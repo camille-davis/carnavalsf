@@ -26,8 +26,6 @@ img {
   --light-text: #FFFFFF;
 
   /* Typography Variables */
-  --body-font: 'Lato', sans-serif;
-  --accent-font: 'Saira Condensed', sans-serif;
   --body-size: 1.125rem;
   --h1-size: 6.25rem;
   --border-radius: .125rem;

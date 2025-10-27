@@ -2,9 +2,6 @@
 
 /**
  * CarnavalSF Theme Functions
- *
- * This file contains all the theme setup functions and customizer options
- * for the CarnavalSF WordPress theme.
  */
 
 // Register navigation menus
@@ -22,13 +19,66 @@ function carnavalsf_enqueue_assets() {
   // Main stylesheet
   wp_enqueue_style('carnavalsf-style', get_stylesheet_uri());
 
-  // Google Fonts
-  wp_enqueue_style('carnavalsf-fonts', 'https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700;1,400;1,700&family=Saira+Condensed:wght@400;800&display=block');
-
   // Menu script
-  wp_enqueue_script('carnavalsf-menu', get_template_directory_uri() . '/js/menu.js', ['jquery'], '1.0', true);
+  wp_enqueue_script(
+    'carnavalsf-menu',
+    get_template_directory_uri() . '/js/menu.js',
+    array('jquery'),
+    '1.0',
+    true
+  );
 }
 add_action('wp_enqueue_scripts', 'carnavalsf_enqueue_assets');
+
+// Add customizer controls.
+function carnavalsf_customize_controls() {
+  global $wp_customize;
+
+  // Enqueue customizer style.
+  wp_enqueue_style(
+    'carnavalsf-customizer',
+    get_template_directory_uri() . '/css/customizer.css',
+    array(),
+    '1.0'
+  );
+
+  // Get typography setting defaults because they aren't passed to JS automatically.
+  $typography_settings = [];
+  $controls = $wp_customize->controls();
+  foreach ($controls as $control) {
+    if ($control->section !== 'carnavalsf_typography') {
+      continue;
+    }
+    $typography_settings[] = $control->id;
+  }
+
+  // Add the defaults to the customize-controls script.
+  $inline_script = '';
+  foreach ($typography_settings as $setting_id) {
+      $setting = $wp_customize->get_setting($setting_id);
+      if ($setting) {
+          $inline_script .= sprintf(
+              'wp.customize("%s", function(setting) { setting.default = %s; });',
+              $setting_id,
+              wp_json_encode($setting->default)
+          );
+      }
+  }
+  wp_add_inline_script('customize-controls', $inline_script);
+
+  // Add 'Reset' buttons.
+  wp_enqueue_script(
+    'carnavalsf-customizer',
+    get_template_directory_uri() . '/js/customizer.js',
+    array('jquery', 'customize-controls'),
+    '1.0',
+    true
+  );
+  wp_localize_script('carnavalsf-customizer', 'carnavalsfCustomizer', [
+      'resetText' => __('Reset', 'carnavalsf')
+  ]);
+}
+add_action('customize_controls_enqueue_scripts', 'carnavalsf_customize_controls');
 
 // Customizer settings
 function carnavalsf_customize_register($wp_customize) {
@@ -95,6 +145,17 @@ function carnavalsf_customize_register($wp_customize) {
     'priority' => 35,
   ]);
 
+  // Fonts URL
+  $wp_customize->add_setting('fonts_url', [
+    'default' => 'https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700;1,400;1,700&family=Saira+Condensed:wght@400;800&display=block',
+    'sanitize_callback' => 'esc_url_raw',
+  ]);
+  $wp_customize->add_control('fonts_url', [
+    'label' => __('Fonts URL', 'carnavalsf'),
+    'section' => 'carnavalsf_typography',
+    'type' => 'text',
+  ]);
+
   // Body Font
   $wp_customize->add_setting('body_font', [
     'default' => 'Lato',
@@ -118,8 +179,14 @@ function carnavalsf_customize_register($wp_customize) {
   ]);
 
   // Heading Size Controls
-  $headings = ['h1' => '6.25rem', 'h2' => '3.5rem', 'h3' => '2.5rem',
-               'h4' => '1.75rem', 'h5' => '1.25rem', 'h6' => '1rem'];
+  $headings = [
+    'h1' => '6.25rem',
+    'h2' => '3.5rem',
+    'h3' => '2.5rem',
+    'h4' => '1.75rem',
+    'h5' => '1.25rem',
+    'h6' => '1rem',
+  ];
 
   foreach ($headings as $heading => $default) {
     $wp_customize->add_setting("{$heading}_size", [
@@ -138,13 +205,20 @@ add_action('customize_register', 'carnavalsf_customize_register');
 // Output Customizer CSS
 function carnavalsf_customizer_css() {
   echo '<style type="text/css">';
+
+  // Import fonts.
+  $fonts_url = get_theme_mod('fonts_url');
+  if ($fonts_url) {
+    echo '@import url("' . esc_url_raw($fonts_url) . '");';
+  }
+
   echo ':root {';
 
   // Output color variables
   $colors = [
-    'accent-1' => get_theme_mod('accent_color_1', '#FFA843'),
-    'accent-2' => get_theme_mod('accent_color_2', '#9C286E'),
-    'accent-3' => get_theme_mod('accent_color_3', '#05DFD7'),
+    'accent-color-1' => get_theme_mod('accent_color_1', '#FFA843'),
+    'accent-color-2' => get_theme_mod('accent_color_2', '#9C286E'),
+    'accent-color-3' => get_theme_mod('accent_color_3', '#05DFD7'),
     'dark-text' => get_theme_mod('dark_text_color', '#383838'),
     'light-text' => get_theme_mod('light_text_color', '#FFFFFF'),
   ];
@@ -173,11 +247,11 @@ add_action('wp_head', 'carnavalsf_customizer_css');
 
 // Development only - don't append version to style.css and script.js
 // TODO: Remove in prod.
-/*function carnavalsf_remove_version_scripts_styles($src) {
+function carnavalsf_remove_version_scripts_styles($src) {
   if (strpos($src, 'ver=')) {
     $src = remove_query_arg('ver', $src);
   }
   return $src;
 }
 add_filter('style_loader_src', 'carnavalsf_remove_version_scripts_styles', 9999);
-add_filter('script_loader_src', 'carnavalsf_remove_version_scripts_styles', 9999);*/
+add_filter('script_loader_src', 'carnavalsf_remove_version_scripts_styles', 9999);

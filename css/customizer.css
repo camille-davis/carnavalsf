@@ -1,0 +1,19 @@
+/* 'Reset' buttons */
+
+#sub-accordion-section-carnavalsf_typography .customize-control {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+#sub-accordion-section-carnavalsf_typography .customize-control-title {
+  width: 100%;
+}
+
+#sub-accordion-section-carnavalsf_typography input {
+  width: auto;
+  flex-grow: 1;
+}
+
+#sub-accordion-section-carnavalsf_typography .reset-button {
+  margin-left: .5rem;
+}
