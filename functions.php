@@ -170,3 +170,14 @@ function carnavalsf_customizer_css() {
   echo '</style>';
 }
 add_action('wp_head', 'carnavalsf_customizer_css');
+
+// Development only - don't append version to style.css and script.js
+// TODO: Remove in prod.
+/*function carnavalsf_remove_version_scripts_styles($src) {
+  if (strpos($src, 'ver=')) {
+    $src = remove_query_arg('ver', $src);
+  }
+  return $src;
+}
+add_filter('style_loader_src', 'carnavalsf_remove_version_scripts_styles', 9999);
+add_filter('script_loader_src', 'carnavalsf_remove_version_scripts_styles', 9999);*/

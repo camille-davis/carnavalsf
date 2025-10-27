@@ -10,37 +10,53 @@ jQuery(document).ready(function() {
     if ($menuOpen.attr('aria-expanded') !== 'false') {
       return;
     }
-    $menuOpen.attr('aria-expanded', 'true');
-    $menuClose.focus();
 
+    // Open the menu.
+    $menuOuter.addClass('transitioning');
+    $menuOpen.attr('aria-expanded', 'true');
+    setTimeout(() => {
+      $menuOuter.removeClass('transitioning');
+    }, 300);
+
+    // Handle focus.
     const elements = getElementsOutsideMenu();
     elements.forEach(function(el) {
       $(el).attr('tabindex', '-1');
     });
+    $menuClose.focus();
   }
 
   function closeMenu() {
     if ($menuOpen.attr('aria-expanded') !== 'true') {
       return;
     }
-    $menuOpen.attr('aria-expanded', 'false');
-    $menuOpen.focus();
 
+    // Close the menu.
+    $menuOuter.addClass('transitioning');
+    $menuOpen.attr('aria-expanded', 'false');
+    setTimeout(() => {
+      $menuOuter.removeClass('transitioning');
+    }, 300);
+
+    // Handle focus.
     const elements = getElementsOutsideMenu();
     elements.forEach(function(el) {
       $(el).removeAttr('tabindex');
     });
+    $menuOpen.focus();
   }
 
   function getElementsOutsideMenu() {
     let elements = [];
 
+    // Get menu siblings, and siblings of menu parents up to the body.
     let $el = $menuOuter;
     while ($el.length > 0 && $el.get(0) !== document.body) {
       elements.push(...$el.siblings());
       $el = $el.parent();
     }
 
+    // Remove script elements and admin bar.
     elements = elements.filter(function(el) {
       return !$(el).is('script') && !$(el).is('#wpadminbar');
     });
@@ -61,6 +77,13 @@ jQuery(document).ready(function() {
   // Close menu when pressing the Escape key.
   $(document).on('keydown', function(e) {
     if (e.key === 'Escape' && $menuOpen.attr('aria-expanded') === 'true') {
+      closeMenu();
+    }
+  });
+
+  // Close menu when resizing to desktop size.
+  $(window).on('resize', function() {
+    if ($(window).width() >= 1080) {
       closeMenu();
     }
   });

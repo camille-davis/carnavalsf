@@ -191,17 +191,17 @@ h1, h2, h3, h4, h5, h6 {
     min-height: 100vh;
     visibility: hidden;
     opacity: 0;
-    transition:
-      opacity 0.3s ease,
-      visibility 0s ease 0.3s;
   }
 
   [aria-expanded="true"] + .menu-outer {
     opacity: 1;
     visibility: visible;
+  }
+
+  .menu-outer.transitioning {
     transition:
       opacity 0.3s ease,
-      visibility 0s;
+      visibility 0.3s ease;
   }
 }
 
