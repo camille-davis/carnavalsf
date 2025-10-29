@@ -179,7 +179,7 @@ function carnavalsf_customize_register($wp_customize) {
 
   // Fonts URL
   $wp_customize->add_setting('fonts_url', [
-    'default' => 'https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700;1,400;1,700&family=Saira+Condensed:wght@400;800&display=block',
+    'default' => 'https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&family=Saira+Condensed:wght@400;800&display=block',
     'sanitize_callback' => 'esc_url_raw',
   ]);
   $wp_customize->add_control('fonts_url', [
@@ -190,7 +190,7 @@ function carnavalsf_customize_register($wp_customize) {
 
   // Body Font
   $wp_customize->add_setting('body_font', [
-    'default' => 'Lato',
+    'default' => 'Quicksand',
     'sanitize_callback' => 'sanitize_text_field',
   ]);
   $wp_customize->add_control('body_font', [
@@ -210,7 +210,18 @@ function carnavalsf_customize_register($wp_customize) {
     'type' => 'text',
   ]);
 
-  // Heading Size Controls
+  // Body Font Size
+  $wp_customize->add_setting('body_font_size', [
+    'default' => '1rem',
+    'sanitize_callback' => 'sanitize_text_field',
+  ]);
+  $wp_customize->add_control('body_font_size', [
+    'label' => __('Body Font Size', 'carnavalsf'),
+    'section' => 'carnavalsf_typography',
+    'type' => 'text',
+  ]);
+
+  // Heading Font Sizes
   $headings = [
     'h1' => '6.25rem',
     'h2' => '3.5rem',
@@ -219,13 +230,12 @@ function carnavalsf_customize_register($wp_customize) {
     'h5' => '1.25rem',
     'h6' => '1rem',
   ];
-
   foreach ($headings as $heading => $default) {
-    $wp_customize->add_setting("{$heading}_size", [
+    $wp_customize->add_setting("{$heading}_font_size", [
       'default' => $default,
       'sanitize_callback' => 'sanitize_text_field',
     ]);
-    $wp_customize->add_control("{$heading}_size", [
+    $wp_customize->add_control("{$heading}_font_size", [
       'label' => __(ucfirst($heading) . ' Size', 'carnavalsf'),
       'section' => 'carnavalsf_typography',
       'type' => 'text',
@@ -238,41 +248,35 @@ add_action('customize_register', 'carnavalsf_customize_register');
 function carnavalsf_customizer_css() {
   echo '<style type="text/css">';
 
-  // Import fonts.
+  // Output font import.
   $fonts_url = get_theme_mod('fonts_url');
   if ($fonts_url) {
     echo '@import url("' . esc_url_raw($fonts_url) . '");';
   }
 
-  echo ':root {';
-
-  // Output color variables
-  $colors = [
+  // Output custom css variables.
+  $custom_css_variables = [
     'accent-color-1' => get_theme_mod('accent_color_1', '#FFA843'),
     'accent-color-2' => get_theme_mod('accent_color_2', '#9C286E'),
     'accent-color-3' => get_theme_mod('accent_color_3', '#05DFD7'),
     'dark-text' => get_theme_mod('dark_text_color', '#383838'),
     'light-text' => get_theme_mod('light_text_color', '#FFFFFF'),
+    'body-font' => get_theme_mod('body_font', 'Quicksand') . ', sans-serif',
+    'accent-font' => get_theme_mod('accent_font', 'Saira Condensed') . ', sans-serif',
+    'body-font-size' => get_theme_mod('body_font_size', '1rem'),
+    'h1-font-size' => get_theme_mod('h1_font_size', '6.25rem'),
+    'h2-font-size' => get_theme_mod('h2_font_size', '3.5rem'),
+    'h3-font-size' => get_theme_mod('h3_font_size', '2.5rem'),
+    'h4-font-size' => get_theme_mod('h4_font_size', '1.75rem'),
+    'h5-font-size' => get_theme_mod('h5_font_size', '1.25rem'),
+    'h6-font-size' => get_theme_mod('h6_font_size', '1rem'),
   ];
-
-  foreach ($colors as $name => $value) {
+  echo ':root {';
+  foreach ($custom_css_variables as $name => $value) {
     echo "--{$name}: {$value};";
   }
-
-  // Output typography variables
-  echo '--body-font: "' . get_theme_mod('body_font', 'Lato') . '", sans-serif;';
-  echo '--accent-font: "' . get_theme_mod('accent_font', 'Saira Condensed') . '", sans-serif;';
-
-  // Output heading sizes
-  $headings = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'];
-  foreach ($headings as $heading) {
-    $size = get_theme_mod("{$heading}_size");
-    if ($size) {
-      echo "--{$heading}-size: {$size};";
-    }
-  }
-
   echo '}';
+
   echo '</style>';
 }
 add_action('wp_head', 'carnavalsf_customizer_css');
