@@ -277,6 +277,12 @@ function carnavalsf_customizer_css() {
 }
 add_action('wp_head', 'carnavalsf_customizer_css');
 
+// Disable automatic image resizing
+function carnavalsf_disable_image_resizing() {
+  add_filter('intermediate_image_sizes_advanced', '__return_empty_array');
+}
+add_action('init', 'carnavalsf_disable_image_resizing');
+
 // Development only - don't append version to style.css and script.js
 // TODO: Remove in prod.
 function carnavalsf_remove_version_scripts_styles($src) {
