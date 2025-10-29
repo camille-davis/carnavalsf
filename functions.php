@@ -13,6 +13,35 @@ function carnavalsf_register_menus() {
 }
 add_action('init', 'carnavalsf_register_menus');
 
+// Register footer widget area
+function carnavalsf_widgets_init() {
+  register_sidebar([
+      'name'          => __('Footer Column 1', 'carnavalsf'),
+      'id'            => 'footer-column-1',
+      'before_widget' => '<div class="footer-widget">',
+      'after_widget'  => '</div>',
+  ]);
+  register_sidebar([
+      'name'          => __('Footer Column 2', 'carnavalsf'),
+      'id'            => 'footer-column-2',
+      'before_widget' => '<div class="footer-widget">',
+      'after_widget'  => '</div>',
+  ]);
+  register_sidebar([
+      'name'          => __('Footer Column 3', 'carnavalsf'),
+      'id'            => 'footer-column-3',
+      'before_widget' => '<div class="footer-widget">',
+      'after_widget'  => '</div>',
+  ]);
+  register_sidebar([
+      'name'          => __('Footer Bottom', 'carnavalsf'),
+      'id'            => 'footer-bottom',
+      'before_widget' => '<div class="footer-widget">',
+      'after_widget'  => '</div>',
+  ]);
+}
+add_action('widgets_init', 'carnavalsf_widgets_init');
+
 // Enqueue theme styles and scripts
 function carnavalsf_enqueue_assets() {
 
