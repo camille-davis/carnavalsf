@@ -14,19 +14,6 @@ Text Domain: carnavalsf
 }
 
 :root {
-  /* Color Variables */
-  --accent-color-1: #FFA843;
-  --accent-color-2: #9C286E;
-  --accent-color-3: #05DFD7;
-  --dark-text: #383838;
-  --light-text: #FFFFFF;
-
-  /* Typography Variables */
-  --body-font-size: 1.125rem;
-  --h1-font-size: 6.25rem;
-  --border-radius: .125rem;
-
-  /* Layout Variables */
   --desktop-min: 1080px;
 }
 
