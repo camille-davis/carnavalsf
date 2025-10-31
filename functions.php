@@ -76,6 +76,14 @@ function carnavalsf_enqueue_assets() {
     '1.0',
     true
   );
+
+  wp_enqueue_script(
+    'carnavalsf-transitions',
+    get_template_directory_uri() . '/js/transitions.js',
+    array('jquery'),
+    '1.0',
+    true
+  );
 }
 add_action('wp_enqueue_scripts', 'carnavalsf_enqueue_assets');
 
@@ -85,20 +93,31 @@ function carnavalsf_disable_image_resizing() {
 }
 add_action('init', 'carnavalsf_disable_image_resizing');
 
-// Customize Details block with h3 tags and expand icon.
+// Customize Details Gutenberg block.
 add_filter('render_block', 'customize_details_block', 10, 2);
 function customize_details_block($block_content, $block) {
-    if ($block['blockName'] === 'core/details') {
-        $block_content = str_replace(
-            '<summary>',
-            '<summary><div class="expand-icon"><img src="/wp-content/themes/carnavalsf/img/caret-right-cropped.png" alt="" /></div><h3>',
-            $block_content
-        );
-        $block_content = str_replace(
-            '</summary>',
-            '</h3></summary>',
-            $block_content
-        );
-    }
-    return $block_content;
+  if ($block['blockName'] === 'core/details') {
+
+      // Add 'expand' icon and wrap summary text in h3.
+      $block_content = str_replace(
+          '<summary>',
+          '<summary><div class="expand-icon"><img src="/wp-content/themes/carnavalsf/img/caret-right-cropped.png" alt="" /></div><h3>',
+          $block_content
+      );
+
+      // Close h3 and open .details-content div after summary.
+      $block_content = str_replace(
+          '</summary>',
+          '</h3></summary><div class="details-content">',
+          $block_content
+      );
+
+      // Close .details-content div before closing details tag.
+      $block_content = str_replace(
+          '</details>',
+          '</div></details>',
+          $block_content
+      );
+  }
+  return $block_content;
 }
