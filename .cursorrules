@@ -1,0 +1,28 @@
+# Code Quality Rules
+
+## Remove Unnecessary Code
+
+Always remove unnecessary code before committing. This includes:
+
+1. **Unused variables, functions, and attributes**: Remove any code that is defined but never used, including:
+   - Data attributes that are set but never read
+   - Inline scripts that duplicate functionality already provided by localized scripts
+   - Variables or functions that are declared but never called
+
+2. **Code that cannot execute**: Remove code that will never run due to context limitations:
+   - WordPress Customizer API code (`wp.customize`) on non-customizer screens (e.g., post edit screens)
+   - Event listeners for APIs that aren't available in the current context
+   - Conditional code where the condition can never be true
+
+3. **Unnecessary dependencies**: Remove script/style dependencies that aren't actually used:
+   - Don't include `customize-controls` dependency unless actually using the Customizer API
+   - Only include dependencies that are directly used in the code
+
+4. **Redundant functionality**: If functionality is already provided elsewhere, don't duplicate it:
+   - If colors are set inline via `style` attributes, don't also set them via JavaScript unless needed for dynamic updates
+   - If data is already localized via `wp_localize_script`, don't also output it in inline scripts
+
+5. **Dead code paths**: Remove code in else/elseif branches that will never execute, or simplify conditionals that are always true/false.
+
+Before finalizing code, review it to ensure every line serves a purpose and will execute in the intended context.
+
