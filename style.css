@@ -15,8 +15,9 @@ Text Domain: carnavalsf
 
 :root {
   --desktop-min: 1080px;
-  --padding-desktop: 2rem;
-  --padding-mobile: 1.5rem;
+  --padding-vertical: 3rem;
+  --padding-horizontal-desktop: 2rem;
+  --padding-horizontal-mobile: 1.5rem;
   --border-radius: .25rem;
 }
 
@@ -42,10 +43,20 @@ a {
   font-weight: bold;
 }
 
+a:hover {
+  text-decoration: none;
+}
+
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--accent-font);
   line-height: 1;
   text-transform: uppercase;
+}
+
+h1, h2 {
+  background-color: #fff;
+  display: inline-block;
+  padding: 0 1rem;
 }
 
 h1 {
@@ -343,19 +354,19 @@ h6 { font-size: var(--h6-font-size); }
 }
 
 .footer-bottom {
-  padding: .75rem var(--padding-desktop);
+  padding: .75rem var(--padding-horizontal-desktop);
 }
 
 @media (max-width: 1079px) {
   .footer-columns {
-    padding-left: var(--padding-mobile);
-    padding-right: var(--padding-mobile);
+    padding-left: var(--padding-horizontal-mobile);
+    padding-right: var(--padding-horizontal-mobile);
     flex-direction: column;
   }
 
   .footer-bottom {
-    padding-left: var(--padding-mobile);
-    padding-right: var(--padding-mobile);
+    padding-left: var(--padding-horizontal-mobile);
+    padding-right: var(--padding-horizontal-mobile);
   }
 }
 
@@ -381,6 +392,7 @@ h6 { font-size: var(--h6-font-size); }
 
 .footer-column-1 h1 {
   font-size: var(--h3-font-size);
+  padding: 0;
 }
 
 .footer-column-1 .wp-block-list img {
@@ -416,13 +428,13 @@ h6 { font-size: var(--h6-font-size); }
 }
 
 .entry-content {
-  padding: var(--padding-desktop);
+  padding: var(--padding-vertical) var(--padding-horizontal-desktop);
 }
 
 @media (max-width: 1079px) {
   .entry-content {
-    padding-left: var(--padding-mobile);
-    padding-right: var(--padding-mobile);
+    padding-left: var(--padding-horizontal-mobile);
+    padding-right: var(--padding-horizontal-mobile);
   }
 }
 
@@ -442,7 +454,7 @@ h6 { font-size: var(--h6-font-size); }
 
 .wp-block-details {
   border-radius: var(--border-radius);
-  padding: .75rem;
+  padding: .75rem 1rem;
   border: .125rem solid #fff;
   margin-bottom: .75rem;
 }
@@ -455,7 +467,6 @@ h6 { font-size: var(--h6-font-size); }
 
 .wp-block-details h3 {
   margin: 0;
-  color: var(--accent-color-2);
 }
 
 .wp-block-details p:last-child {
@@ -472,7 +483,7 @@ h6 { font-size: var(--h6-font-size); }
 }
 
 .expand-icon img {
-  filter: var(--accent-color-2-filter);
+  filter: var(--dark-text-filter);
   width: 1rem;
   transition: transform 0.3s ease;
 }
