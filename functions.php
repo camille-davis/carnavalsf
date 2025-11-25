@@ -18,6 +18,9 @@ add_filter('script_loader_src', 'carnavalsf_remove_version_scripts_styles', 9999
 // Load customizer functions.
 require_once get_template_directory() . '/inc/customizer.php';
 
+// Load page color meta box.
+require_once get_template_directory() . '/inc/page-color.php';
+
 // Add theme support for website logo.
 add_theme_support( 'custom-logo' );
 
