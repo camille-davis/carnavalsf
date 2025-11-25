@@ -4,7 +4,7 @@ while (have_posts()): the_post();
   $page_color = 'page-color-1';
   $page_color_meta = get_post_meta(get_the_ID(), '_carnavalsf_page_color', true);
   if (!empty($page_color_meta) && in_array($page_color_meta, ['color-1', 'color-2'])) {
-    $page_color = 'page-color-' . $page_color_meta;
+    $page_color = 'page-' . $page_color_meta;
   }
   ?>
 
