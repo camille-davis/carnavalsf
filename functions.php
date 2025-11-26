@@ -27,6 +27,42 @@ add_theme_support( 'custom-logo' );
 // Add theme support for featured images.
 add_theme_support( 'post-thumbnails' );
 
+// Register editor color palette with accent colors from customizer
+function carnavalsf_editor_color_palette() {
+  $editor_color_palette = array(
+    array(
+      'name'  => __( 'Accent Color 1', 'carnavalsf' ),
+      'slug'  => 'accent-color-1',
+      'color' => get_theme_mod( 'accent_color_1', '#FFA843' ),
+    ),
+    array(
+      'name'  => __( 'Accent Color 2', 'carnavalsf' ),
+      'slug'  => 'accent-color-2',
+      'color' => get_theme_mod( 'accent_color_2', '#9C286E' ),
+    ),
+    array(
+      'name'  => __( 'Accent Color 3', 'carnavalsf' ),
+      'slug'  => 'accent-color-3',
+      'color' => get_theme_mod( 'accent_color_3', '#05DFD7' ),
+    ),
+    array(
+      'name'  => __( 'Dark Text Color', 'carnavalsf' ),
+      'slug'  => 'dark-text-color',
+      'color' => get_theme_mod( 'dark_text_color', '#383838' ),
+    ),
+    array(
+      'name'  => __( 'Light Text Color', 'carnavalsf' ),
+      'slug'  => 'light-text-color',
+      'color' => get_theme_mod( 'light_text_color', '#FFFFFF' )
+    ),
+  );
+
+  if ( $editor_color_palette ) {
+    add_theme_support( 'editor-color-palette', $editor_color_palette );
+  }
+}
+add_action( 'after_setup_theme', 'carnavalsf_editor_color_palette' );
+
 // Register navigation menus.
 function carnavalsf_register_menus() {
   register_nav_menus([

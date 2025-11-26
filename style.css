@@ -423,8 +423,11 @@ h6 { font-size: var(--h6-font-size); }
 
 h1, h2 {
   background-color: #fff;
-  padding: 0 1rem;
   width: fit-content;
+}
+
+h1, h2, h2.has-background {
+  padding: 0 1rem;
 }
 
 .page-color-2 h1,
@@ -565,3 +568,14 @@ h1, h2 {
   background-color: var(--accent-color-1);
   color: var(--accent-color-2);
 }
+
+.has-accent-color-1-color { color: var(--accent-color-1) !important; }
+.has-accent-color-1-background-color { background-color: var(--accent-color-1) !important; }
+.has-accent-color-2-color { color: var(--accent-color-2) !important; }
+.has-accent-color-2-background-color { background-color: var(--accent-color-2) !important; }
+.has-accent-color-3-color { color: var(--accent-color-3) !important; }
+.has-accent-color-3-background-color { background-color: var(--accent-color-3) !important; }
+.has-dark-text-color-color { color: var(--dark-text) !important; }
+.has-dark-text-color-background-color { background-color: var(--dark-text) !important; }
+.has-light-text-color-color { color: var(--light-text) !important; }
+.has-light-text-color-background-color { background-color: var(--light-text) !important; }
