@@ -15,14 +15,17 @@ Text Domain: carnavalsf
 
 :root {
   --desktop-min: 1080px;
-  --padding-vertical: 3rem;
-  --padding-horizontal-desktop: 2rem;
-  --padding-horizontal-mobile: 1.5rem;
+  --side-padding-desktop: 2rem;
+  --side-padding-mobile: 1.5rem;
+  --vertical-space-large: 3rem;
+  --vertical-space-small: 1rem;
   --border-radius: .25rem;
+  --nav-height-desktop: 7.5rem;
+  --nav-height-mobile: 6rem;
 }
 
 p {
-  margin-bottom: 1rem;
+  margin-bottom: var(--vertical-space-small);
 }
 
 body {
@@ -51,14 +54,12 @@ h1, h2, h3, h4, h5, h6 {
   font-family: var(--accent-font);
   line-height: 1;
   text-transform: uppercase;
+  margin: calc(var(--vertical-space-large) - var(--vertical-space-small)) 0 var(--vertical-space-small);
+  scroll-margin-top: calc(var(--nav-height-desktop) + var(--vertical-space-large));
 }
 
 h1 {
-  margin-bottom: 1.5rem;
-}
-
-h2, h3, h4, h5, h6 {
-  margin: 1rem 0;
+  margin-top: 0;
 }
 
 h1 { font-size: var(--h1-font-size); }
@@ -67,12 +68,6 @@ h3 { font-size: var(--h3-font-size); }
 h4 { font-size: var(--h4-font-size); }
 h5 { font-size: var(--h5-font-size); }
 h6 { font-size: var(--h6-font-size); }
-
-.wp-block-button__link {
-  background-color: var(--accent-color-2);
-  border-radius: var(--border-radius);
-  padding: .5rem 1.5rem;
-}
 
 /*
  * Header
@@ -92,7 +87,7 @@ h6 { font-size: var(--h6-font-size); }
 @media (max-width: 1079px) {
   .site-header {
     position: relative;
-    min-height: 6rem;
+    min-height: var(--nav-height-mobile);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -322,7 +317,7 @@ h6 { font-size: var(--h6-font-size); }
   }
 
   .menu-links li {
-    margin-bottom: 1rem;
+    margin-bottom: var(--vertical-space-small);
   }
 
   .menu-links a {
@@ -348,19 +343,19 @@ h6 { font-size: var(--h6-font-size); }
 }
 
 .footer-bottom {
-  padding: .75rem var(--padding-horizontal-desktop);
+  padding: .75rem var(--side-padding-desktop);
 }
 
 @media (max-width: 1079px) {
   .footer-columns {
-    padding-left: var(--padding-horizontal-mobile);
-    padding-right: var(--padding-horizontal-mobile);
+    padding-left: var(--side-padding-mobile);
+    padding-right: var(--side-padding-mobile);
     flex-direction: column;
   }
 
   .footer-bottom {
-    padding-left: var(--padding-horizontal-mobile);
-    padding-right: var(--padding-horizontal-mobile);
+    padding-left: var(--side-padding-mobile);
+    padding-right: var(--side-padding-mobile);
   }
 }
 
@@ -428,8 +423,8 @@ h6 { font-size: var(--h6-font-size); }
 
 h1, h2 {
   background-color: #fff;
-  display: inline-block;
   padding: 0 1rem;
+  width: fit-content;
 }
 
 .page-color-2 h1,
@@ -442,13 +437,15 @@ h1, h2 {
 }
 
 .entry-content {
-  padding: var(--padding-vertical) var(--padding-horizontal-desktop);
+  padding: var(--vertical-space-large) var(--side-padding-desktop);
+  display: flex;
+  flex-direction: column;
 }
 
 @media (max-width: 1079px) {
   .entry-content {
-    padding-left: var(--padding-horizontal-mobile);
-    padding-right: var(--padding-horizontal-mobile);
+    padding-left: var(--side-padding-mobile);
+    padding-right: var(--side-padding-mobile);
   }
 }
 
@@ -521,4 +518,30 @@ h1, h2 {
 
 .wp-block-details .details-content > :last-child {
   margin-bottom: .25rem;
+}
+
+/* Buttons block */
+
+.wp-block-buttons {
+  margin-bottom: var(--vertical-space-small);
+}
+
+.wp-block-button__link {
+  border-radius: var(--border-radius);
+  padding: .5rem 1.5rem;
+  text-transform: uppercase;
+  font-size: inherit;
+  letter-spacing: .025em;
+}
+
+.wp-block-button__link,
+.page-color-2 .wp-block-button__link:hover {
+  background-color: var(--accent-color-2);
+  color: var(--accent-color-1);
+}
+
+.page-color-2 .wp-block-button__link,
+.wp-block-button__link:hover {
+  background-color: var(--accent-color-1);
+  color: var(--accent-color-2);
 }

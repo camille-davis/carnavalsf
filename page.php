@@ -18,7 +18,7 @@ while (have_posts()): the_post();
       <?php endif; ?>
 
       <div class="entry-content">
-        <?php the_title('<h1 class="entry-title">', '</h1>'); ?>
+        <?php the_title('<h1 class="entry-title" id="title">', '</h1>'); ?>
         <?php the_content(); ?>
       </div>
     </div>
