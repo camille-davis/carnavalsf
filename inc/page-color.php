@@ -124,6 +124,15 @@ class CarnavalSF_Page_Color
       true
     );
 
+    // Enqueue page color editor script (for parent window to listen to meta box)
+    wp_enqueue_script(
+      'carnavalsf-page-color-editor',
+      get_template_directory_uri() . '/js/page-color-editor.js',
+      [],
+      '1.0',
+      true
+    );
+
     // Localize script with customizer colors
     wp_localize_script('carnavalsf-page-color-admin', 'carnavalsfPageColor', [
       'color1' => get_theme_mod('accent_color_1', '#FFA843'),

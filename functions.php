@@ -27,17 +27,20 @@ add_theme_support( 'custom-logo' );
 // Add theme support for featured images.
 add_theme_support( 'post-thumbnails' );
 
-// Enable background image support for all blocks
-add_filter('register_block_type_args', 'carnavalsf_enable_background_image_all_blocks', 10, 2);
-function carnavalsf_enable_background_image_all_blocks($args, $name) {
+// Modify block supports: enable background images and disable shadow
+add_filter('register_block_type_args', 'carnavalsf_modify_block_supports', 10, 2);
+function carnavalsf_modify_block_supports($args, $name) {
   if (!isset($args['supports'])) {
     $args['supports'] = array();
   }
+  // Enable background image support
   if (!isset($args['supports']['background'])) {
     $args['supports']['background'] = array();
   }
   $args['supports']['background']['backgroundImage'] = true;
   $args['supports']['background']['backgroundSize'] = true;
+  // Disable shadow support
+  $args['supports']['shadow'] = false;
   return $args;
 }
 
@@ -140,6 +143,13 @@ function carnavalsf_enqueue_assets() {
 }
 add_action('wp_enqueue_scripts', 'carnavalsf_enqueue_assets');
 
+// Add editor styles
+function carnavalsf_add_editor_styles() {
+  add_theme_support('editor-styles');
+  add_editor_style('style.css');
+}
+add_action('after_setup_theme', 'carnavalsf_add_editor_styles');
+
 // Enqueue block editor assets
 function carnavalsf_enqueue_block_editor_assets() {
   wp_enqueue_script(
@@ -156,8 +166,50 @@ function carnavalsf_enqueue_block_editor_assets() {
     '1.0',
     true
   );
+
+  // Enqueue page color editor script
+  wp_enqueue_script(
+    'carnavalsf-page-color-editor',
+    get_template_directory_uri() . '/js/page-color-editor.js',
+    array(),
+    '1.0',
+    true
+  );
 }
 add_action('enqueue_block_editor_assets', 'carnavalsf_enqueue_block_editor_assets');
+
+// Add CSS variables to editor canvas only (not sidebar)
+function carnavalsf_add_editor_inline_css($editor_settings) {
+  // Get the CSS variables
+  $inline_css = CarnavalSF_Customizer::get_inline_css();
+
+  if (empty($inline_css)) {
+    return $editor_settings;
+  }
+
+  // Ensure styles array exists
+  if (!isset($editor_settings['styles'])) {
+    $editor_settings['styles'] = array();
+  }
+
+  // Prepend CSS variables so they're available before other styles
+  // Must set isGlobalStyles to false or it will be stripped out
+  array_unshift($editor_settings['styles'], array(
+    'css' => $inline_css,
+    '__unstableType' => 'theme',
+    'isGlobalStyles' => false,
+  ));
+
+  return $editor_settings;
+}
+add_filter('block_editor_settings_all', 'carnavalsf_add_editor_inline_css', 10, 1);
+
+// Disable layout support in block editor
+function carnavalsf_disable_layout_support($editor_settings) {
+  $editor_settings['supportsLayout'] = false;
+  return $editor_settings;
+}
+add_filter('block_editor_settings_all', 'carnavalsf_disable_layout_support', 10, 1);
 
 // Disable automatic image resizing
 function carnavalsf_disable_image_resizing() {

@@ -45,7 +45,7 @@
           { group: 'styles' },
           createElement(
             PanelBody,
-            { title: 'Width', initialOpen: true, order: 30 },
+            { title: 'Width', initialOpen: true, order: 10 },
             createElement(ToggleControl, {
               label: 'Fullwidth',
               checked: fullwidth,
@@ -63,6 +63,27 @@
     'editor.BlockEdit',
     'carnavalsf/group-block-fullwidth',
     withFullwidthControl
+  );
+
+  // Add is-fullwidth class to block wrapper in editor
+  addFilter(
+    'editor.BlockListBlock',
+    'carnavalsf/group-block-fullwidth-class',
+    (BlockListBlock) => {
+      return (props) => {
+        const { name, attributes, className } = props;
+
+        if (name === 'core/group' && attributes && attributes.fullwidth) {
+          const modifiedClassName = className ? className + ' is-fullwidth' : 'is-fullwidth';
+          return createElement(BlockListBlock, {
+            ...props,
+            className: modifiedClassName
+          });
+        }
+
+        return createElement(BlockListBlock, props);
+      };
+    }
   );
 })();
 

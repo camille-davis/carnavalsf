@@ -190,33 +190,33 @@ class CarnavalSF_Customizer
     wp_enqueue_style('carnavalsf-customizer', get_template_directory_uri() . '/css/customizer.css');
   }
 
-  public function output_inline_css()
+  public static function get_inline_css()
   {
-    echo '<style type="text/css">';
+    $css = '';
 
     // Output font import.
     $fonts_url = get_theme_mod('fonts_url');
     if ($fonts_url) {
-      echo '@import url("' . esc_url_raw($fonts_url) . '");';
+      $css .= '@import url("' . esc_url_raw($fonts_url) . '");';
     }
 
     // Output custom css variables.
     $custom_css_variables = [
       'accent-color-1' => get_theme_mod('accent_color_1', '#FFA843'),
-      'accent-color-1-filter' => $this->hex_to_css_filter(get_theme_mod('accent_color_1', '#FFA843')),
-      'accent-color-1-rgb' => implode(',', $this->hex_to_rgb(get_theme_mod('accent_color_1', '#FFA843'))),
+      'accent-color-1-filter' => self::hex_to_css_filter(get_theme_mod('accent_color_1', '#FFA843')),
+      'accent-color-1-rgb' => implode(',', self::hex_to_rgb(get_theme_mod('accent_color_1', '#FFA843'))),
       'accent-color-2' => get_theme_mod('accent_color_2', '#9C286E'),
-      'accent-color-2-filter' => $this->hex_to_css_filter(get_theme_mod('accent_color_2', '#9C286E')),
-      'accent-color-2-rgb' => implode(',', $this->hex_to_rgb(get_theme_mod('accent_color_2', '#9C286E'))),
+      'accent-color-2-filter' => self::hex_to_css_filter(get_theme_mod('accent_color_2', '#9C286E')),
+      'accent-color-2-rgb' => implode(',', self::hex_to_rgb(get_theme_mod('accent_color_2', '#9C286E'))),
       'accent-color-3' => get_theme_mod('accent_color_3', '#05DFD7'),
-      'accent-color-3-filter' => $this->hex_to_css_filter(get_theme_mod('accent_color_3', '#05DFD7')),
-      'accent-color-3-rgb' => implode(',', $this->hex_to_rgb(get_theme_mod('accent_color_3', '#05DFD7'))),
+      'accent-color-3-filter' => self::hex_to_css_filter(get_theme_mod('accent_color_3', '#05DFD7')),
+      'accent-color-3-rgb' => implode(',', self::hex_to_rgb(get_theme_mod('accent_color_3', '#05DFD7'))),
       'dark-text' => get_theme_mod('dark_text_color', '#383838'),
-      'dark-text-filter' => $this->hex_to_css_filter(get_theme_mod('dark_text_color', '#383838')),
-      'dark-text-rgb' => implode(',', $this->hex_to_rgb(get_theme_mod('dark_text_color', '#383838'))),
+      'dark-text-filter' => self::hex_to_css_filter(get_theme_mod('dark_text_color', '#383838')),
+      'dark-text-rgb' => implode(',', self::hex_to_rgb(get_theme_mod('dark_text_color', '#383838'))),
       'light-text' => get_theme_mod('light_text_color', '#FFFFFF'),
-      'light-text-filter' => $this->hex_to_css_filter(get_theme_mod('light_text_color', '#FFFFFF')),
-      'light-text-rgb' => implode(',', $this->hex_to_rgb(get_theme_mod('light_text_color', '#FFFFFF'))),
+      'light-text-filter' => self::hex_to_css_filter(get_theme_mod('light_text_color', '#FFFFFF')),
+      'light-text-rgb' => implode(',', self::hex_to_rgb(get_theme_mod('light_text_color', '#FFFFFF'))),
       'body-font' => get_theme_mod('body_font', 'Quicksand') . ', sans-serif',
       'accent-font' => get_theme_mod('accent_font', 'Saira Condensed') . ', sans-serif',
       'body-font-size' => get_theme_mod('body_font_size', '1rem'),
@@ -227,16 +227,23 @@ class CarnavalSF_Customizer
       'h5-font-size' => get_theme_mod('h5_font_size', '1.25rem'),
       'h6-font-size' => get_theme_mod('h6_font_size', '1rem'),
     ];
-    echo ':root {';
+    $css .= ':root {';
     foreach ($custom_css_variables as $name => $value) {
-      echo "--{$name}: {$value};";
+      $css .= "--{$name}: {$value};";
     }
-    echo '}';
+    $css .= '}';
 
+    return $css;
+  }
+
+  public function output_inline_css()
+  {
+    echo '<style type="text/css">';
+    echo self::get_inline_css();
     echo '</style>';
   }
 
-  private function hex_to_rgb($hex)
+  private static function hex_to_rgb($hex)
   {
     // Remove hash if present
     $hex = ltrim($hex, '#');
@@ -253,9 +260,9 @@ class CarnavalSF_Customizer
     ];
   }
 
-  private function hex_to_css_filter($hex)
+  private static function hex_to_css_filter($hex)
   {
-    $hex = $this->hex_to_rgb($hex);
+    $hex = self::hex_to_rgb($hex);
 
     // Convert to RGB
     // Create color object

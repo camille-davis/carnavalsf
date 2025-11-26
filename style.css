@@ -439,7 +439,8 @@ h1, h2, h2.has-background {
   color: var(--accent-color-1);
 }
 
-.entry-content {
+.entry-content,
+.editor-styles-wrapper {
   padding: var(--vertical-space-large) var(--side-padding-desktop);
   display: flex;
   flex-direction: column;
@@ -459,7 +460,8 @@ h1, h2, h2.has-background {
 }
 
 @media (max-width: 1079px) {
-  .entry-content {
+  .entry-content,
+  .editor-styles-wrapper {
     padding-left: var(--side-padding-mobile);
     padding-right: var(--side-padding-mobile);
   }
@@ -475,6 +477,11 @@ h1, h2, h2.has-background {
 /*
    Gutenberg Blocks
 */
+
+/* Unset inline editor styles */
+.editor-visual-editor__post-title-wrapper {
+  margin-top: 0 !important;
+}
 
 /* Columns block */
 
