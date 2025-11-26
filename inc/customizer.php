@@ -203,15 +203,20 @@ class CarnavalSF_Customizer
     // Output custom css variables.
     $custom_css_variables = [
       'accent-color-1' => get_theme_mod('accent_color_1', '#FFA843'),
-      'accent-color-2' => get_theme_mod('accent_color_2', '#9C286E'),
-      'accent-color-3' => get_theme_mod('accent_color_3', '#05DFD7'),
       'accent-color-1-filter' => $this->hex_to_css_filter(get_theme_mod('accent_color_1', '#FFA843')),
+      'accent-color-1-rgb' => implode(',', $this->hex_to_rgb(get_theme_mod('accent_color_1', '#FFA843'))),
+      'accent-color-2' => get_theme_mod('accent_color_2', '#9C286E'),
       'accent-color-2-filter' => $this->hex_to_css_filter(get_theme_mod('accent_color_2', '#9C286E')),
+      'accent-color-2-rgb' => implode(',', $this->hex_to_rgb(get_theme_mod('accent_color_2', '#9C286E'))),
+      'accent-color-3' => get_theme_mod('accent_color_3', '#05DFD7'),
       'accent-color-3-filter' => $this->hex_to_css_filter(get_theme_mod('accent_color_3', '#05DFD7')),
+      'accent-color-3-rgb' => implode(',', $this->hex_to_rgb(get_theme_mod('accent_color_3', '#05DFD7'))),
       'dark-text' => get_theme_mod('dark_text_color', '#383838'),
       'dark-text-filter' => $this->hex_to_css_filter(get_theme_mod('dark_text_color', '#383838')),
+      'dark-text-rgb' => implode(',', $this->hex_to_rgb(get_theme_mod('dark_text_color', '#383838'))),
       'light-text' => get_theme_mod('light_text_color', '#FFFFFF'),
       'light-text-filter' => $this->hex_to_css_filter(get_theme_mod('light_text_color', '#FFFFFF')),
+      'light-text-rgb' => implode(',', $this->hex_to_rgb(get_theme_mod('light_text_color', '#FFFFFF'))),
       'body-font' => get_theme_mod('body_font', 'Quicksand') . ', sans-serif',
       'accent-font' => get_theme_mod('accent_font', 'Saira Condensed') . ', sans-serif',
       'body-font-size' => get_theme_mod('body_font_size', '1rem'),
@@ -231,7 +236,7 @@ class CarnavalSF_Customizer
     echo '</style>';
   }
 
-  private function hex_to_css_filter($hex)
+  private function hex_to_rgb($hex)
   {
     // Remove hash if present
     $hex = ltrim($hex, '#');
@@ -241,13 +246,20 @@ class CarnavalSF_Customizer
       $hex = $hex[0] . $hex[0] . $hex[1] . $hex[1] . $hex[2] . $hex[2];
     }
 
-    // Convert to RGB
-    $r = hexdec(substr($hex, 0, 2));
-    $g = hexdec(substr($hex, 2, 2));
-    $b = hexdec(substr($hex, 4, 2));
+    return [
+      'r' => hexdec(substr($hex, 0, 2)),
+      'g' => hexdec(substr($hex, 2, 2)),
+      'b' => hexdec(substr($hex, 4, 2)),
+    ];
+  }
 
+  private function hex_to_css_filter($hex)
+  {
+    $hex = $this->hex_to_rgb($hex);
+
+    // Convert to RGB
     // Create color object
-    $color = new FilterColor($r, $g, $b);
+    $color = new FilterColor($hex['r'], $hex['g'], $hex['b']);
     $solver = new FilterSolver($color);
     $result = $solver->solve();
 
