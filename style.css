@@ -24,21 +24,16 @@ Text Domain: carnavalsf
   --nav-height-mobile: 6rem;
 }
 
-p {
-  margin-bottom: var(--vertical-space-small);
-}
-
 body {
   background-color: var(--accent-color-1);
-}
-
-/* Global Typography */
-
-body {
   font-family: var(--body-font);
   font-size: var(--body-font-size);
   color: var(--dark-text);
   line-height: 1.5;
+}
+
+p {
+  margin-bottom: var(--vertical-space-small);
 }
 
 a {
@@ -49,6 +44,8 @@ a {
 a:hover {
   text-decoration: none;
 }
+
+/* Headings */
 
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--accent-font);
@@ -81,6 +78,7 @@ h6 { font-size: var(--h6-font-size); }
 @media (min-width: 1080px) {
   .site-header {
     position: fixed;
+    z-index: 1;
   }
 }
 
@@ -421,18 +419,15 @@ h6 { font-size: var(--h6-font-size); }
   text-transform: uppercase;
 }
 
-h1, h2 {
+.entry-content h1,
+.entry-content h2,
+.editor-styles-wrapper h1,
+.editor-styles-wrapper h2 {
   background-color: #fff;
+  color: var(--accent-color-2);
+  margin-left: calc(-1 * var(--side-padding-desktop)) !important;
+  padding: 0 1rem 0 var(--side-padding-desktop);
   width: fit-content;
-}
-
-h1, h2, h2.has-background {
-  padding: 0 1rem;
-}
-
-.page-color-2 h1,
-.page-color-2 h2 {
-  color: var(--dark-text);
 }
 
 .page-color-2 a {
@@ -479,6 +474,7 @@ h1, h2, h2.has-background {
 */
 
 /* Unset inline editor styles */
+
 .editor-visual-editor__post-title-wrapper {
   margin-top: 0 !important;
 }

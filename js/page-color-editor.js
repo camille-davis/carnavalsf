@@ -15,6 +15,7 @@
           editorWrapper.classList.add(pageColorClass);
         }
       } catch (e) {
+
         // Skip iframes we can't access
       }
     }

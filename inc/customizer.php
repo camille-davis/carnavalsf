@@ -1,523 +1,772 @@
 <?php
 /**
  * Customizer functionality for Carnaval SF theme
+ *
+ * @package CarnavalSF
  */
 
-class CarnavalSF_Customizer
-{
-  public function __construct()
-  {
-    add_action('customize_register', [$this, 'register_controls']);
-    add_action('customize_controls_enqueue_scripts', [$this, 'add_reset_buttons']);
-    add_action('customize_controls_enqueue_scripts', [$this, 'add_customizer_style']);
-    add_action('wp_head', [$this, 'output_inline_css']);
+/**
+ * Customizer Class
+ */
+class CarnavalSF_Customizer {
 
-  }
+	/**
+	 * Constructor
+	 */
+	public function __construct() {
+		add_action( 'customize_register', array( $this, 'register_controls' ) );
+		add_action( 'customize_controls_enqueue_scripts', array( $this, 'add_reset_buttons' ) );
+		add_action( 'customize_controls_enqueue_scripts', array( $this, 'add_customizer_style' ) );
+		add_action( 'wp_head', array( $this, 'output_inline_css' ) );
+	}
 
-  public function register_controls($wp_customize)
-  {
-    // Colors Section
-    $wp_customize->add_section('carnavalsf_colors', [
-      'title' => __('Theme Colors', 'carnavalsf'),
-      'priority' => 30,
-    ]);
+	/**
+	 * Register customizer controls and settings
+	 *
+	 * @param WP_Customize_Manager $wp_customize Theme Customizer object
+	 */
+	public function register_controls( $wp_customize ) {
+		$this->register_color_controls( $wp_customize );
+		$this->register_typography_controls( $wp_customize );
+	}
 
-    // Accent Color 1
-    $wp_customize->add_setting('accent_color_1', [
-      'default' => '#FFA843',
-      'sanitize_callback' => 'sanitize_hex_color',
-    ]);
-    $wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, 'accent_color_1', [
-      'label' => __('Accent Color 1', 'carnavalsf'),
-      'section' => 'carnavalsf_colors',
-    ]));
+	/**
+	 * Register color controls
+	 *
+	 * @param WP_Customize_Manager $wp_customize Theme Customizer object
+	 */
+	private function register_color_controls( $wp_customize ) {
 
-    // Accent Color 2
-    $wp_customize->add_setting('accent_color_2', [
-      'default' => '#9C286E',
-      'sanitize_callback' => 'sanitize_hex_color',
-    ]);
-    $wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, 'accent_color_2', [
-      'label' => __('Accent Color 2', 'carnavalsf'),
-      'section' => 'carnavalsf_colors',
-    ]));
+		// Colors Section
+		$wp_customize->add_section(
+			'carnavalsf_colors',
+			array(
+				'title'    => __( 'Theme Colors', 'carnavalsf' ),
+				'priority' => 30,
+			)
+		);
 
-    // Accent Color 3
-    $wp_customize->add_setting('accent_color_3', [
-      'default' => '#05DFD7',
-      'sanitize_callback' => 'sanitize_hex_color',
-    ]);
-    $wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, 'accent_color_3', [
-      'label' => __('Accent Color 3', 'carnavalsf'),
-      'section' => 'carnavalsf_colors',
-    ]));
+		// Color settings
+		$colors = array(
+			'accent_color_1'  => array(
+				'default' => '#FFA843',
+				'label'   => __( 'Accent Color 1', 'carnavalsf' ),
+			),
+			'accent_color_2'  => array(
+				'default' => '#9C286E',
+				'label'   => __( 'Accent Color 2', 'carnavalsf' ),
+			),
+			'accent_color_3'  => array(
+				'default' => '#05DFD7',
+				'label'   => __( 'Accent Color 3', 'carnavalsf' ),
+			),
+			'dark_text_color' => array(
+				'default' => '#383838',
+				'label'   => __( 'Dark Text Color', 'carnavalsf' ),
+			),
+			'light_text_color' => array(
+				'default' => '#FFFFFF',
+				'label'   => __( 'Light Text Color', 'carnavalsf' ),
+			),
+		);
 
-    // Dark Text Color
-    $wp_customize->add_setting('dark_text_color', [
-      'default' => '#383838',
-      'sanitize_callback' => 'sanitize_hex_color',
-    ]);
-    $wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, 'dark_text_color', [
-      'label' => __('Dark Text Color', 'carnavalsf'),
-      'section' => 'carnavalsf_colors',
-    ]));
+		foreach ( $colors as $setting_id => $args ) {
+			$wp_customize->add_setting(
+				$setting_id,
+				array(
+					'default'           => $args['default'],
+					'sanitize_callback' => 'sanitize_hex_color',
+				)
+			);
 
-    // Light Text Color
-    $wp_customize->add_setting('light_text_color', [
-      'default' => '#FFFFFF',
-      'sanitize_callback' => 'sanitize_hex_color',
-    ]);
-    $wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, 'light_text_color', [
-      'label' => __('Light Text Color', 'carnavalsf'),
-      'section' => 'carnavalsf_colors',
-    ]));
+			$wp_customize->add_control(
+				new WP_Customize_Color_Control(
+					$wp_customize,
+					$setting_id,
+					array(
+						'label'   => $args['label'],
+						'section' => 'carnavalsf_colors',
+					)
+				)
+			);
+		}
+	}
 
-    // Typography Section
-    $wp_customize->add_section('carnavalsf_typography', [
-      'title' => __('Typography', 'carnavalsf'),
-      'priority' => 35,
-    ]);
+	/**
+	 * Register typography controls
+	 *
+	 * @param WP_Customize_Manager $wp_customize Theme Customizer object
+	 */
+	private function register_typography_controls( $wp_customize ) {
 
-    // Fonts URL
-    $wp_customize->add_setting('fonts_url', [
-      'default' => 'https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&family=Saira+Condensed:wght@400;800&display=block',
-      'sanitize_callback' => 'esc_url_raw',
-    ]);
-    $wp_customize->add_control('fonts_url', [
-      'label' => __('Fonts URL', 'carnavalsf'),
-      'section' => 'carnavalsf_typography',
-      'type' => 'text',
-    ]);
+		// Typography Section
+		$wp_customize->add_section(
+			'carnavalsf_typography',
+			array(
+				'title'    => __( 'Typography', 'carnavalsf' ),
+				'priority' => 35,
+			)
+		);
 
-    // Body Font
-    $wp_customize->add_setting('body_font', [
-      'default' => 'Quicksand',
-      'sanitize_callback' => 'sanitize_text_field',
-    ]);
-    $wp_customize->add_control('body_font', [
-      'label' => __('Body Font', 'carnavalsf'),
-      'section' => 'carnavalsf_typography',
-      'type' => 'text',
-    ]);
+		// Fonts URL
+		$wp_customize->add_setting(
+			'fonts_url',
+			array(
+				'default'           => 'https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&family=Saira+Condensed:wght@400;800&display=block',
+				'sanitize_callback' => 'esc_url_raw',
+			)
+		);
 
-    // Accent Font
-    $wp_customize->add_setting('accent_font', [
-      'default' => 'Saira Condensed',
-      'sanitize_callback' => 'sanitize_text_field',
-    ]);
-    $wp_customize->add_control('accent_font', [
-      'label' => __('Accent Font', 'carnavalsf'),
-      'section' => 'carnavalsf_typography',
-      'type' => 'text',
-    ]);
+		$wp_customize->add_control(
+			'fonts_url',
+			array(
+				'label'   => __( 'Fonts URL', 'carnavalsf' ),
+				'section' => 'carnavalsf_typography',
+				'type'    => 'text',
+			)
+		);
 
-    // Body Font Size
-    $wp_customize->add_setting('body_font_size', [
-      'default' => '1rem',
-      'sanitize_callback' => 'sanitize_text_field',
-    ]);
-    $wp_customize->add_control('body_font_size', [
-      'label' => __('Body Font Size', 'carnavalsf'),
-      'section' => 'carnavalsf_typography',
-      'type' => 'text',
-    ]);
+		// Body Font
+		$wp_customize->add_setting(
+			'body_font',
+			array(
+				'default'           => 'Quicksand',
+				'sanitize_callback' => 'sanitize_text_field',
+			)
+		);
 
-    // Heading Font Sizes
-    $headings = [
-      'h1' => '6.25rem',
-      'h2' => '4.25rem',
-      'h3' => '2.5rem',
-      'h4' => '1.75rem',
-      'h5' => '1.25rem',
-      'h6' => '1rem',
-    ];
-    foreach ($headings as $heading => $default) {
-      $wp_customize->add_setting("{$heading}_font_size", [
-        'default' => $default,
-        'sanitize_callback' => 'sanitize_text_field',
-      ]);
-      $wp_customize->add_control("{$heading}_font_size", [
-        'label' => __(ucfirst($heading) . ' Size', 'carnavalsf'),
-        'section' => 'carnavalsf_typography',
-        'type' => 'text',
-      ]);
-    }
-  }
+		$wp_customize->add_control(
+			'body_font',
+			array(
+				'label'   => __( 'Body Font', 'carnavalsf' ),
+				'section' => 'carnavalsf_typography',
+				'type'    => 'text',
+			)
+		);
 
-  public function add_reset_buttons()
-  {
-    global $wp_customize;
+		// Accent Font
+		$wp_customize->add_setting(
+			'accent_font',
+			array(
+				'default'           => 'Saira Condensed',
+				'sanitize_callback' => 'sanitize_text_field',
+			)
+		);
 
-    // Get typography setting defaults because they aren't passed to JS automatically.
-    $typography_settings = [];
-    $controls = $wp_customize->controls();
-    foreach ($controls as $control) {
-      if ($control->section !== 'carnavalsf_typography') {
-        continue;
-      }
-      $typography_settings[] = $control->id;
-    }
+		$wp_customize->add_control(
+			'accent_font',
+			array(
+				'label'   => __( 'Accent Font', 'carnavalsf' ),
+				'section' => 'carnavalsf_typography',
+				'type'    => 'text',
+			)
+		);
 
-    // Add the defaults to the customize-controls script.
-    $inline_script = '';
-    foreach ($typography_settings as $setting_id) {
-      $setting = $wp_customize->get_setting($setting_id);
-      if ($setting) {
-        $inline_script .= sprintf(
-          'wp.customize("%s", function(setting) { setting.default = %s; });',
-          $setting_id,
-          wp_json_encode($setting->default)
-        );
-      }
-    }
-    wp_add_inline_script('customize-controls', $inline_script);
+		// Body Font Size
+		$wp_customize->add_setting(
+			'body_font_size',
+			array(
+				'default'           => '1rem',
+				'sanitize_callback' => 'sanitize_text_field',
+			)
+		);
 
-    // Add 'Reset' buttons.
-    wp_enqueue_script(
-      'carnavalsf-customizer',
-      get_template_directory_uri() . '/js/customizer.js',
-      array('jquery', 'customize-controls'),
-      '1.0',
-      true
-    );
-    wp_localize_script('carnavalsf-customizer', 'carnavalsfCustomizer', [
-      'resetText' => __('Reset', 'carnavalsf')
-    ]);
-  }
+		$wp_customize->add_control(
+			'body_font_size',
+			array(
+				'label'   => __( 'Body Font Size', 'carnavalsf' ),
+				'section' => 'carnavalsf_typography',
+				'type'    => 'text',
+			)
+		);
 
-  public function add_customizer_style()
-  {
-    wp_enqueue_style('carnavalsf-customizer', get_template_directory_uri() . '/css/customizer.css');
-  }
+		// Heading Font Sizes
+		$headings = array(
+			'h1' => '6.25rem',
+			'h2' => '4.25rem',
+			'h3' => '2.5rem',
+			'h4' => '1.75rem',
+			'h5' => '1.25rem',
+			'h6' => '1rem',
+		);
 
-  public static function get_inline_css()
-  {
-    $css = '';
+		foreach ( $headings as $heading => $default ) {
+			$wp_customize->add_setting(
+				"{$heading}_font_size",
+				array(
+					'default'           => $default,
+					'sanitize_callback' => 'sanitize_text_field',
+				)
+			);
 
-    // Output font import.
-    $fonts_url = get_theme_mod('fonts_url');
-    if ($fonts_url) {
-      $css .= '@import url("' . esc_url_raw($fonts_url) . '");';
-    }
+			$wp_customize->add_control(
+				"{$heading}_font_size",
+				array(
+					'label'   => sprintf(
+						__( '%s Size', 'carnavalsf' ),
+						ucfirst( $heading )
+					),
+					'section' => 'carnavalsf_typography',
+					'type'    => 'text',
+				)
+			);
+		}
+	}
 
-    // Output custom css variables.
-    $custom_css_variables = [
-      'accent-color-1' => get_theme_mod('accent_color_1', '#FFA843'),
-      'accent-color-1-filter' => self::hex_to_css_filter(get_theme_mod('accent_color_1', '#FFA843')),
-      'accent-color-1-rgb' => implode(',', self::hex_to_rgb(get_theme_mod('accent_color_1', '#FFA843'))),
-      'accent-color-2' => get_theme_mod('accent_color_2', '#9C286E'),
-      'accent-color-2-filter' => self::hex_to_css_filter(get_theme_mod('accent_color_2', '#9C286E')),
-      'accent-color-2-rgb' => implode(',', self::hex_to_rgb(get_theme_mod('accent_color_2', '#9C286E'))),
-      'accent-color-3' => get_theme_mod('accent_color_3', '#05DFD7'),
-      'accent-color-3-filter' => self::hex_to_css_filter(get_theme_mod('accent_color_3', '#05DFD7')),
-      'accent-color-3-rgb' => implode(',', self::hex_to_rgb(get_theme_mod('accent_color_3', '#05DFD7'))),
-      'dark-text' => get_theme_mod('dark_text_color', '#383838'),
-      'dark-text-filter' => self::hex_to_css_filter(get_theme_mod('dark_text_color', '#383838')),
-      'dark-text-rgb' => implode(',', self::hex_to_rgb(get_theme_mod('dark_text_color', '#383838'))),
-      'light-text' => get_theme_mod('light_text_color', '#FFFFFF'),
-      'light-text-filter' => self::hex_to_css_filter(get_theme_mod('light_text_color', '#FFFFFF')),
-      'light-text-rgb' => implode(',', self::hex_to_rgb(get_theme_mod('light_text_color', '#FFFFFF'))),
-      'body-font' => get_theme_mod('body_font', 'Quicksand') . ', sans-serif',
-      'accent-font' => get_theme_mod('accent_font', 'Saira Condensed') . ', sans-serif',
-      'body-font-size' => get_theme_mod('body_font_size', '1rem'),
-      'h1-font-size' => get_theme_mod('h1_font_size', '6.25rem'),
-      'h2-font-size' => get_theme_mod('h2_font_size', '4.25rem'),
-      'h3-font-size' => get_theme_mod('h3_font_size', '2.5rem'),
-      'h4-font-size' => get_theme_mod('h4_font_size', '1.75rem'),
-      'h5-font-size' => get_theme_mod('h5_font_size', '1.25rem'),
-      'h6-font-size' => get_theme_mod('h6_font_size', '1rem'),
-    ];
-    $css .= ':root {';
-    foreach ($custom_css_variables as $name => $value) {
-      $css .= "--{$name}: {$value};";
-    }
-    $css .= '}';
+	/**
+	 * Add reset buttons to customizer controls
+	 */
+	public function add_reset_buttons() {
+		global $wp_customize;
 
-    return $css;
-  }
+		// Get typography setting defaults because they aren't passed to JS automatically
+		$typography_settings = array();
+		$controls = $wp_customize->controls();
+		foreach ( $controls as $control ) {
+			if ( $control->section !== 'carnavalsf_typography' ) {
+				continue;
+			}
+			$typography_settings[] = $control->id;
+		}
 
-  public function output_inline_css()
-  {
-    echo '<style type="text/css">';
-    echo self::get_inline_css();
-    echo '</style>';
-  }
+		// Add the defaults to the customize-controls script
+		$inline_script = '';
+		foreach ( $typography_settings as $setting_id ) {
+			$setting = $wp_customize->get_setting( $setting_id );
+			if ( $setting ) {
+				$inline_script .= sprintf(
+					'wp.customize("%s", function(setting) { setting.default = %s; });',
+					$setting_id,
+					wp_json_encode( $setting->default )
+				);
+			}
+		}
+		wp_add_inline_script( 'customize-controls', $inline_script );
 
-  private static function hex_to_rgb($hex)
-  {
-    // Remove hash if present
-    $hex = ltrim($hex, '#');
+		// Add 'Reset' buttons
+		wp_enqueue_script(
+			'carnavalsf-customizer',
+			get_template_directory_uri() . '/js/customizer.js',
+			array( 'jquery', 'customize-controls' ),
+			wp_get_theme()->get( 'Version' ),
+			true
+		);
 
-    // Expand shorthand hex (e.g., "03F" to "0033FF")
-    if (strlen($hex) === 3) {
-      $hex = $hex[0] . $hex[0] . $hex[1] . $hex[1] . $hex[2] . $hex[2];
-    }
+		wp_localize_script(
+			'carnavalsf-customizer',
+			'carnavalsfCustomizer',
+			array(
+				'resetText' => __( 'Reset', 'carnavalsf' ),
+			)
+		);
+	}
 
-    return [
-      'r' => hexdec(substr($hex, 0, 2)),
-      'g' => hexdec(substr($hex, 2, 2)),
-      'b' => hexdec(substr($hex, 4, 2)),
-    ];
-  }
+	/**
+	 * Add customizer styles
+	 */
+	public function add_customizer_style() {
+		wp_enqueue_style(
+			'carnavalsf-customizer',
+			get_template_directory_uri() . '/css/customizer.css',
+			array(),
+			wp_get_theme()->get( 'Version' )
+		);
+	}
 
-  private static function hex_to_css_filter($hex)
-  {
-    $hex = self::hex_to_rgb($hex);
+	/**
+	 * Get inline CSS with CSS variables
+	 *
+	 * @return string CSS string with variables
+	 */
+	public static function get_inline_css() {
+		$css = '';
 
-    // Convert to RGB
-    // Create color object
-    $color = new FilterColor($hex['r'], $hex['g'], $hex['b']);
-    $solver = new FilterSolver($color);
-    $result = $solver->solve();
+		// Output font import
+		$fonts_url = get_theme_mod( 'fonts_url' );
+		if ( $fonts_url ) {
+			$css .= '@import url("' . esc_url_raw( $fonts_url ) . '");';
+		}
 
-    return $result['filter'];
-  }
+		// Output custom CSS variables
+		$custom_css_variables = array(
+			'accent-color-1'         => get_theme_mod( 'accent_color_1', '#FFA843' ),
+			'accent-color-1-filter'  => self::hex_to_css_filter( get_theme_mod( 'accent_color_1', '#FFA843' ) ),
+			'accent-color-1-rgb'     => implode( ',', self::hex_to_rgb( get_theme_mod( 'accent_color_1', '#FFA843' ) ) ),
+			'accent-color-2'         => get_theme_mod( 'accent_color_2', '#9C286E' ),
+			'accent-color-2-filter'  => self::hex_to_css_filter( get_theme_mod( 'accent_color_2', '#9C286E' ) ),
+			'accent-color-2-rgb'     => implode( ',', self::hex_to_rgb( get_theme_mod( 'accent_color_2', '#9C286E' ) ) ),
+			'accent-color-3'         => get_theme_mod( 'accent_color_3', '#05DFD7' ),
+			'accent-color-3-filter'  => self::hex_to_css_filter( get_theme_mod( 'accent_color_3', '#05DFD7' ) ),
+			'accent-color-3-rgb'     => implode( ',', self::hex_to_rgb( get_theme_mod( 'accent_color_3', '#05DFD7' ) ) ),
+			'dark-text'              => get_theme_mod( 'dark_text_color', '#383838' ),
+			'dark-text-filter'       => self::hex_to_css_filter( get_theme_mod( 'dark_text_color', '#383838' ) ),
+			'dark-text-rgb'          => implode( ',', self::hex_to_rgb( get_theme_mod( 'dark_text_color', '#383838' ) ) ),
+			'light-text'             => get_theme_mod( 'light_text_color', '#FFFFFF' ),
+			'light-text-filter'      => self::hex_to_css_filter( get_theme_mod( 'light_text_color', '#FFFFFF' ) ),
+			'light-text-rgb'         => implode( ',', self::hex_to_rgb( get_theme_mod( 'light_text_color', '#FFFFFF' ) ) ),
+			'body-font'              => get_theme_mod( 'body_font', 'Quicksand' ) . ', sans-serif',
+			'accent-font'            => get_theme_mod( 'accent_font', 'Saira Condensed' ) . ', sans-serif',
+			'body-font-size'         => get_theme_mod( 'body_font_size', '1rem' ),
+			'h1-font-size'           => get_theme_mod( 'h1_font_size', '6.25rem' ),
+			'h2-font-size'           => get_theme_mod( 'h2_font_size', '4.25rem' ),
+			'h3-font-size'           => get_theme_mod( 'h3_font_size', '2.5rem' ),
+			'h4-font-size'           => get_theme_mod( 'h4_font_size', '1.75rem' ),
+			'h5-font-size'           => get_theme_mod( 'h5_font_size', '1.25rem' ),
+			'h6-font-size'           => get_theme_mod( 'h6_font_size', '1rem' ),
+		);
+
+		$css .= ':root {';
+		foreach ( $custom_css_variables as $name => $value ) {
+			$css .= "--{$name}: {$value};";
+		}
+		$css .= '}';
+
+		return $css;
+	}
+
+	/**
+	 * Output inline CSS in the head
+	 */
+	public function output_inline_css() {
+		echo '<style type="text/css">';
+		echo self::get_inline_css();
+		echo '</style>';
+	}
+
+	/**
+	 * Convert hex color to RGB array
+	 *
+	 * @param string $hex Hex color code
+	 * @return array RGB values as array with 'r', 'g', 'b' keys
+	 */
+	private static function hex_to_rgb( $hex ) {
+
+		// Remove hash if present
+		$hex = ltrim( $hex, '#' );
+
+		// Expand shorthand hex (e.g., "03F" to "0033FF")
+		if ( strlen( $hex ) === 3 ) {
+			$hex = $hex[0] . $hex[0] . $hex[1] . $hex[1] . $hex[2] . $hex[2];
+		}
+
+		return array(
+			'r' => hexdec( substr( $hex, 0, 2 ) ),
+			'g' => hexdec( substr( $hex, 2, 2 ) ),
+			'b' => hexdec( substr( $hex, 4, 2 ) ),
+		);
+	}
+
+	/**
+	 * Convert hex color to CSS filter
+	 *
+	 * @param string $hex Hex color code
+	 * @return string CSS filter string
+	 */
+	private static function hex_to_css_filter( $hex ) {
+		$rgb = self::hex_to_rgb( $hex );
+
+		// Create color object and solve for filter
+		$color = new FilterColor( $rgb['r'], $rgb['g'], $rgb['b'] );
+		$solver = new FilterSolver( $color );
+		$result = $solver->solve();
+
+		return $result['filter'];
+	}
 }
 
-class FilterColor
-{
-  public $r, $g, $b;
+/**
+ * Filter Color Class
+ *
+ * Represents a color for CSS filter calculations
+ */
+class FilterColor {
 
-  public function __construct($r, $g, $b)
-  {
-    $this->set($r, $g, $b);
-  }
+	/**
+	 * Red component (0-255)
+	 *
+	 * @var int
+	 */
+	public $r;
 
-  public function set($r, $g, $b)
-  {
-    $this->r = $this->clamp($r);
-    $this->g = $this->clamp($g);
-    $this->b = $this->clamp($b);
-  }
+	/**
+	 * Green component (0-255)
+	 *
+	 * @var int
+	 */
+	public $g;
 
-  public function clamp($value)
-  {
-    return max(0, min(255, $value));
-  }
+	/**
+	 * Blue component (0-255)
+	 *
+	 * @var int
+	 */
+	public $b;
 
-  public function invert($value = 1)
-  {
-    $this->r = ($value + ($this->r / 255) * (1 - 2 * $value)) * 255;
-    $this->g = ($value + ($this->g / 255) * (1 - 2 * $value)) * 255;
-    $this->b = ($value + ($this->b / 255) * (1 - 2 * $value)) * 255;
-  }
+	/**
+	 * Constructor
+	 *
+	 * @param int $r Red component (0-255)
+	 * @param int $g Green component (0-255)
+	 * @param int $b Blue component (0-255)
+	 */
+	public function __construct( $r, $g, $b ) {
+		$this->set( $r, $g, $b );
+	}
 
-  public function sepia($value = 1)
-  {
-    $this->multiply([
-      0.393 + 0.607 * (1 - $value),
-      0.769 - 0.769 * (1 - $value),
-      0.189 - 0.189 * (1 - $value),
-      0.349 - 0.349 * (1 - $value),
-      0.686 + 0.314 * (1 - $value),
-      0.168 - 0.168 * (1 - $value),
-      0.272 - 0.272 * (1 - $value),
-      0.534 - 0.534 * (1 - $value),
-      0.131 + 0.869 * (1 - $value),
-    ]);
-  }
+	/**
+	 * Set color values
+	 *
+	 * @param int $r Red component (0-255)
+	 * @param int $g Green component (0-255)
+	 * @param int $b Blue component (0-255)
+	 */
+	public function set( $r, $g, $b ) {
+		$this->r = $this->clamp( $r );
+		$this->g = $this->clamp( $g );
+		$this->b = $this->clamp( $b );
+	}
 
-  public function saturate($value = 1)
-  {
-    $this->multiply([
-      0.213 + 0.787 * $value,
-      0.715 - 0.715 * $value,
-      0.072 - 0.072 * $value,
-      0.213 - 0.213 * $value,
-      0.715 + 0.285 * $value,
-      0.072 - 0.072 * $value,
-      0.213 - 0.213 * $value,
-      0.715 - 0.715 * $value,
-      0.072 + 0.928 * $value,
-    ]);
-  }
+	/**
+	 * Clamp value between 0 and 255
+	 *
+	 * @param int|float $value Value to clamp
+	 * @return int Clamped value
+	 */
+	public function clamp( $value ) {
+		return max( 0, min( 255, $value ) );
+	}
 
-  public function hueRotate($angle = 0)
-  {
-    $angle = deg2rad($angle);
-    $sin = sin($angle);
-    $cos = cos($angle);
+	/**
+	 * Apply invert filter
+	 *
+	 * @param float $value Invert value (0-1)
+	 */
+	public function invert( $value = 1 ) {
+		$this->r = ( $value + ( $this->r / 255 ) * ( 1 - 2 * $value ) ) * 255;
+		$this->g = ( $value + ( $this->g / 255 ) * ( 1 - 2 * $value ) ) * 255;
+		$this->b = ( $value + ( $this->b / 255 ) * ( 1 - 2 * $value ) ) * 255;
+	}
 
-    $this->multiply([
-      0.213 + $cos * 0.787 - $sin * 0.213,
-      0.715 - $cos * 0.715 - $sin * 0.715,
-      0.072 - $cos * 0.072 + $sin * 0.928,
-      0.213 - $cos * 0.213 + $sin * 0.143,
-      0.715 + $cos * 0.285 + $sin * 0.14,
-      0.072 - $cos * 0.072 - $sin * 0.283,
-      0.213 - $cos * 0.213 - $sin * 0.787,
-      0.715 - $cos * 0.715 + $sin * 0.715,
-      0.072 + $cos * 0.928 + $sin * 0.072,
-    ]);
-  }
+	/**
+	 * Apply sepia filter
+	 *
+	 * @param float $value Sepia value (0-1)
+	 */
+	public function sepia( $value = 1 ) {
+		$this->multiply(
+			array(
+				0.393 + 0.607 * ( 1 - $value ),
+				0.769 - 0.769 * ( 1 - $value ),
+				0.189 - 0.189 * ( 1 - $value ),
+				0.349 - 0.349 * ( 1 - $value ),
+				0.686 + 0.314 * ( 1 - $value ),
+				0.168 - 0.168 * ( 1 - $value ),
+				0.272 - 0.272 * ( 1 - $value ),
+				0.534 - 0.534 * ( 1 - $value ),
+				0.131 + 0.869 * ( 1 - $value ),
+			)
+		);
+	}
 
-  public function brightness($value = 1)
-  {
-    $this->linear($value);
-  }
+	/**
+	 * Apply saturate filter
+	 *
+	 * @param float $value Saturate value (0-1)
+	 */
+	public function saturate( $value = 1 ) {
+		$this->multiply(
+			array(
+				0.213 + 0.787 * $value,
+				0.715 - 0.715 * $value,
+				0.072 - 0.072 * $value,
+				0.213 - 0.213 * $value,
+				0.715 + 0.285 * $value,
+				0.072 - 0.072 * $value,
+				0.213 - 0.213 * $value,
+				0.715 - 0.715 * $value,
+				0.072 + 0.928 * $value,
+			)
+		);
+	}
 
-  public function contrast($value = 1)
-  {
-    $this->linear($value, - (0.5 * $value) + 0.5);
-  }
+	/**
+	 * Apply hue rotate filter
+	 *
+	 * @param float $angle Angle in degrees
+	 */
+	public function hueRotate( $angle = 0 ) {
+		$angle = deg2rad( $angle );
+		$sin = sin( $angle );
+		$cos = cos( $angle );
 
-  public function linear($slope = 1, $intercept = 0)
-  {
-    $this->r = $this->clamp($this->r * $slope + $intercept * 255);
-    $this->g = $this->clamp($this->g * $slope + $intercept * 255);
-    $this->b = $this->clamp($this->b * $slope + $intercept * 255);
-  }
+		$this->multiply(
+			array(
+				0.213 + $cos * 0.787 - $sin * 0.213,
+				0.715 - $cos * 0.715 - $sin * 0.715,
+				0.072 - $cos * 0.072 + $sin * 0.928,
+				0.213 - $cos * 0.213 + $sin * 0.143,
+				0.715 + $cos * 0.285 + $sin * 0.14,
+				0.072 - $cos * 0.072 - $sin * 0.283,
+				0.213 - $cos * 0.213 - $sin * 0.787,
+				0.715 - $cos * 0.715 + $sin * 0.715,
+				0.072 + $cos * 0.928 + $sin * 0.072,
+			)
+		);
+	}
 
-  public function multiply($matrix)
-  {
-    $newR = $this->clamp(
-      $this->r * $matrix[0] + $this->g * $matrix[1] + $this->b * $matrix[2]
-    );
-    $newG = $this->clamp(
-      $this->r * $matrix[3] + $this->g * $matrix[4] + $this->b * $matrix[5]
-    );
-    $newB = $this->clamp(
-      $this->r * $matrix[6] + $this->g * $matrix[7] + $this->b * $matrix[8]
-    );
-    $this->r = $newR;
-    $this->g = $newG;
-    $this->b = $newB;
-  }
+	/**
+	 * Apply brightness filter
+	 *
+	 * @param float $value Brightness value (0-1)
+	 */
+	public function brightness( $value = 1 ) {
+		$this->linear( $value );
+	}
+
+	/**
+	 * Apply contrast filter
+	 *
+	 * @param float $value Contrast value (0-1)
+	 */
+	public function contrast( $value = 1 ) {
+		$this->linear( $value, -( 0.5 * $value ) + 0.5 );
+	}
+
+	/**
+	 * Apply linear transformation
+	 *
+	 * @param float $slope Slope value
+	 * @param float $intercept Intercept value
+	 */
+	public function linear( $slope = 1, $intercept = 0 ) {
+		$this->r = $this->clamp( $this->r * $slope + $intercept * 255 );
+		$this->g = $this->clamp( $this->g * $slope + $intercept * 255 );
+		$this->b = $this->clamp( $this->b * $slope + $intercept * 255 );
+	}
+
+	/**
+	 * Apply matrix multiplication
+	 *
+	 * @param array $matrix 3x3 transformation matrix
+	 */
+	public function multiply( $matrix ) {
+		$new_r = $this->clamp(
+			$this->r * $matrix[0] + $this->g * $matrix[1] + $this->b * $matrix[2]
+		);
+		$new_g = $this->clamp(
+			$this->r * $matrix[3] + $this->g * $matrix[4] + $this->b * $matrix[5]
+		);
+		$new_b = $this->clamp(
+			$this->r * $matrix[6] + $this->g * $matrix[7] + $this->b * $matrix[8]
+		);
+
+		$this->r = $new_r;
+		$this->g = $new_g;
+		$this->b = $new_b;
+	}
 }
 
-class FilterSolver
-{
-  private $target;
-  private $reusedColor;
+/**
+ * Filter Solver Class
+ *
+ * Solves for CSS filter values to match a target color
+ */
+class FilterSolver {
 
-  public function __construct($target)
-  {
-    $this->target = $target;
-    $this->reusedColor = new FilterColor(0, 0, 0);
-  }
+	/**
+	 * Target color
+	 *
+	 * @var FilterColor
+	 */
+	private $target;
 
-  public function solve()
-  {
-    $result = $this->solveNarrow($this->solveWide());
-    return [
-      'values' => $result['values'],
-      'loss' => $result['loss'],
-      'filter' => $this->css($result['values'])
-    ];
-  }
+	/**
+	 * Reused color object for calculations
+	 *
+	 * @var FilterColor
+	 */
+	private $reused_color;
 
-  private function solveWide()
-  {
-    $A = 5;
-    $c = 15;
-    $a = [60, 180, 18000, 600, 1.2, 1.2];
+	/**
+	 * Constructor
+	 *
+	 * @param FilterColor $target Target color to match
+	 */
+	public function __construct( $target ) {
+		$this->target = $target;
+		$this->reused_color = new FilterColor( 0, 0, 0 );
+	}
 
-    $best = ['loss' => INF];
-    for ($i = 0; $best['loss'] > 25 && $i < 3; $i++) {
-      $initial = [50, 20, 3750, 50, 100, 100];
-      $result = $this->spsa($A, $a, $c, $initial, 1000);
-      if ($result['loss'] < $best['loss']) {
-        $best = $result;
-      }
-    }
-    return $best;
-  }
+	/**
+	 * Solve for filter values
+	 *
+	 * @return array Array with 'values', 'loss', and 'filter' keys
+	 */
+	public function solve() {
+		$result = $this->solve_narrow( $this->solve_wide() );
+		return array(
+			'values' => $result['values'],
+			'loss'   => $result['loss'],
+			'filter' => $this->css( $result['values'] ),
+		);
+	}
 
-  private function solveNarrow($wide)
-  {
-    $A = $wide['loss'];
-    $c = 2;
-    $A1 = $A + 1;
-    $a = [0.25 * $A1, 0.25 * $A1, $A1, 0.25 * $A1, 0.2 * $A1, 0.2 * $A1];
-    return $this->spsa($A, $a, $c, $wide['values'], 500);
-  }
+	/**
+	 * Solve with wide search parameters
+	 *
+	 * @return array Best result from wide search
+	 */
+	private function solve_wide() {
+		$a = 5;
+		$c = 15;
+		$a_arr = array( 60, 180, 18000, 600, 1.2, 1.2 );
 
-  private function spsa($A, $a, $c, $values, $iters)
-  {
-    $alpha = 1;
-    $gamma = 0.16666666666666666;
+		$best = array( 'loss' => INF );
+		for ( $i = 0; $best['loss'] > 25 && $i < 3; $i++ ) {
+			$initial = array( 50, 20, 3750, 50, 100, 100 );
+			$result = $this->spsa( $a, $a_arr, $c, $initial, 1000 );
+			if ( $result['loss'] < $best['loss'] ) {
+				$best = $result;
+			}
+		}
+		return $best;
+	}
 
-    $best = null;
-    $bestLoss = INF;
-    $n = count($values);
+	/**
+	 * Solve with narrow search parameters
+	 *
+	 * @param array $wide Result from wide search
+	 * @return array Best result from narrow search
+	 */
+	private function solve_narrow( $wide ) {
+		$a = $wide['loss'];
+		$c = 2;
+		$a1 = $a + 1;
+		$a_arr = array( 0.25 * $a1, 0.25 * $a1, $a1, 0.25 * $a1, 0.2 * $a1, 0.2 * $a1 );
+		return $this->spsa( $a, $a_arr, $c, $wide['values'], 500 );
+	}
 
-    for ($k = 0; $k < $iters; $k++) {
-      $ck = $c / pow($k + 1, $gamma);
-      $deltas = [];
-      $highArgs = [];
-      $lowArgs = [];
+	/**
+	 * Simultaneous Perturbation Stochastic Approximation algorithm
+	 *
+	 * @param int $a Algorithm parameter
+	 * @param array $a_arr Algorithm parameter array
+	 * @param int $c Algorithm parameter
+	 * @param array $values Initial values
+	 * @param int $iters Number of iterations
+	 * @return array Best result
+	 */
+	private function spsa( $a, $a_arr, $c, $values, $iters ) {
+		$alpha = 1;
+		$gamma = 0.16666666666666666;
+		$best = null;
+		$best_loss = INF;
+		$n = count( $values );
 
-      for ($i = 0; $i < $n; $i++) {
-        $deltas[$i] = mt_rand(0, 1) ? 1 : -1;
-        $highArgs[$i] = $values[$i] + $ck * $deltas[$i];
-        $lowArgs[$i] = $values[$i] - $ck * $deltas[$i];
-      }
+		for ( $k = 0; $k < $iters; $k++ ) {
+			$ck = $c / pow( $k + 1, $gamma );
+			$deltas = array();
+			$high_args = array();
+			$low_args = array();
 
-      $lossDiff = $this->loss($highArgs) - $this->loss($lowArgs);
+			for ( $i = 0; $i < $n; $i++ ) {
+				$deltas[ $i ] = mt_rand( 0, 1 ) ? 1 : -1;
+				$high_args[ $i ] = $values[ $i ] + $ck * $deltas[ $i ];
+				$low_args[ $i ] = $values[ $i ] - $ck * $deltas[ $i ];
+			}
 
-      for ($i = 0; $i < $n; $i++) {
-        $g = $lossDiff / (2 * $ck) * $deltas[$i];
-        $ak = $a[$i] / pow($A + $k + 1, $alpha);
-        $values[$i] = $this->fix($values[$i] - $ak * $g, $i);
-      }
+			$loss_diff = $this->loss( $high_args ) - $this->loss( $low_args );
 
-      $loss = $this->loss($values);
-      if ($loss < $bestLoss) {
-        $best = $values;
-        $bestLoss = $loss;
-      }
-    }
+			for ( $i = 0; $i < $n; $i++ ) {
+				$g = $loss_diff / ( 2 * $ck ) * $deltas[ $i ];
+				$ak = $a_arr[ $i ] / pow( $a + $k + 1, $alpha );
+				$values[ $i ] = $this->fix( $values[ $i ] - $ak * $g, $i );
+			}
 
-    return ['values' => $best, 'loss' => $bestLoss];
-  }
+			$loss = $this->loss( $values );
+			if ( $loss < $best_loss ) {
+				$best = $values;
+				$best_loss = $loss;
+			}
+		}
 
-  private function fix($value, $idx)
-  {
-    $max = 100;
-    if ($idx === 2) $max = 7500;
-    elseif ($idx === 4 || $idx === 5) $max = 200;
+		return array(
+			'values' => $best,
+			'loss'   => $best_loss,
+		);
+	}
 
-    if ($idx === 3) {
-      if ($value > $max) $value = fmod($value, $max);
-      elseif ($value < 0) $value = $max + fmod($value, $max);
-    } else {
-      if ($value < 0) $value = 0;
-      elseif ($value > $max) $value = $max;
-    }
+	/**
+	 * Fix value within bounds for given index
+	 *
+	 * @param float $value Value to fix
+	 * @param int $idx Index of the value
+	 * @return float Fixed value
+	 */
+	private function fix( $value, $idx ) {
+		$max = 100;
+		if ( $idx === 2 ) {
+			$max = 7500;
+		} elseif ( $idx === 4 || $idx === 5 ) {
+			$max = 200;
+		}
 
-    return $value;
-  }
+		if ( $idx === 3 ) {
+			if ( $value > $max ) {
+				$value = fmod( $value, $max );
+			} elseif ( $value < 0 ) {
+				$value = $max + fmod( $value, $max );
+			}
+		} else {
+			if ( $value < 0 ) {
+				$value = 0;
+			} elseif ( $value > $max ) {
+				$value = $max;
+			}
+		}
 
-  private function loss($filters)
-  {
-    $color = $this->reusedColor;
-    $color->set(0, 0, 0);
+		return $value;
+	}
 
-    $color->invert($filters[0] / 100);
-    $color->sepia($filters[1] / 100);
-    $color->saturate($filters[2] / 100);
-    $color->hueRotate($filters[3] * 3.6);
-    $color->brightness($filters[4] / 100);
-    $color->contrast($filters[5] / 100);
+	/**
+	 * Calculate loss for given filter values
+	 *
+	 * @param array $filters Filter values
+	 * @return float Loss value
+	 */
+	private function loss( $filters ) {
+		$color = $this->reused_color;
+		$color->set( 0, 0, 0 );
 
-    return
-      abs($color->r - $this->target->r) +
-      abs($color->g - $this->target->g) +
-      abs($color->b - $this->target->b);
-  }
+		$color->invert( $filters[0] / 100 );
+		$color->sepia( $filters[1] / 100 );
+		$color->saturate( $filters[2] / 100 );
+		$color->hueRotate( $filters[3] * 3.6 );
+		$color->brightness( $filters[4] / 100 );
+		$color->contrast( $filters[5] / 100 );
 
-  private function css($filters)
-  {
-    return sprintf(
-      'brightness(0) saturate(100%%) invert(%d%%) sepia(%d%%) saturate(%d%%) hue-rotate(%ddeg) brightness(%d%%) contrast(%d%%)',
-      round($filters[0]),
-      round($filters[1]),
-      round($filters[2]),
-      round($filters[3] * 3.6),
-      round($filters[4]),
-      round($filters[5])
-    );
-  }
+		return abs( $color->r - $this->target->r ) +
+			abs( $color->g - $this->target->g ) +
+			abs( $color->b - $this->target->b );
+	}
+
+	/**
+	 * Generate CSS filter string from values
+	 *
+	 * @param array $filters Filter values
+	 * @return string CSS filter string
+	 */
+	private function css( $filters ) {
+		return sprintf(
+			'brightness(0) saturate(100%%) invert(%d%%) sepia(%d%%) saturate(%d%%) hue-rotate(%ddeg) brightness(%d%%) contrast(%d%%)',
+			round( $filters[0] ),
+			round( $filters[1] ),
+			round( $filters[2] ),
+			round( $filters[3] * 3.6 ),
+			round( $filters[4] ),
+			round( $filters[5] )
+		);
+	}
 }
 
 new CarnavalSF_Customizer();
