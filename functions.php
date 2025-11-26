@@ -90,6 +90,25 @@ function carnavalsf_enqueue_assets() {
 }
 add_action('wp_enqueue_scripts', 'carnavalsf_enqueue_assets');
 
+// Enqueue block editor assets
+function carnavalsf_enqueue_block_editor_assets() {
+  wp_enqueue_script(
+    'carnavalsf-group-block-fullwidth',
+    get_template_directory_uri() . '/js/group-block-fullwidth.js',
+    array(
+      'wp-blocks',
+      'wp-block-editor',
+      'wp-components',
+      'wp-compose',
+      'wp-element',
+      'wp-hooks',
+    ),
+    '1.0',
+    true
+  );
+}
+add_action('enqueue_block_editor_assets', 'carnavalsf_enqueue_block_editor_assets');
+
 // Disable automatic image resizing
 function carnavalsf_disable_image_resizing() {
   add_filter('intermediate_image_sizes_advanced', '__return_empty_array');
@@ -121,6 +140,19 @@ function customize_details_block($block_content, $block) {
           '</div></details>',
           $block_content
       );
+  }
+  return $block_content;
+}
+
+// Add is-fullwidth class to Group block when fullwidth attribute is set
+add_filter('render_block', 'carnavalsf_group_block_fullwidth', 10, 2);
+function carnavalsf_group_block_fullwidth($block_content, $block) {
+  if ($block['blockName'] === 'core/group' && !empty($block['attrs']['fullwidth'])) {
+    $block_content = preg_replace(
+      '/class="([^"]*wp-block-group[^"]*)"/',
+      'class="$1 is-fullwidth"',
+      $block_content
+    );
   }
   return $block_content;
 }

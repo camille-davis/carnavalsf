@@ -26,3 +26,7 @@ Always remove unnecessary code before committing. This includes:
 
 Before finalizing code, review it to ensure every line serves a purpose and will execute in the intended context.
 
+## JavaScript Syntax
+
+**Do not use JSX syntax** in JavaScript files. This theme does not use a build process to transpile JSX. Instead, use `wp.element.createElement()` for creating React elements in WordPress block editor scripts. JSX syntax will cause syntax errors since the browser cannot parse it directly.
+
