@@ -27,6 +27,20 @@ add_theme_support( 'custom-logo' );
 // Add theme support for featured images.
 add_theme_support( 'post-thumbnails' );
 
+// Enable background image support for all blocks
+add_filter('register_block_type_args', 'carnavalsf_enable_background_image_all_blocks', 10, 2);
+function carnavalsf_enable_background_image_all_blocks($args, $name) {
+  if (!isset($args['supports'])) {
+    $args['supports'] = array();
+  }
+  if (!isset($args['supports']['background'])) {
+    $args['supports']['background'] = array();
+  }
+  $args['supports']['background']['backgroundImage'] = true;
+  $args['supports']['background']['backgroundSize'] = true;
+  return $args;
+}
+
 // Register editor color palette with accent colors from customizer
 function carnavalsf_editor_color_palette() {
   $editor_color_palette = array(
