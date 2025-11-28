@@ -437,7 +437,11 @@ h6 { font-size: var(--h6-font-size); }
 .entry-content,
 .editor-styles-wrapper {
   padding: var(--vertical-space-large) var(--side-padding-desktop);
-  display: flex;
+}
+
+.entry-content,
+.is-root-container {
+  display: flex !important;
   flex-direction: column;
 }
 
@@ -496,41 +500,53 @@ h6 { font-size: var(--h6-font-size); }
   margin-bottom: .75rem;
 }
 
+.wp-block-details:last-of-type {
+  margin-bottom: var(--vertical-space-small);
+}
+
 .wp-block-details summary {
   list-style: none;
   display: flex;
   align-items: center;
+  position: relative;
+  padding-left: 2.5rem;
+}
+
+.wp-block-details summary::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-image: url('img/caret-right-cropped.png');
+  background-size: 1rem;
+  background-position: center;
+  background-repeat: no-repeat;
+  filter: var(--dark-text-filter);
+  transition: transform 0.3s ease;
+}
+
+.page-color-2 .wp-block-details summary::before {
+  filter: var(--light-text-filter);
+}
+
+.wp-block-details[open] summary::before {
+  transform: rotate(90deg);
 }
 
 .wp-block-details h3 {
   margin: 0;
 }
 
-.wp-block-details p:last-child {
-  margin-bottom: 0;
-}
-
-.expand-icon {
-  width: 2rem;
-  height: 2rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-right: .5rem;
-}
-
-.expand-icon img {
-  filter: var(--dark-text-filter);
-  width: 1rem;
-  transition: transform 0.3s ease;
-}
-
-.page-color-2 .expand-icon img {
-  filter: var(--light-text-filter);
-}
-
-.wp-block-details[open] img {
-  transform: rotate(90deg);
+summary .block-editor-rich-text__editable {
+  font-family: var(--accent-font);
+  line-height: 1;
+  text-transform: uppercase;
+  font-size: var(--h3-font-size);
+  font-weight: 800;
 }
 
 .wp-block-details .details-content {
@@ -538,10 +554,12 @@ h6 { font-size: var(--h6-font-size); }
   transition: max-height 0.3s ease;
 }
 
+.editor-styles-wrapper summary + *,
 .wp-block-details .details-content > :first-child {
   margin-top: 1rem;
 }
 
+.editor-styles-wrapper details > :last-child,
 .wp-block-details .details-content > :last-child {
   margin-bottom: .25rem;
 }

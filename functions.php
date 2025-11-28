@@ -267,10 +267,10 @@ add_filter( 'register_block_type_args', 'carnavalsf_modify_block_supports', 10, 
 function carnavalsf_customize_details_block( $block_content, $block ) {
 	if ( $block['blockName'] === 'core/details' ) {
 
-		// Add 'expand' icon and wrap summary text in h3
+		// Wrap summary text in h3
 		$block_content = str_replace(
 			'<summary>',
-			'<summary><div class="expand-icon"><img src="' . esc_url( get_template_directory_uri() . '/img/caret-right-cropped.png' ) . '" alt="" /></div><h3>',
+			'<summary><h3>',
 			$block_content
 		);
 
