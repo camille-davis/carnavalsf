@@ -295,17 +295,27 @@ add_filter( 'render_block', 'carnavalsf_customize_details_block', 10, 2 );
 
 // Add is-fullwidth class to Group block when fullwidth attribute is set
 function carnavalsf_group_block_fullwidth( $block_content, $block ) {
-	if ( $block['blockName'] === 'core/group' && ! empty( $block['attrs']['fullwidth'] ) ) {
-		$block_content = preg_replace(
-			'/class="([^"]*wp-block-group[^"]*)"/',
-			'class="$1 is-fullwidth"',
-			$block_content
-		);
+	if ( empty( $block['attrs']['fullwidth'] ) ) {
+		return $block_content;
 	}
+
+	// Only modify the first occurrence (current block's wrapper), not nested groups
+	$block_content = preg_replace_callback(
+		'/<([^>]*\bclass=")([^"]*wp-block-group[^"]*)("[^>]*)>/',
+		function( $matches ) {
+			if ( strpos( $matches[2], 'is-fullwidth' ) === false ) {
+				return '<' . $matches[1] . $matches[2] . ' is-fullwidth' . $matches[3] . '>';
+			}
+			return $matches[0];
+		},
+		$block_content,
+		1
+	);
 
 	return $block_content;
 }
-add_filter( 'render_block', 'carnavalsf_group_block_fullwidth', 10, 2 );
+// Use the more specific filter for group blocks (WordPress best practice)
+add_filter( 'render_block_core/group', 'carnavalsf_group_block_fullwidth', 10, 2 );
 
 /**
  * Development only
