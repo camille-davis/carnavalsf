@@ -23,10 +23,10 @@ class CarnavalSF_Blocks {
 	}
 
 	/**
-	 * Disable layout support in block editor
+	 * Disable layout support in block editor.
 	 *
-	 * @param array $editor_settings Editor settings array
-	 * @return array Modified editor settings
+	 * @param array $editor_settings Editor settings array.
+	 * @return array Modified editor settings.
 	 */
 	public function disable_layout_support( $editor_settings ) {
 		$editor_settings['supportsLayout'] = false;
@@ -34,13 +34,12 @@ class CarnavalSF_Blocks {
 	}
 
 	/**
-	 * Disable shadow support in block editor
+	 * Disable shadow support in block editor.
 	 *
-	 * @param array $args Block type arguments
-	 * @param string $name Block type name
-	 * @return array Modified block type arguments
+	 * @param array $args Block type arguments.
+	 * @return array Modified block type arguments.
 	 */
-	public function disable_shadow_support( $args, $name ) {
+	public function disable_shadow_support( $args ) {
 		if ( ! isset( $args['supports'] ) ) {
 			$args['supports'] = array();
 		}
@@ -49,7 +48,7 @@ class CarnavalSF_Blocks {
 	}
 
 	/**
-	 * Enqueue block editor assets
+	 * Enqueue block editor assets.
 	 */
 	public function enqueue_block_editor_assets() {
 		wp_enqueue_script(
@@ -71,34 +70,33 @@ class CarnavalSF_Blocks {
 	/**
 	 * Modify block supports: enable background images
 	 *
-	 * @param array $args Block type arguments
-	 * @param string $name Block type name
-	 * @return array Modified block type arguments
+	 * @param array $args Block type arguments.
+	 * @return array Modified block type arguments.
 	 */
-	public function modify_block_supports( $args, $name ) {
+	public function modify_block_supports( $args ) {
 		if ( ! isset( $args['supports'] ) ) {
 			$args['supports'] = array();
 		}
 
-		// Enable background image support
+		// Enable background image support.
 		if ( ! isset( $args['supports']['background'] ) ) {
 			$args['supports']['background'] = array();
 		}
 		$args['supports']['background']['backgroundImage'] = true;
-		$args['supports']['background']['backgroundSize'] = true;
+		$args['supports']['background']['backgroundSize']  = true;
 
 		return $args;
 	}
 
 	/**
-	 * Customize Details Gutenberg block
+	 * Customize Details Gutenberg block.
 	 *
-	 * @param string $block_content The block content
-	 * @param array $block The block data
-	 * @return string Modified block content
+	 * @param string $block_content The block content.
+	 * @param array  $block The block data.
+	 * @return string Modified block content.
 	 */
 	public function customize_details_block( $block_content, $block ) {
-		if ( $block['blockName'] === 'core/details' ) {
+		if ( 'core/details' === $block['blockName'] ) {
 			$block_content = preg_replace(
 				array( '/<summary>/', '/<\/summary>/', '/<\/details>/' ),
 				array( '<summary><h3>', '</h3></summary><div class="details-content">', '</div></details>' ),
@@ -110,23 +108,23 @@ class CarnavalSF_Blocks {
 	}
 
 	/**
-	 * Add is-fullwidth class to Group block when fullwidth attribute is set
+	 * Add is-fullwidth class to Group block when fullwidth attribute is set.
 	 *
-	 * @param string $block_content The block content
-	 * @param array $block The block data
-	 * @return string Modified block content
+	 * @param string $block_content The block content.
+	 * @param array  $block The block data.
+	 * @return string Modified block content.
 	 */
 	public function group_block_fullwidth( $block_content, $block ) {
 		if ( empty( $block['attrs']['fullwidth'] ) ) {
 			return $block_content;
 		}
 
-		// Check if already has the class
+		// Check if already has the class.
 		if ( strpos( $block_content, 'is-fullwidth' ) !== false ) {
 			return $block_content;
 		}
 
-		// Add class to the first wp-block-group class attribute
+		// Add class to the first wp-block-group class attribute.
 		$block_content = preg_replace(
 			'/(<[^>]*\bclass="[^"]*wp-block-group[^"]*)(")/',
 			'$1 is-fullwidth$2',
@@ -139,4 +137,3 @@ class CarnavalSF_Blocks {
 }
 
 new CarnavalSF_Blocks();
-

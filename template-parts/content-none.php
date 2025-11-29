@@ -4,8 +4,8 @@
  *
  * @package CarnavalSF
  */
-?>
 
+?>
 <div class="entry-content">
 	<h1 class="entry-title"><?php esc_html_e( 'Nothing Found', 'carnavalsf' ); ?></h1>
 		<?php if ( is_search() ) : ?>

@@ -1,10 +1,13 @@
 <?php
 /**
- * Convert hex colors to RGB, or CSS filters
+ * Utilities to convert hex colors to RGB, or CSS filters.
  *
  * @package CarnavalSF
  */
 
+/**
+ * Color converter class.
+ */
 class CarnavalSF_Color_Converter {
 
 	/**
@@ -49,48 +52,48 @@ class CarnavalSF_Color_Converter {
 }
 
 /**
- * Low-level color representation for CSS filter calculations
+ * Low-level color representation for CSS filter calculations.
  */
 class FilterColor {
 
 	/**
-	 * Red component (0-255)
+	 * Red component (0-255).
 	 *
 	 * @var int
 	 */
 	public $r;
 
 	/**
-	 * Green component (0-255)
+	 * Green component (0-255).
 	 *
 	 * @var int
 	 */
 	public $g;
 
 	/**
-	 * Blue component (0-255)
+	 * Blue component (0-255).
 	 *
 	 * @var int
 	 */
 	public $b;
 
 	/**
-	 * Constructor
+	 * Constructor.
 	 *
-	 * @param int $r Red component (0-255)
-	 * @param int $g Green component (0-255)
-	 * @param int $b Blue component (0-255)
+	 * @param int $r Red component (0-255).
+	 * @param int $g Green component (0-255).
+	 * @param int $b Blue component (0-255).
 	 */
 	public function __construct( $r, $g, $b ) {
 		$this->set( $r, $g, $b );
 	}
 
 	/**
-	 * Set color values
+	 * Set color values.
 	 *
-	 * @param int $r Red component (0-255)
-	 * @param int $g Green component (0-255)
-	 * @param int $b Blue component (0-255)
+	 * @param int $r Red component (0-255).
+	 * @param int $g Green component (0-255).
+	 * @param int $b Blue component (0-255).
 	 */
 	public function set( $r, $g, $b ) {
 		$this->r = $this->clamp( $r );
@@ -99,20 +102,20 @@ class FilterColor {
 	}
 
 	/**
-	 * Clamp value between 0 and 255
+	 * Clamp value between 0 and 255.
 	 *
-	 * @param int|float $value Value to clamp
-	 * @return int Clamped value
+	 * @param int|float $value Value to clamp.
+	 * @return int Clamped value.
 	 */
 	public function clamp( $value ) {
 		return max( 0, min( 255, $value ) );
 	}
 
 	/**
-	 * Apply linear transformation
+	 * Apply linear transformation.
 	 *
-	 * @param float $slope Slope value
-	 * @param float $intercept Intercept value
+	 * @param float $slope Slope value.
+	 * @param float $intercept Intercept value.
 	 */
 	public function linear( $slope = 1, $intercept = 0 ) {
 		$this->r = $this->clamp( $this->r * $slope + $intercept * 255 );
@@ -121,9 +124,9 @@ class FilterColor {
 	}
 
 	/**
-	 * Apply matrix multiplication
+	 * Apply matrix multiplication.
 	 *
-	 * @param array $matrix 3x3 transformation matrix
+	 * @param array $matrix 3x3 transformation matrix.
 	 */
 	public function multiply( $matrix ) {
 		$new_r = $this->clamp(
@@ -142,9 +145,9 @@ class FilterColor {
 	}
 
 	/**
-	 * Apply invert filter
+	 * Apply invert filter.
 	 *
-	 * @param float $value Invert value (0-1)
+	 * @param float $value Invert value (0-1).
 	 */
 	public function invert( $value = 1 ) {
 		$this->r = ( $value + ( $this->r / 255 ) * ( 1 - 2 * $value ) ) * 255;
@@ -153,9 +156,9 @@ class FilterColor {
 	}
 
 	/**
-	 * Apply sepia filter
+	 * Apply sepia filter.
 	 *
-	 * @param float $value Sepia value (0-1)
+	 * @param float $value Sepia value (0-1).
 	 */
 	public function sepia( $value = 1 ) {
 		$this->multiply(
@@ -174,9 +177,9 @@ class FilterColor {
 	}
 
 	/**
-	 * Apply saturate filter
+	 * Apply saturate filter.
 	 *
-	 * @param float $value Saturate value (0-1)
+	 * @param float $value Saturate value (0-1).
 	 */
 	public function saturate( $value = 1 ) {
 		$this->multiply(
@@ -195,11 +198,11 @@ class FilterColor {
 	}
 
 	/**
-	 * Apply hue rotate filter
+	 * Apply hue rotate filter.
 	 *
-	 * @param float $angle Angle in degrees
+	 * @param float $angle Angle in degrees.
 	 */
-	public function hueRotate( $angle = 0 ) {
+	public function hue_rotate( $angle = 0 ) {
 		$angle = deg2rad( $angle );
 		$sin   = sin( $angle );
 		$cos   = cos( $angle );
@@ -220,18 +223,18 @@ class FilterColor {
 	}
 
 	/**
-	 * Apply brightness filter
+	 * Apply brightness filter.
 	 *
-	 * @param float $value Brightness value (0-1)
+	 * @param float $value Brightness value (0-1).
 	 */
 	public function brightness( $value = 1 ) {
 		$this->linear( $value );
 	}
 
 	/**
-	 * Apply contrast filter
+	 * Apply contrast filter.
 	 *
-	 * @param float $value Contrast value (0-1)
+	 * @param float $value Contrast value (0-1).
 	 */
 	public function contrast( $value = 1 ) {
 		$this->linear( $value, -( 0.5 * $value ) + 0.5 );
@@ -239,19 +242,19 @@ class FilterColor {
 }
 
 /**
- * CSS filter solver (SPSA algorithm over filter parameter space)
+ * CSS filter solver (SPSA algorithm over filter parameter space).
  */
 class FilterSolver {
 
 	/**
-	 * Target color
+	 * Target color.
 	 *
 	 * @var FilterColor
 	 */
 	private $target;
 
 	/**
-	 * Reused color object for calculations
+	 * Reused color object for calculations.
 	 *
 	 * @var FilterColor
 	 */
@@ -260,17 +263,17 @@ class FilterSolver {
 	/**
 	 * Constructor
 	 *
-	 * @param FilterColor $target Target color to match
+	 * @param FilterColor $target Target color to match.
 	 */
 	public function __construct( $target ) {
-		$this->target = $target;
+		$this->target       = $target;
 		$this->reused_color = new FilterColor( 0, 0, 0 );
 	}
 
 	/**
-	 * Solve for filter values
+	 * Solve for filter values.
 	 *
-	 * @return array Array with 'values', 'loss', and 'filter' keys
+	 * @return array Array with 'values', 'loss', and 'filter' keys.
 	 */
 	public function solve() {
 		$result = $this->solve_narrow( $this->solve_wide() );
@@ -282,10 +285,10 @@ class FilterSolver {
 	}
 
 	/**
-	 * Generate CSS filter string from values
+	 * Generate CSS filter string from values.
 	 *
-	 * @param array $filters Filter values
-	 * @return string CSS filter string
+	 * @param array $filters Filter values.
+	 * @return string CSS filter string.
 	 */
 	private function css( $filters ) {
 		return sprintf(
@@ -300,9 +303,9 @@ class FilterSolver {
 	}
 
 	/**
-	 * Calculate loss for given filter values
+	 * Calculate loss for given filter values.
 	 *
-	 * @param array $filters Filter values
+	 * @param array $filters Filter values.
 	 * @return float Loss value
 	 */
 	private function loss( $filters ) {
@@ -312,7 +315,7 @@ class FilterSolver {
 		$color->invert( $filters[0] / 100 );
 		$color->sepia( $filters[1] / 100 );
 		$color->saturate( $filters[2] / 100 );
-		$color->hueRotate( $filters[3] * 3.6 );
+		$color->hue_rotate( $filters[3] * 3.6 );
 		$color->brightness( $filters[4] / 100 );
 		$color->contrast( $filters[5] / 100 );
 
@@ -324,60 +327,58 @@ class FilterSolver {
 	/**
 	 * Fix value within bounds for given index
 	 *
-	 * @param float $value Value to fix
-	 * @param int   $idx   Index of the value
+	 * @param float $value Value to fix.
+	 * @param int   $idx   Index of the value.
 	 * @return float Fixed value
 	 */
 	private function fix( $value, $idx ) {
 		$max = 100;
-		if ( $idx === 2 ) {
+		if ( 2 === $idx ) {
 			$max = 7500;
-		} elseif ( $idx === 4 || $idx === 5 ) {
+		} elseif ( 4 === $idx || 5 === $idx ) {
 			$max = 200;
 		}
 
-		if ( $idx === 3 ) {
+		if ( 3 === $idx ) {
 			if ( $value > $max ) {
 				$value = fmod( $value, $max );
 			} elseif ( $value < 0 ) {
 				$value = $max + fmod( $value, $max );
 			}
-		} else {
-			if ( $value < 0 ) {
+		} elseif ( $value < 0 ) {
 				$value = 0;
-			} elseif ( $value > $max ) {
-				$value = $max;
-			}
+		} elseif ( $value > $max ) {
+			$value = $max;
 		}
 
 		return $value;
 	}
 
 	/**
-	 * Simultaneous Perturbation Stochastic Approximation algorithm
+	 * Simultaneous Perturbation Stochastic Approximation algorithm.
 	 *
-	 * @param int   $a      Algorithm parameter
-	 * @param array $a_arr  Algorithm parameter array
-	 * @param int   $c      Algorithm parameter
-	 * @param array $values Initial values
-	 * @param int   $iters  Number of iterations
-	 * @return array Best result
+	 * @param int   $a      Algorithm parameter.
+	 * @param array $a_arr  Algorithm parameter array.
+	 * @param int   $c      Algorithm parameter.
+	 * @param array $values Initial values.
+	 * @param int   $iters  Number of iterations.
+	 * @return array Best result.
 	 */
 	private function spsa( $a, $a_arr, $c, $values, $iters ) {
-		$alpha    = 1;
-		$gamma    = 0.16666666666666666;
-		$best     = null;
+		$alpha     = 1;
+		$gamma     = 0.16666666666666666;
+		$best      = null;
 		$best_loss = INF;
-		$n        = count( $values );
+		$n         = count( $values );
 
 		for ( $k = 0; $k < $iters; $k++ ) {
-			$ck       = $c / pow( $k + 1, $gamma );
-			$deltas   = array();
+			$ck        = $c / pow( $k + 1, $gamma );
+			$deltas    = array();
 			$high_args = array();
 			$low_args  = array();
 
 			for ( $i = 0; $i < $n; $i++ ) {
-				$deltas[ $i ]   = mt_rand( 0, 1 ) ? 1 : -1;
+				$deltas[ $i ]    = wp_rand( 0, 1 ) ? 1 : -1;
 				$high_args[ $i ] = $values[ $i ] + $ck * $deltas[ $i ];
 				$low_args[ $i ]  = $values[ $i ] - $ck * $deltas[ $i ];
 			}
@@ -385,8 +386,8 @@ class FilterSolver {
 			$loss_diff = $this->loss( $high_args ) - $this->loss( $low_args );
 
 			for ( $i = 0; $i < $n; $i++ ) {
-				$g         = $loss_diff / ( 2 * $ck ) * $deltas[ $i ];
-				$ak        = $a_arr[ $i ] / pow( $a + $k + 1, $alpha );
+				$g            = $loss_diff / ( 2 * $ck ) * $deltas[ $i ];
+				$ak           = $a_arr[ $i ] / pow( $a + $k + 1, $alpha );
 				$values[ $i ] = $this->fix( $values[ $i ] - $ak * $g, $i );
 			}
 
@@ -409,14 +410,14 @@ class FilterSolver {
 	 * @return array Best result from wide search
 	 */
 	private function solve_wide() {
-		$a = 5;
-		$c = 15;
+		$a     = 5;
+		$c     = 15;
 		$a_arr = array( 60, 180, 18000, 600, 1.2, 1.2 );
 
 		$best = array( 'loss' => INF );
 		for ( $i = 0; $best['loss'] > 25 && $i < 3; $i++ ) {
 			$initial = array( 50, 20, 3750, 50, 100, 100 );
-			$result = $this->spsa( $a, $a_arr, $c, $initial, 1000 );
+			$result  = $this->spsa( $a, $a_arr, $c, $initial, 1000 );
 			if ( $result['loss'] < $best['loss'] ) {
 				$best = $result;
 			}
@@ -425,15 +426,15 @@ class FilterSolver {
 	}
 
 	/**
-	 * Solve with narrow search parameters
+	 * Solve with narrow search parameters.
 	 *
-	 * @param array $wide Result from wide search
-	 * @return array Best result from narrow search
+	 * @param array $wide Result from wide search.
+	 * @return array Best result from narrow search.
 	 */
 	private function solve_narrow( $wide ) {
-		$a = $wide['loss'];
-		$c = 2;
-		$a1 = $a + 1;
+		$a     = $wide['loss'];
+		$c     = 2;
+		$a1    = $a + 1;
 		$a_arr = array( 0.25 * $a1, 0.25 * $a1, $a1, 0.25 * $a1, 0.2 * $a1, 0.2 * $a1 );
 		return $this->spsa( $a, $a_arr, $c, $wide['values'], 500 );
 	}

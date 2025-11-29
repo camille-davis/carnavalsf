@@ -13,8 +13,8 @@ get_header();
 	while ( have_posts() ) :
 		the_post();
 
-		// Get page color from meta box
-		$page_color = 'page-color-1';
+		// Get page color from meta box.
+		$page_color      = 'page-color-1';
 		$page_color_meta = get_post_meta( get_the_ID(), '_carnavalsf_page_color', true );
 		if ( ! empty( $page_color_meta ) && in_array( $page_color_meta, array( 'color-1', 'color-2' ), true ) ) {
 			$page_color = 'page-' . $page_color_meta;

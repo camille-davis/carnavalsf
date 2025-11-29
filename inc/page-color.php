@@ -36,7 +36,7 @@ class CarnavalSF_Page_Color {
 	/**
 	 * Render the page color meta box
 	 *
-	 * @param WP_Post $post The post object
+	 * @param WP_Post $post The post object.
 	 */
 	public function render_page_color_meta_box( $post ) {
 		wp_nonce_field( 'carnavalsf_page_color_nonce', 'carnavalsf_page_color_nonce' );
@@ -46,7 +46,7 @@ class CarnavalSF_Page_Color {
 			$selected_color = 'color-1';
 		}
 
-		// Get colors from customizer
+		// Get colors from customizer.
 		$color_1 = get_theme_mod( 'accent_color_1', '#FFA843' );
 		$color_2 = get_theme_mod( 'accent_color_2', '#9C286E' );
 		?>
@@ -72,33 +72,33 @@ class CarnavalSF_Page_Color {
 	/**
 	 * Save page color meta box data
 	 *
-	 * @param int $post_id The post ID
+	 * @param int $post_id The post ID.
 	 */
 	public function save_page_color( $post_id ) {
 
-		// Check nonce
+		// Check nonce.
 		if ( ! isset( $_POST['carnavalsf_page_color_nonce'] ) ||
 			! wp_verify_nonce( $_POST['carnavalsf_page_color_nonce'], 'carnavalsf_page_color_nonce' ) ) {
 			return;
 		}
 
-		// Check autosave
+		// Check autosave.
 		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
 			return;
 		}
 
-		// Check permissions
+		// Check permissions.
 		if ( ! current_user_can( 'edit_post', $post_id ) ) {
 			return;
 		}
 
-		// Check post type
+		// Check post type.
 		if ( get_post_type( $post_id ) !== 'page' ) {
 			return;
 		}
 
-		// Save the value
-		$color = 'color-1'; // Default
+		// Save the value.
+		$color = 'color-1'; // Default.
 		if ( isset( $_POST['carnavalsf_page_color'] ) ) {
 			$submitted_color = sanitize_text_field( wp_unslash( $_POST['carnavalsf_page_color'] ) );
 			if ( in_array( $submitted_color, array( 'color-1', 'color-2' ), true ) ) {
@@ -111,11 +111,11 @@ class CarnavalSF_Page_Color {
 	/**
 	 * Enqueue admin assets for page color meta box
 	 *
-	 * @param string $hook The current admin page hook
+	 * @param string $hook The current admin page hook.
 	 */
 	public function enqueue_admin_assets( $hook ) {
 
-		// Only load on page edit screens
+		// Only load on page edit screens.
 		if ( 'post.php' !== $hook && 'post-new.php' !== $hook ) {
 			return;
 		}
@@ -125,7 +125,7 @@ class CarnavalSF_Page_Color {
 			return;
 		}
 
-		// Enqueue admin CSS
+		// Enqueue admin CSS.
 		wp_enqueue_style(
 			'carnavalsf-page-color-admin',
 			get_template_directory_uri() . '/css/page-color-admin.css',
@@ -133,7 +133,7 @@ class CarnavalSF_Page_Color {
 			wp_get_theme()->get( 'Version' )
 		);
 
-		// Enqueue page color JavaScript (handles both admin swatches and editor updates)
+		// Enqueue page color JavaScript (handles both admin swatches and editor updates).
 		wp_enqueue_script(
 			'carnavalsf-page-color',
 			get_template_directory_uri() . '/js/page-color.js',
@@ -142,7 +142,7 @@ class CarnavalSF_Page_Color {
 			true
 		);
 
-		// Localize script with customizer colors
+		// Localize script with customizer colors.
 		wp_localize_script(
 			'carnavalsf-page-color',
 			'carnavalsfPageColor',
@@ -152,7 +152,6 @@ class CarnavalSF_Page_Color {
 			)
 		);
 	}
-
 }
 
 new CarnavalSF_Page_Color();

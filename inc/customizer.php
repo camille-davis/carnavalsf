@@ -1,34 +1,34 @@
 <?php
 /**
- * Customizer functionality for Carnaval SF theme
+ * Customizer functionality for Carnaval SF theme.
  *
  * @package CarnavalSF
  */
 
-// Load color utility functions and classes
+// Load color utility functions and classes.
 require_once get_template_directory() . '/inc/color-converter.php';
 
 /**
- * Customizer Class
+ * Customizer class.
  */
 class CarnavalSF_Customizer {
 
 	/**
-	 * Constructor
+	 * Constructor.
 	 */
 	public function __construct() {
 		add_action( 'customize_register', array( $this, 'register_controls' ) );
 		add_action( 'customize_controls_enqueue_scripts', array( $this, 'add_reset_buttons' ) );
 		add_action( 'customize_controls_enqueue_scripts', array( $this, 'add_customizer_style' ) );
-		add_action( 'wp_head', array( $this, 'output_inline_css' ) );
+		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_frontend_inline_css' ), 20 );
 		add_action( 'after_setup_theme', array( $this, 'register_editor_color_palette' ) );
 		add_filter( 'block_editor_settings_all', array( $this, 'add_editor_inline_css' ), 10, 1 );
 	}
 
 	/**
-	 * Register customizer controls and settings
+	 * Register customizer controls and settings.
 	 *
-	 * @param WP_Customize_Manager $wp_customize Theme Customizer object
+	 * @param WP_Customize_Manager $wp_customize Theme Customizer object.
 	 */
 	public function register_controls( $wp_customize ) {
 		$this->register_color_controls( $wp_customize );
@@ -36,13 +36,13 @@ class CarnavalSF_Customizer {
 	}
 
 	/**
-	 * Register color controls
+	 * Register color controls.
 	 *
-	 * @param WP_Customize_Manager $wp_customize Theme Customizer object
+	 * @param WP_Customize_Manager $wp_customize Theme Customizer object.
 	 */
 	private function register_color_controls( $wp_customize ) {
 
-		// Colors Section
+		// Colors Section.
 		$wp_customize->add_section(
 			'carnavalsf_colors',
 			array(
@@ -51,21 +51,21 @@ class CarnavalSF_Customizer {
 			)
 		);
 
-		// Color settings
+		// Color settings.
 		$colors = array(
-			'accent_color_1'  => array(
+			'accent_color_1'   => array(
 				'default' => '#FFA843',
 				'label'   => __( 'Accent Color 1', 'carnavalsf' ),
 			),
-			'accent_color_2'  => array(
+			'accent_color_2'   => array(
 				'default' => '#9C286E',
 				'label'   => __( 'Accent Color 2', 'carnavalsf' ),
 			),
-			'accent_color_3'  => array(
+			'accent_color_3'   => array(
 				'default' => '#05DFD7',
 				'label'   => __( 'Accent Color 3', 'carnavalsf' ),
 			),
-			'dark_text_color' => array(
+			'dark_text_color'  => array(
 				'default' => '#383838',
 				'label'   => __( 'Dark Text Color', 'carnavalsf' ),
 			),
@@ -98,13 +98,13 @@ class CarnavalSF_Customizer {
 	}
 
 	/**
-	 * Register typography controls
+	 * Register typography controls.
 	 *
-	 * @param WP_Customize_Manager $wp_customize Theme Customizer object
+	 * @param WP_Customize_Manager $wp_customize Theme Customizer object.
 	 */
 	private function register_typography_controls( $wp_customize ) {
 
-		// Typography Section
+		// Typography Section.
 		$wp_customize->add_section(
 			'carnavalsf_typography',
 			array(
@@ -113,7 +113,7 @@ class CarnavalSF_Customizer {
 			)
 		);
 
-		// Fonts URL
+		// Fonts URL.
 		$wp_customize->add_setting(
 			'fonts_url',
 			array(
@@ -131,7 +131,7 @@ class CarnavalSF_Customizer {
 			)
 		);
 
-		// Body Font
+		// Body Font.
 		$wp_customize->add_setting(
 			'body_font',
 			array(
@@ -149,7 +149,7 @@ class CarnavalSF_Customizer {
 			)
 		);
 
-		// Accent Font
+		// Accent Font.
 		$wp_customize->add_setting(
 			'accent_font',
 			array(
@@ -167,7 +167,7 @@ class CarnavalSF_Customizer {
 			)
 		);
 
-		// Body Font Size
+		// Body Font Size.
 		$wp_customize->add_setting(
 			'body_font_size',
 			array(
@@ -185,7 +185,7 @@ class CarnavalSF_Customizer {
 			)
 		);
 
-		// Heading Font Sizes
+		// Heading Font Sizes.
 		$headings = array(
 			'h1' => '6.25rem',
 			'h2' => '4.25rem',
@@ -208,6 +208,7 @@ class CarnavalSF_Customizer {
 				"{$heading}_font_size",
 				array(
 					'label'   => sprintf(
+						// translators: %s is the heading name.
 						__( '%s Size', 'carnavalsf' ),
 						ucfirst( $heading )
 					),
@@ -219,16 +220,16 @@ class CarnavalSF_Customizer {
 	}
 
 	/**
-	 * Add reset buttons to customizer controls
+	 * Add reset buttons to customizer controls.
 	 */
 	public function add_reset_buttons() {
 		global $wp_customize;
 
-		// Get typography setting defaults and build inline script in a single loop
+		// Get typography setting defaults and build inline script in a single loop.
 		$inline_script = '';
-		$controls = $wp_customize->controls();
+		$controls      = $wp_customize->controls();
 		foreach ( $controls as $control ) {
-			if ( $control->section !== 'carnavalsf_typography' ) {
+			if ( 'carnavalsf_typography' !== $control->section ) {
 				continue;
 			}
 			$setting = $wp_customize->get_setting( $control->id );
@@ -242,7 +243,7 @@ class CarnavalSF_Customizer {
 		}
 		wp_add_inline_script( 'customize-controls', $inline_script );
 
-		// Add 'Reset' buttons
+		// Add 'Reset' buttons.
 		wp_enqueue_script(
 			'carnavalsf-customizer',
 			get_template_directory_uri() . '/js/customizer.js',
@@ -261,7 +262,7 @@ class CarnavalSF_Customizer {
 	}
 
 	/**
-	 * Add customizer styles
+	 * Add customizer styles.
 	 */
 	public function add_customizer_style() {
 		wp_enqueue_style(
@@ -273,27 +274,27 @@ class CarnavalSF_Customizer {
 	}
 
 	/**
-	 * Add CSS variables to editor canvas only (not sidebar)
+	 * Add CSS variables to editor canvas only (not sidebar).
 	 *
-	 * @param array $editor_settings Editor settings array
-	 * @return array Modified editor settings
+	 * @param array $editor_settings Editor settings array.
+	 * @return array Modified editor settings.
 	 */
 	public function add_editor_inline_css( $editor_settings ) {
 
-		// Get the CSS variables
+		// Get the CSS variables.
 		$inline_css = self::get_inline_css();
 
 		if ( empty( $inline_css ) ) {
 			return $editor_settings;
 		}
 
-		// Ensure styles array exists
+		// Ensure styles array exists.
 		if ( ! isset( $editor_settings['styles'] ) ) {
 			$editor_settings['styles'] = array();
 		}
 
-		// Prepend CSS variables so they're available before other styles
-		// Must set isGlobalStyles to false or it will be stripped out
+		// Prepend CSS variables so they're available before other styles.
+		// Must set isGlobalStyles to false or it will be stripped out.
 		array_unshift(
 			$editor_settings['styles'],
 			array(
@@ -307,7 +308,7 @@ class CarnavalSF_Customizer {
 	}
 
 	/**
-	 * Register editor color palette with accent colors from customizer
+	 * Register editor color palette with accent colors from customizer.
 	 */
 	public function register_editor_color_palette() {
 		$editor_color_palette = array(
@@ -342,52 +343,52 @@ class CarnavalSF_Customizer {
 	}
 
 	/**
-	 * Get inline CSS with CSS variables
+	 * Get inline CSS with CSS variables.
 	 *
-	 * @return string CSS string with variables
+	 * @return string CSS string with variables.
 	 */
 	public static function get_inline_css() {
 		$css = '';
 
-		// Output font import
+		// Output font import.
 		$fonts_url = get_theme_mod( 'fonts_url' );
 		if ( $fonts_url ) {
 			$css .= '@import url("' . esc_url_raw( $fonts_url ) . '");';
 		}
 
-		// Cache theme mod values to avoid repeated calls
-		$accent_color_1 = get_theme_mod( 'accent_color_1', '#FFA843' );
-		$accent_color_2 = get_theme_mod( 'accent_color_2', '#9C286E' );
-		$accent_color_3 = get_theme_mod( 'accent_color_3', '#05DFD7' );
-		$dark_text_color = get_theme_mod( 'dark_text_color', '#383838' );
+		// Cache theme mod values to avoid repeated calls.
+		$accent_color_1   = get_theme_mod( 'accent_color_1', '#FFA843' );
+		$accent_color_2   = get_theme_mod( 'accent_color_2', '#9C286E' );
+		$accent_color_3   = get_theme_mod( 'accent_color_3', '#05DFD7' );
+		$dark_text_color  = get_theme_mod( 'dark_text_color', '#383838' );
 		$light_text_color = get_theme_mod( 'light_text_color', '#FFFFFF' );
 
-		// Output custom CSS variables
+		// Output custom CSS variables.
 		$custom_css_variables = array(
-			'accent-color-1'         => $accent_color_1,
-			'accent-color-1-filter'  => CarnavalSF_Color_Converter::hex_to_css_filter( $accent_color_1 ),
-			'accent-color-1-rgb'     => implode( ',', CarnavalSF_Color_Converter::hex_to_rgb( $accent_color_1 ) ),
-			'accent-color-2'         => $accent_color_2,
-			'accent-color-2-filter'  => CarnavalSF_Color_Converter::hex_to_css_filter( $accent_color_2 ),
-			'accent-color-2-rgb'     => implode( ',', CarnavalSF_Color_Converter::hex_to_rgb( $accent_color_2 ) ),
-			'accent-color-3'         => $accent_color_3,
-			'accent-color-3-filter'  => CarnavalSF_Color_Converter::hex_to_css_filter( $accent_color_3 ),
-			'accent-color-3-rgb'     => implode( ',', CarnavalSF_Color_Converter::hex_to_rgb( $accent_color_3 ) ),
-			'dark-text'              => $dark_text_color,
-			'dark-text-filter'       => CarnavalSF_Color_Converter::hex_to_css_filter( $dark_text_color ),
-			'dark-text-rgb'          => implode( ',', CarnavalSF_Color_Converter::hex_to_rgb( $dark_text_color ) ),
-			'light-text'             => $light_text_color,
-			'light-text-filter'      => CarnavalSF_Color_Converter::hex_to_css_filter( $light_text_color ),
-			'light-text-rgb'         => implode( ',', CarnavalSF_Color_Converter::hex_to_rgb( $light_text_color ) ),
-			'body-font'              => get_theme_mod( 'body_font', 'Quicksand' ) . ', sans-serif',
-			'accent-font'            => get_theme_mod( 'accent_font', 'Saira Condensed' ) . ', sans-serif',
-			'body-font-size'         => get_theme_mod( 'body_font_size', '1rem' ),
-			'h1-font-size'           => get_theme_mod( 'h1_font_size', '6.25rem' ),
-			'h2-font-size'           => get_theme_mod( 'h2_font_size', '4.25rem' ),
-			'h3-font-size'           => get_theme_mod( 'h3_font_size', '2.5rem' ),
-			'h4-font-size'           => get_theme_mod( 'h4_font_size', '1.75rem' ),
-			'h5-font-size'           => get_theme_mod( 'h5_font_size', '1.25rem' ),
-			'h6-font-size'           => get_theme_mod( 'h6_font_size', '1rem' ),
+			'accent-color-1'        => $accent_color_1,
+			'accent-color-1-filter' => CarnavalSF_Color_Converter::hex_to_css_filter( $accent_color_1 ),
+			'accent-color-1-rgb'    => implode( ',', CarnavalSF_Color_Converter::hex_to_rgb( $accent_color_1 ) ),
+			'accent-color-2'        => $accent_color_2,
+			'accent-color-2-filter' => CarnavalSF_Color_Converter::hex_to_css_filter( $accent_color_2 ),
+			'accent-color-2-rgb'    => implode( ',', CarnavalSF_Color_Converter::hex_to_rgb( $accent_color_2 ) ),
+			'accent-color-3'        => $accent_color_3,
+			'accent-color-3-filter' => CarnavalSF_Color_Converter::hex_to_css_filter( $accent_color_3 ),
+			'accent-color-3-rgb'    => implode( ',', CarnavalSF_Color_Converter::hex_to_rgb( $accent_color_3 ) ),
+			'dark-text'             => $dark_text_color,
+			'dark-text-filter'      => CarnavalSF_Color_Converter::hex_to_css_filter( $dark_text_color ),
+			'dark-text-rgb'         => implode( ',', CarnavalSF_Color_Converter::hex_to_rgb( $dark_text_color ) ),
+			'light-text'            => $light_text_color,
+			'light-text-filter'     => CarnavalSF_Color_Converter::hex_to_css_filter( $light_text_color ),
+			'light-text-rgb'        => implode( ',', CarnavalSF_Color_Converter::hex_to_rgb( $light_text_color ) ),
+			'body-font'             => get_theme_mod( 'body_font', 'Quicksand' ) . ', sans-serif',
+			'accent-font'           => get_theme_mod( 'accent_font', 'Saira Condensed' ) . ', sans-serif',
+			'body-font-size'        => get_theme_mod( 'body_font_size', '1rem' ),
+			'h1-font-size'          => get_theme_mod( 'h1_font_size', '6.25rem' ),
+			'h2-font-size'          => get_theme_mod( 'h2_font_size', '4.25rem' ),
+			'h3-font-size'          => get_theme_mod( 'h3_font_size', '2.5rem' ),
+			'h4-font-size'          => get_theme_mod( 'h4_font_size', '1.75rem' ),
+			'h5-font-size'          => get_theme_mod( 'h5_font_size', '1.25rem' ),
+			'h6-font-size'          => get_theme_mod( 'h6_font_size', '1rem' ),
 		);
 
 		$css .= ':root {';
@@ -400,12 +401,17 @@ class CarnavalSF_Customizer {
 	}
 
 	/**
-	 * Output inline CSS in the head
+	 * Attach inline CSS to the main theme stylesheet on the frontend.
 	 */
-	public function output_inline_css() {
-		echo '<style type="text/css">';
-		echo self::get_inline_css();
-		echo '</style>';
+	public function enqueue_frontend_inline_css() {
+		$inline_css = self::get_inline_css();
+
+		if ( empty( $inline_css ) ) {
+			return;
+		}
+
+		// Attach the CSS variables to the main theme stylesheet.
+		wp_add_inline_style( 'carnavalsf-style', $inline_css );
 	}
 }
 

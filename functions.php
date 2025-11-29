@@ -6,34 +6,26 @@
  */
 
 /**
- * Theme setup & includes
+ * Theme includes
  */
-
-// Sets up theme defaults and registers support for various WordPress features.
-function carnavalsf_setup() {
-
-  // Add theme support for custom logo
-  add_theme_support( 'custom-logo' );
-
-  // Add theme support for featured images
-  add_theme_support( 'post-thumbnails' );
-
-  // Add editor styles
-  add_theme_support( 'editor-styles' );
-  add_editor_style( 'style.css' );
-}
-add_action( 'after_setup_theme', 'carnavalsf_setup' );
-
-// Include required files
 require_once get_template_directory() . '/inc/customizer.php';
 require_once get_template_directory() . '/inc/page-color.php';
 require_once get_template_directory() . '/inc/blocks.php';
 
 /**
- * Navigation & Widget Registration
+ * Theme setup
  */
+function carnavalsf_setup() {
+	add_theme_support( 'custom-logo' );
+	add_theme_support( 'post-thumbnails' );
+	add_theme_support( 'editor-styles' );
+	add_editor_style( 'style.css' );
+}
+add_action( 'after_setup_theme', 'carnavalsf_setup' );
 
-// Register navigation menus
+/**
+ * Navigation menus
+ */
 function carnavalsf_register_menus() {
 	register_nav_menus(
 		array(
@@ -44,7 +36,9 @@ function carnavalsf_register_menus() {
 }
 add_action( 'init', 'carnavalsf_register_menus' );
 
-// Register footer widget areas
+/**
+ * Footer widget areas
+ */
 function carnavalsf_widgets_init() {
 	$widgets = array(
 		'footer-column-1' => __( 'Footer Column 1', 'carnavalsf' ),
@@ -67,16 +61,14 @@ function carnavalsf_widgets_init() {
 add_action( 'widgets_init', 'carnavalsf_widgets_init' );
 
 /**
- * Asset enqueuing
+ * Styles and scripts
  */
-
-// Enqueue theme styles and scripts
 function carnavalsf_enqueue_assets() {
 
-	// Main stylesheet
+	// Main stylesheet.
 	wp_enqueue_style( 'carnavalsf-style', get_stylesheet_uri(), array(), wp_get_theme()->get( 'Version' ) );
 
-	// Mobile menu functionality
+	// Mobile menu functionality.
 	wp_enqueue_script(
 		'carnavalsf-menu',
 		get_template_directory_uri() . '/js/menu.js',
@@ -85,7 +77,7 @@ function carnavalsf_enqueue_assets() {
 		true
 	);
 
-	// Details block animation
+	// Details block animation.
 	wp_enqueue_script(
 		'carnavalsf-details-block',
 		get_template_directory_uri() . '/js/details-block.js',
@@ -97,20 +89,18 @@ function carnavalsf_enqueue_assets() {
 add_action( 'wp_enqueue_scripts', 'carnavalsf_enqueue_assets' );
 
 /**
- * Disable unwanted WordPress features
+ * Disable WordPress image resizing
  */
-
-// Disable automatic image resizing
 function carnavalsf_disable_image_resizing() {
 	add_filter( 'intermediate_image_sizes_advanced', '__return_empty_array' );
 }
 add_action( 'init', 'carnavalsf_disable_image_resizing' );
 
 /**
- * Development only
+ * DEV ONLY: Remove version query strings from styles and scripts
+ *
+ * @param string $src The source URL.
  */
-
-// Remove version query strings from styles and scripts
 function carnavalsf_remove_version_scripts_styles( $src ) {
 	if ( strpos( $src, 'ver=' ) ) {
 		$src = remove_query_arg( 'ver', $src );

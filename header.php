@@ -4,6 +4,7 @@
  *
  * @package CarnavalSF
  */
+
 ?>
 <!DOCTYPE html>
 <html <?php language_attributes(); ?>>
@@ -24,13 +25,13 @@
 	 * Display the site logo or site name.
 	 */
 	$logo_id = get_theme_mod( 'custom_logo' );
-	$logo = wp_get_attachment_image_src( $logo_id, 'full' );
+	$logo    = wp_get_attachment_image_src( $logo_id, 'full' );
 	?>
 	<a id="site-logo" href="<?php echo esc_url( home_url( '/' ) ); ?>" class="site-logo">
 		<?php if ( $logo ) : ?>
 			<?php
 
-			// Get the image's alt text or fall back to site name
+			// Get the image's alt text or fall back to site name.
 			$alt_text = get_post_meta( $logo_id, '_wp_attachment_image_alt', true );
 			if ( empty( $alt_text ) ) {
 				$alt_text = get_bloginfo( 'name' );

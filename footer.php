@@ -4,8 +4,8 @@
  *
  * @package CarnavalSF
  */
-?>
 
+?>
 <footer class="site-footer">
 	<?php if ( is_active_sidebar( 'footer-column-1' ) || is_active_sidebar( 'footer-column-2' ) || is_active_sidebar( 'footer-column-3' ) ) : ?>
 		<div class="footer-columns">
