@@ -1,25 +1,26 @@
 (function ($) {
-  wp.customize.bind('ready', function () {
+	wp.customize.bind('ready', function () {
+		// Get all the controls in the typography section.
+		const typographyControls = wp.customize
+			.section('carnavalsf_typography')
+			.controls();
+		typographyControls.forEach((control) => {
+			// Create and insert 'Reset' button.
+			const $resetButton = $(
+				'<button type="button" class="button reset-button">' +
+					carnavalsfCustomizer.resetText + // eslint-disable-line no-undef
+					'</button>'
+			);
+			control.container.find('input').after($resetButton);
 
-    // Get all the controls in the typography section.
-    typographyControls = wp.customize
-      .section('carnavalsf_typography')
-      .controls();
-    typographyControls.forEach((control) => {
-
-      // Create and insert 'Reset' button.
-      const $resetButton = $(
-        '<button type="button" class="button reset-button">' +
-          carnavalsfCustomizer.resetText +
-          '</button>'
-      );
-      control.container.find('input').after($resetButton);
-
-      // On reset, repopulate input with default value.
-      $resetButton.on('click', () => {
-        const defaultValue = control.setting.default;
-        control.container.find('input').val(defaultValue).trigger('change');
-      });
-    });
-  });
+			// On reset, repopulate input with default value.
+			$resetButton.on('click', () => {
+				const defaultValue = control.setting.default;
+				control.container
+					.find('input')
+					.val(defaultValue)
+					.trigger('change');
+			});
+		});
+	});
 })(jQuery);
