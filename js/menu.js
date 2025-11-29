@@ -1,92 +1,154 @@
-jQuery(document).ready(function () {
-	const $ = jQuery;
+jQuery(document).ready(function ($) {
+	const $body = $('body');
+	const $window = $(window);
 	const $menuOpen = $('#open-menu');
 	const $menuClose = $('#close-menu');
 	const $menuOuter = $('#menu-outer');
+
+	// Mobile menu is active under this width.
+	const DESKTOP_BREAKPOINT = 1080;
+
+	// Admin bar is positioned absolute under (and at) this width
+	// and will be covered by mobile menu.
+	const ADMIN_BAR_ABSOLUTE_BREAKPOINT = 600;
 
 	if (!$menuOpen.length || !$menuOuter.length) {
 		return;
 	}
 
+	/**
+	 * Helper functions for tab flow.
+	 */
+
+	// Stores original tabindex values to be restored.
+	const tabindexStore = new Map();
+
+	// Removes covered elements from tab flow when mobile menu is open.
+	function removeFromTabFlow() {
+
+		// Get focusable elements.
+		const focusableSelector = 'a[href]:not(:disabled):not(:hidden), ' +
+			'button:not(:disabled):not(:hidden), ' +
+			'input:not(:disabled):not(:hidden), ' +
+			'select:not(:disabled):not(:hidden), ' +
+			'textarea:not(:disabled):not(:hidden), ' +
+			'summary:not(:disabled):not(:hidden), ' +
+			'[tabindex]:not([tabindex="-1"]):not(:disabled):not(:hidden)';
+
+		$(focusableSelector).each(function() {
+			const $el = $(this);
+			const element = this;
+
+			// Skip element if we've already processed it.
+			if (tabindexStore.has(element)) {
+				return;
+			}
+
+			// Skip element if it's inside the menu.
+			if ($el.closest('#menu-outer').length) {
+				return;
+			}
+
+			// Skip element if it's inside position: fixed admin bar.
+			const isInAdminBar = $el.closest('#wpadminbar').length;
+			if (isInAdminBar && $window.width() > ADMIN_BAR_ABSOLUTE_BREAKPOINT) {
+				return;
+			}
+
+			// Save original tabindex.
+			const originalTabindex = $el.attr('tabindex');
+			tabindexStore.set(element, originalTabindex !== undefined ? originalTabindex : null);
+
+			// Remove element from tab flow.
+			$el.attr('tabindex', '-1');
+		});
+	}
+
+	// Restores saved tabindex values.
+	function restoreTabFlow() {
+		tabindexStore.forEach((originalTabindex, element) => {
+			const $el = $(element);
+			if (originalTabindex === null) {
+				$el.removeAttr('tabindex');
+			} else {
+				$el.attr('tabindex', originalTabindex);
+			}
+		});
+		tabindexStore.clear();
+	}
+
+	/**
+	 * Open/close functionality.
+	 */
+
+	function isOpen() {
+		return $menuOpen.attr('aria-expanded') === 'true';
+	}
+
 	function openMenu() {
-		if ($menuOpen.attr('aria-expanded') !== 'false') {
+		if (isOpen()) {
 			return;
 		}
 
-		// Open the menu.
 		$menuOuter.addClass('transitioning');
 		$menuOpen.attr('aria-expanded', 'true');
+		$body.addClass('menu-open');
+		removeFromTabFlow();
+
 		setTimeout(() => {
 			$menuOuter.removeClass('transitioning');
+			$menuClose.focus();
 		}, 300);
-
-		// Handle focus.
-		const elements = getElementsOutsideMenu();
-		elements.forEach(function (el) {
-			$(el).attr('tabindex', '-1');
-		});
-		$menuClose.focus();
 	}
 
 	function closeMenu() {
-		if ($menuOpen.attr('aria-expanded') !== 'true') {
+		if (!isOpen()) {
 			return;
 		}
 
-		// Close the menu.
 		$menuOuter.addClass('transitioning');
 		$menuOpen.attr('aria-expanded', 'false');
+		restoreTabFlow();
+
 		setTimeout(() => {
 			$menuOuter.removeClass('transitioning');
+			$body.removeClass('menu-open');
+			$menuOpen.focus();
 		}, 300);
-
-		// Handle focus.
-		const elements = getElementsOutsideMenu();
-		elements.forEach(function (el) {
-			$(el).removeAttr('tabindex');
-		});
-		$menuOpen.focus();
-	}
-
-	function getElementsOutsideMenu() {
-		let elements = [];
-
-		// Get menu siblings, and siblings of menu parents up to the body.
-		let $el = $menuOuter;
-		while ($el.length > 0 && $el.get(0) !== document.body) {
-			elements.push(...$el.siblings());
-			$el = $el.parent();
-		}
-
-		// Remove script elements and admin bar.
-		elements = elements.filter(function (el) {
-			return !$(el).is('script') && !$(el).is('#wpadminbar');
-		});
-
-		return elements;
 	}
 
 	$menuOpen.on('click', openMenu);
 	$menuClose.on('click', closeMenu);
 
-	// Close menu when clicking outside.
+	// Close by clicking on modal background.
 	$menuOuter.on('click', function (e) {
 		if (!$(e.target).closest('.menu-inner').length) {
 			closeMenu();
 		}
 	});
 
-	// Close menu when pressing the Escape key.
+	// Close by pressing Escape.
 	$(document).on('keydown', function (e) {
-		if (e.key === 'Escape' && $menuOpen.attr('aria-expanded') === 'true') {
+		if (e.key === 'Escape' && isOpen()) {
 			closeMenu();
 		}
 	});
 
-	// Close menu when resizing to desktop size.
-	$(window).on('resize', function () {
-		if ($(window).width() >= 1080) {
-			closeMenu();
+	$window.on('resize', function () {
+
+		// If menu is closed, do nothing.
+		if (!isOpen()) {
+			return;
 		}
+
+		// If we're at desktop width, close the menu.
+		if ($window.width() >= DESKTOP_BREAKPOINT) {
+			closeMenu();
+			return;
+		}
+
+		// Update tab flow to include or exclude admin bar.
+		restoreTabFlow();
+		removeFromTabFlow();
 	});
 });

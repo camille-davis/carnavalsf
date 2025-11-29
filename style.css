@@ -185,6 +185,7 @@ h6 {
 
 	.close-menu {
 		margin: calc((6rem - 3.75rem) / 2) 0 1.5rem 0;
+		flex-shrink: 0;
 	}
 
 	.open-menu__icon {
@@ -229,21 +230,39 @@ h6 {
 	}
 }
 
-/* Menu outer container, modal background */
+/* Menu containers */
+
+.menu-inner {
+	display: flex;
+	flex-direction: column;
+	min-height: 7.5rem;
+}
+
+@media (min-width: 1080px) {
+	main {
+		padding-top: 7.5rem; /* TODO check this under 600 */
+	}
+}
 
 @media (max-width: 1079.99px) {
+
+	body.menu-open {
+		overflow: hidden;
+	}
 
 	.menu-outer {
 		display: flex;
 		justify-content: flex-end;
 		background: rgba(0, 0, 0, 0.5);
-		position: absolute;
-		top: 0;
+		position: fixed;
 		left: 0;
 		right: 0;
-		min-height: 100vh;
 		visibility: hidden;
 		opacity: 0;
+		z-index: 100000;
+		overflow-y: auto;
+		top: 32px;
+		height: calc(100vh - 32px);
 	}
 
 	[aria-expanded="true"] + .menu-outer {
@@ -256,34 +275,42 @@ h6 {
 			opacity 0.3s ease,
 			visibility 0.3s ease;
 	}
-}
-
-/* Menu inner container */
-
-.menu-inner {
-	display: flex;
-	flex-direction: column;
-}
-
-@media (min-width: 1080px) {
-
-	.menu-inner {
-		min-height: 7.5rem;
-	}
-
-	main {
-		padding-top: 7.5rem;
-	}
-}
-
-@media (max-width: 1079.99px) {
 
 	.menu-inner {
 		min-width: 40%;
-		min-height: 100vh;
 		background: #fff;
 		align-items: flex-end;
-		padding: 0 1.5rem 1.5rem;
+		padding: 0 1.5rem;
+		height: fit-content;
+		min-height: calc(100vh - 32px);
+	}
+
+	.menu-inner > :last-child {
+		padding-bottom: 1.5rem;
+	}
+}
+
+@media screen and (max-width: 782px) {
+
+	.menu-outer {
+		top: 46px;
+		height: calc(100vh - 46px);
+	}
+
+	.menu-inner {
+		min-height: calc(100vh - 46px);
+	}
+}
+
+@media (max-width: 600px) {
+
+	.menu-outer {
+		top: 0;
+		height: 100vh;
+	}
+
+	.menu-inner {
+		min-height: 100vh;
 	}
 }
 
