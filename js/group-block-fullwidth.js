@@ -38,7 +38,7 @@
 
       return createElement(
         Fragment,
-        {},
+        null,
         createElement(BlockEdit, props),
         createElement(
           InspectorControls,
@@ -49,9 +49,7 @@
             createElement(ToggleControl, {
               label: 'Fullwidth',
               checked: fullwidth,
-              onChange: function(value) {
-                setAttributes({ fullwidth: value });
-              },
+              onChange: (value) => setAttributes({ fullwidth: value }),
             })
           )
         )

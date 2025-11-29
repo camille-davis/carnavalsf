@@ -43,6 +43,8 @@ Comments:
 Spacing:
   - Use spaces to line up assignments in arrays.
   - Don't line up variable assignments outside of arrays.
-  - **Don't align parameters in PHPDoc blocks.** Use a single space after the type and parameter name, then the description. For example:
+  - **PHPDoc parameter formatting: Use exactly one space between the type and the parameter name, then one space before the description. Do NOT add extra spaces for alignment.**
     - ✅ `@param array $args Block type arguments`
+    - ✅ `@param string $name Block type name`
     - ❌ `@param array  $args Block type arguments` (extra spaces for alignment)
+    - ❌ `@param array  $block          The block data` (extra spaces for alignment)

@@ -98,18 +98,14 @@ class CarnavalSF_Page_Color {
 		}
 
 		// Save the value
+		$color = 'color-1'; // Default
 		if ( isset( $_POST['carnavalsf_page_color'] ) ) {
-			$color = sanitize_text_field( wp_unslash( $_POST['carnavalsf_page_color'] ) );
-			if ( in_array( $color, array( 'color-1', 'color-2' ), true ) ) {
-				update_post_meta( $post_id, '_carnavalsf_page_color', $color );
-			} else {
-				// Default to color-1 if invalid value
-				update_post_meta( $post_id, '_carnavalsf_page_color', 'color-1' );
+			$submitted_color = sanitize_text_field( wp_unslash( $_POST['carnavalsf_page_color'] ) );
+			if ( in_array( $submitted_color, array( 'color-1', 'color-2' ), true ) ) {
+				$color = $submitted_color;
 			}
-		} else {
-			// Default to color-1 if no value submitted
-			update_post_meta( $post_id, '_carnavalsf_page_color', 'color-1' );
 		}
+		update_post_meta( $post_id, '_carnavalsf_page_color', $color );
 	}
 
 	/**
@@ -137,27 +133,18 @@ class CarnavalSF_Page_Color {
 			wp_get_theme()->get( 'Version' )
 		);
 
-		// Enqueue admin JavaScript
+		// Enqueue page color JavaScript (handles both admin swatches and editor updates)
 		wp_enqueue_script(
-			'carnavalsf-page-color-admin',
-			get_template_directory_uri() . '/js/page-color-admin.js',
+			'carnavalsf-page-color',
+			get_template_directory_uri() . '/js/page-color.js',
 			array( 'jquery' ),
-			wp_get_theme()->get( 'Version' ),
-			true
-		);
-
-		// Enqueue page color editor script (for parent window to listen to meta box)
-		wp_enqueue_script(
-			'carnavalsf-page-color-editor',
-			get_template_directory_uri() . '/js/page-color-editor.js',
-			array(),
 			wp_get_theme()->get( 'Version' ),
 			true
 		);
 
 		// Localize script with customizer colors
 		wp_localize_script(
-			'carnavalsf-page-color-admin',
+			'carnavalsf-page-color',
 			'carnavalsfPageColor',
 			array(
 				'color1' => get_theme_mod( 'accent_color_1', '#FFA843' ),
@@ -165,6 +152,7 @@ class CarnavalSF_Page_Color {
 			)
 		);
 	}
+
 }
 
 new CarnavalSF_Page_Color();
