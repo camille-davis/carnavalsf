@@ -52,8 +52,8 @@ function carnavalsf_widgets_init() {
 			array(
 				'name'          => $name,
 				'id'            => $id,
-				'before_widget' => '<div class="footer-widget">',
-				'after_widget'  => '</div>',
+				'before_widget' => '',
+				'after_widget'  => '',
 			)
 		);
 	}

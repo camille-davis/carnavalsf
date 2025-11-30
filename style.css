@@ -17,11 +17,16 @@ Text Domain: carnavalsf
 	--side-padding-desktop: 2rem;
 	--side-padding-mobile: 1.5rem;
 	--vertical-space-large: 3rem;
+	--vertical-space-medium: 2rem;
 	--vertical-space-small: 1rem;
 	--border-radius: 0.25rem;
 	--nav-height-desktop: 7.5rem;
 	--nav-height-mobile: 6rem;
 	--menu-button-size: 3.75rem;
+	--wp--preset--font-size--small: .875rem;
+  --wp--preset--font-size--medium: 1rem;
+  --wp--preset--font-size--large: 1.25rem;
+  --wp--preset--font-size--x-large: 2rem;
 }
 
 body {
@@ -32,9 +37,17 @@ body {
 	line-height: 1.5;
 }
 
-p {
-	margin-bottom: var(--vertical-space-small);
+/* Global Elements */
+
+p:not(:last-child) {
+	padding-bottom: var(--vertical-space-small);
 }
+
+ul {
+	padding-left: 1rem;
+}
+
+/* Global Typography */
 
 a {
 	color: var(--accent-color-2);
@@ -45,23 +58,16 @@ a:hover {
 	text-decoration: none;
 }
 
-/* Headings */
-
 h1,
 h2,
 h3,
-h4,
-h5,
-h6 {
+h4 {
 	font-family: var(--accent-font);
 	line-height: 1;
 	text-transform: uppercase;
-	margin: calc(var(--vertical-space-large) - var(--vertical-space-small)) 0 var(--vertical-space-small);
-	scroll-margin-top: calc(var(--nav-height-desktop) + var(--vertical-space-large));
 }
 
 h1 {
-	margin-top: 0;
 	font-size: var(--h1-font-size);
 }
 
@@ -455,6 +461,27 @@ main {
  * Page
  */
 
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	margin-top: calc(var(--vertical-space-large) - var(--vertical-space-small));
+	margin-bottom: var(--vertical-space-small);
+	scroll-margin-top: calc(var(--nav-height-desktop) + var(--vertical-space-large));
+}
+
+h1:first-child,
+h2:first-child {
+	margin-top: 0;
+}
+
+h1,
+h2 {
+	margin-bottom: var(--vertical-space-medium);
+}
+
 .page-color-2 {
 	background-color: var(--accent-color-2);
 	color: var(--light-text);
@@ -466,19 +493,45 @@ main {
 	background-position: center center;
 }
 
-.entry-title {
-	text-transform: uppercase;
+h1.has-background,
+h2.has-background,
+h3.has-background,
+h4.has-background,
+h5.has-background,
+h6.has-background {
+	padding: 0 1rem;
+	width: fit-content;
 }
 
-.entry-content h1,
-.entry-content h2,
-.editor-styles-wrapper h1,
-.editor-styles-wrapper h2 {
-	background-color: #fff;
-	color: var(--accent-color-2);
+.editor-post-title,
+.entry-content > h1,
+.entry-content > h2,
+.is-fullwidth > h1,
+.is-fullwidth > h2,
+.is-root-container > h1,
+.is-root-container > h2,
+.is-fullwidth > .wp-block-group__inner-container > h1,
+.is-fullwidth > .wp-block-group__inner-container > h2 {
 	margin-left: calc(-1 * var(--side-padding-desktop)) !important;
 	padding: 0 1rem 0 var(--side-padding-desktop);
+	background-color: #fff;
+	color: var(--accent-color-2);
 	width: fit-content;
+}
+
+@media (max-width: 1080px) {
+	.editor-post-title,
+	.entry-content > h1,
+	.entry-content > h2,
+	.is-fullwidth > h1,
+	.is-fullwidth > h2,
+	.is-root-container > h1,
+	.is-root-container > h2,
+	.is-fullwidth > .wp-block-group__inner-container > h1,
+	.is-fullwidth > .wp-block-group__inner-container > h2 {
+		margin-left: calc(-1 * var(--side-padding-mobile)) !important;
+		padding: 0 1rem 0 var(--side-padding-mobile);
+	}
 }
 
 .page-color-2 a {
@@ -497,16 +550,14 @@ main {
 }
 
 .wp-block-group {
-	margin-top: calc(var(--vertical-space-large) - var(--vertical-space-small));
-	padding-top: var(--vertical-space-small);
-	padding-bottom: var(--vertical-space-large);
+	padding: var(--vertical-space-medium) var(--side-padding-mobile);
 }
 
 .wp-block-group.is-fullwidth {
+	margin-top: calc(var(--vertical-space-large) - var(--vertical-space-small));
 	margin-left: calc(-1 * var(--side-padding-desktop));
 	margin-right: calc(-1 * var(--side-padding-desktop));
-	padding-left: var(--side-padding-desktop);
-	padding-right: var(--side-padding-desktop);
+	padding: var(--vertical-space-large) var(--side-padding-desktop);
 }
 
 @media (max-width: 1080px) {
@@ -537,11 +588,28 @@ main {
 
 /* Columns block */
 
+.is-layout-flex .wp-block-column,
+.wp-block-column {
+	margin-bottom: var(--vertical-space-small);
+}
+
 @media (max-width: 782px) {
 
 	.wp-block-columns {
 		gap: 0;
 	}
+}
+
+/* Grid block */
+
+.is-layout-grid {
+	gap: 5rem;
+}
+
+.is-layout-grid figure {
+	display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Details block */

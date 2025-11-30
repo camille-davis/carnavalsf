@@ -189,8 +189,8 @@ class CarnavalSF_Customizer {
 		$headings = array(
 			'h1' => '6.25rem',
 			'h2' => '4.25rem',
-			'h3' => '2.5rem',
-			'h4' => '1.75rem',
+			'h3' => '3rem',
+			'h4' => '2rem',
 			'h5' => '1.25rem',
 			'h6' => '1rem',
 		);
@@ -385,8 +385,8 @@ class CarnavalSF_Customizer {
 			'body-font-size'        => get_theme_mod( 'body_font_size', '1rem' ),
 			'h1-font-size'          => get_theme_mod( 'h1_font_size', '6.25rem' ),
 			'h2-font-size'          => get_theme_mod( 'h2_font_size', '4.25rem' ),
-			'h3-font-size'          => get_theme_mod( 'h3_font_size', '2.5rem' ),
-			'h4-font-size'          => get_theme_mod( 'h4_font_size', '1.75rem' ),
+			'h3-font-size'          => get_theme_mod( 'h3_font_size', '3rem' ),
+			'h4-font-size'          => get_theme_mod( 'h4_font_size', '2rem' ),
 			'h5-font-size'          => get_theme_mod( 'h5_font_size', '1.25rem' ),
 			'h6-font-size'          => get_theme_mod( 'h6_font_size', '1rem' ),
 		);
