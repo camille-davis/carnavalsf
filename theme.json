@@ -5,6 +5,13 @@
     "background": {
       "backgroundImage": true,
       "backgroundSize": true
+    },
+    "spacing": {
+      "padding": true,
+      "margin": true
+    },
+    "shadow": {
+      "defaultPresets": false
     }
   }
 }

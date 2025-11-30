@@ -549,10 +549,6 @@ h6.has-background {
 	flex-direction: column;
 }
 
-.wp-block-group {
-	padding: var(--vertical-space-medium) var(--side-padding-mobile);
-}
-
 .wp-block-group.is-fullwidth {
 	margin-top: calc(var(--vertical-space-large) - var(--vertical-space-small));
 	margin-left: calc(-1 * var(--side-padding-desktop));

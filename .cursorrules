@@ -26,6 +26,57 @@ Always remove unnecessary code before committing. This includes:
 
 Before finalizing code, review it to ensure every line serves a purpose and will execute in the intended context.
 
+## Code Simplification
+
+Always write code in the most concise and pared-down form possible. This includes:
+
+1. **Combine similar operations**: Merge multiple similar queries or operations into single statements where possible
+2. **Use modern syntax**: Prefer optional chaining (`?.`), arrow functions, and other concise syntax over verbose alternatives
+3. **Remove redundant checks**: Eliminate unnecessary conditionals and type checks when the code is already safe
+4. **Inline simple functions**: If a function is only called once or is very simple, consider inlining it
+5. **Simplify initialization**: Combine related setup code and remove unnecessary intermediate variables
+6. **Consolidate selectors**: Use single query selectors with appropriate combinators instead of multiple separate queries
+7. **Remove verbose comments**: Keep comments minimal and only for non-obvious logic; let the code be self-documenting
+
+**Example of good pared-down code:**
+```javascript
+// ✅ Good: Concise and clear
+function updateTitles() {
+	document.querySelectorAll('.panel').forEach((el) => {
+		if (el.textContent?.includes('Dimensions')) {
+			el.textContent = el.textContent.replace('Dimensions', 'Spacing');
+		}
+	});
+}
+```
+
+**Example of code that should be simplified:**
+```javascript
+// ❌ Bad: Verbose and redundant
+function updatePanelTitles() {
+	const panelButtons = document.querySelectorAll('.components-panel__body-toggle');
+	const headings = document.querySelectorAll('.block-editor-block-inspector h2');
+
+	panelButtons.forEach((button) => {
+		const text = button.textContent;
+		if (text !== null && text !== undefined) {
+			if (text.includes('Dimensions')) {
+				button.textContent = text.replace('Dimensions', 'Spacing');
+			}
+		}
+	});
+
+	headings.forEach((heading) => {
+		const headingText = heading.textContent;
+		if (headingText !== null && headingText !== undefined) {
+			if (headingText.includes('Dimensions')) {
+				heading.textContent = headingText.replace('Dimensions', 'Spacing');
+			}
+		}
+	});
+}
+```
+
 ## JavaScript Syntax
 
 **Do not use JSX syntax** in JavaScript files. This theme does not use a build process to transpile JSX. Instead, use `wp.element.createElement()` for creating React elements in WordPress block editor scripts. JSX syntax will cause syntax errors since the browser cannot parse it directly.

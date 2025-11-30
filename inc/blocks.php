@@ -15,8 +15,6 @@ class CarnavalSF_Blocks {
 	 */
 	public function __construct() {
 		add_filter( 'block_editor_settings_all', array( $this, 'disable_layout_support' ), 10, 1 );
-		add_filter( 'register_block_type_args', array( $this, 'disable_shadow_support' ), 10, 2 );
-		add_filter( 'register_block_type_args', array( $this, 'modify_block_supports' ), 10, 2 );
 		add_filter( 'render_block', array( $this, 'customize_details_block' ), 10, 2 );
 		add_filter( 'render_block_core/group', array( $this, 'group_block_fullwidth' ), 10, 2 );
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_block_editor_assets' ) );
@@ -31,20 +29,6 @@ class CarnavalSF_Blocks {
 	public function disable_layout_support( $editor_settings ) {
 		$editor_settings['supportsLayout'] = false;
 		return $editor_settings;
-	}
-
-	/**
-	 * Disable shadow support in block editor.
-	 *
-	 * @param array $args Block type arguments.
-	 * @return array Modified block type arguments.
-	 */
-	public function disable_shadow_support( $args ) {
-		if ( ! isset( $args['supports'] ) ) {
-			$args['supports'] = array();
-		}
-		$args['supports']['shadow'] = false;
-		return $args;
 	}
 
 	/**
@@ -65,27 +49,14 @@ class CarnavalSF_Blocks {
 			wp_get_theme()->get( 'Version' ),
 			true
 		);
-	}
 
-	/**
-	 * Modify block supports: enable background images
-	 *
-	 * @param array $args Block type arguments.
-	 * @return array Modified block type arguments.
-	 */
-	public function modify_block_supports( $args ) {
-		if ( ! isset( $args['supports'] ) ) {
-			$args['supports'] = array();
-		}
-
-		// Enable background image support.
-		if ( ! isset( $args['supports']['background'] ) ) {
-			$args['supports']['background'] = array();
-		}
-		$args['supports']['background']['backgroundImage'] = true;
-		$args['supports']['background']['backgroundSize']  = true;
-
-		return $args;
+		wp_enqueue_script(
+			'carnavalsf-dimensions-panel-title',
+			get_template_directory_uri() . '/js/dimensions-panel-title.js',
+			array( 'wp-i18n' ),
+			wp_get_theme()->get( 'Version' ),
+			true
+		);
 	}
 
 	/**
