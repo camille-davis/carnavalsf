@@ -14,7 +14,6 @@ Text Domain: carnavalsf
 }
 
 :root {
-	--desktop-min: 1080px;
 	--side-padding-desktop: 2rem;
 	--side-padding-mobile: 1.5rem;
 	--vertical-space-large: 3rem;
@@ -22,6 +21,7 @@ Text Domain: carnavalsf
 	--border-radius: 0.25rem;
 	--nav-height-desktop: 7.5rem;
 	--nav-height-mobile: 6rem;
+	--menu-button-size: 3.75rem;
 }
 
 body {
@@ -92,17 +92,11 @@ h6 {
 .site-header {
 	background-color: var(--accent-color-2);
 	width: 100%;
+	position: fixed;
+	z-index: 1;
 }
 
-@media (min-width: 1080px) {
-
-	.site-header {
-		position: fixed;
-		z-index: 1;
-	}
-}
-
-@media (max-width: 1079.99px) {
+@media (max-width: 1080px) {
 
 	.site-header {
 		position: relative;
@@ -117,16 +111,24 @@ h6 {
 
 .site-logo {
 	padding: 0.25rem;
+	position: absolute;
+	z-index: 2;
+	margin-left: 2rem;
+	top: calc(var(--nav-height-desktop) / 2 - (5.5rem + 0.25rem * 2) / 2 - 0.25rem);
 }
 
 .site-logo img {
 	display: block;
+	height: 5.5rem;
 }
 
-@media (max-width: 1079.99px) {
+@media (max-width: 1080px) {
 
 	.site-logo {
 		margin-left: 1rem;
+		position: relative;
+		z-index: auto;
+		top: auto;
 	}
 
 	.site-logo img {
@@ -134,34 +136,18 @@ h6 {
 	}
 }
 
-@media (min-width: 1080px) {
-
-	.site-logo {
-		position: absolute;
-		z-index: 2;
-		left: 2rem;
-		top: calc(7.5rem / 2 - (5.5rem + 0.25rem * 2) / 2 - 0.25rem);
-	}
-
-	.site-logo img {
-		height: 5.5rem;
-	}
-}
-
 /* Open and close menu buttons */
 
-@media (min-width: 1080px) {
-
-	.open-menu,
-	.close-menu {
-		display: none;
-	}
+.open-menu,
+.close-menu {
+	display: none;
 }
 
-@media (max-width: 1079.99px) {
+@media (max-width: 1080px) {
 
 	.open-menu,
 	.close-menu {
+		display: block;
 		width: 3.75rem;
 		height: 3.75rem;
 		border-radius: var(--border-radius);
@@ -184,7 +170,7 @@ h6 {
 	}
 
 	.close-menu {
-		margin: calc((6rem - 3.75rem) / 2) 0 1.5rem 0;
+		margin: calc((var(--nav-height-mobile) - var(--menu-button-size)) / 2) 1.5rem 1.5rem 0;
 		flex-shrink: 0;
 	}
 
@@ -235,19 +221,21 @@ h6 {
 .menu-inner {
 	display: flex;
 	flex-direction: column;
-	min-height: 7.5rem;
+	min-height: var(--nav-height-desktop);
 }
 
-@media (min-width: 1080px) {
-	main {
-		padding-top: 7.5rem; /* TODO check this under 600 */
-	}
+main {
+	padding-top: var(--nav-height-desktop);
 }
 
-@media (max-width: 1079.99px) {
+@media (max-width: 1080px) {
 
 	body.menu-open {
 		overflow: hidden;
+	}
+
+	main {
+		padding-top: 0;
 	}
 
 	.menu-outer {
@@ -280,7 +268,6 @@ h6 {
 		min-width: 40%;
 		background: #fff;
 		align-items: flex-end;
-		padding: 0 1.5rem;
 		height: fit-content;
 		min-height: calc(100vh - 32px);
 	}
@@ -318,6 +305,11 @@ h6 {
 
 .menu-links {
 	list-style: none;
+	flex-grow: 1;
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+	box-shadow: 0 2px 30px 0 rgba(0, 0, 0, 0.3);
 }
 
 .menu-links a {
@@ -330,52 +322,45 @@ h6 {
 	border-radius: var(--border-radius);
 }
 
-@media (min-width: 1080px) {
-
-	.menu-links {
-		flex-grow: 1;
-		display: flex;
-		justify-content: flex-end;
-		align-items: center;
-		box-shadow: 0 2px 30px 0 rgba(0, 0, 0, 0.3);
-	}
-
-	.menu-links a {
-		margin-right: 0.875rem;
-	}
-
-	.menu-links-1 {
-		z-index: 1;
-		background: var(--accent-color-1);
-	}
-
-	.menu-links-2 {
-		background: var(--accent-color-2);
-	}
-
-	.menu-links-1 a {
-		color: var(--accent-color-2);
-	}
-
-	.menu-links-2 a {
-		color: var(--accent-color-1);
-	}
-
-	.menu-links-1 a:hover {
-		color: var(--accent-color-1);
-		background: var(--accent-color-2);
-	}
-
-	.menu-links-2 a:hover {
-		color: var(--accent-color-2);
-		background-color: var(--accent-color-1);
-	}
+.menu-links a {
+	margin-right: 0.875rem;
 }
 
-@media (max-width: 1079.99px) {
+.menu-links-1 {
+	z-index: 1;
+	background: var(--accent-color-1);
+}
+
+.menu-links-2 {
+	background: var(--accent-color-2);
+}
+
+.menu-links-1 a {
+	color: var(--accent-color-2);
+}
+
+.menu-links-2 a {
+	color: var(--accent-color-1);
+}
+
+.menu-links-1 a:hover {
+	color: var(--accent-color-1);
+	background: var(--accent-color-2);
+}
+
+.menu-links-2 a:hover {
+	color: var(--accent-color-2);
+	background-color: var(--accent-color-1);
+}
+
+@media (max-width: 1080px) {
 
 	.menu-links {
 		text-align: right;
+		display: block;
+		box-shadow: none;
+		flex-grow: 0;
+		background: transparent;
 	}
 
 	.menu-links li {
@@ -384,6 +369,7 @@ h6 {
 
 	.menu-links a {
 		color: var(--accent-color-2);
+		margin: 0 1.5rem;
 	}
 
 	.menu-links a:hover {
@@ -408,7 +394,7 @@ h6 {
 	padding: 0.75rem var(--side-padding-desktop);
 }
 
-@media (max-width: 1079.99px) {
+@media (max-width: 1080px) {
 
 	.footer-columns {
 		padding-left: var(--side-padding-mobile);
@@ -523,7 +509,7 @@ h6 {
 	padding-right: var(--side-padding-desktop);
 }
 
-@media (max-width: 1079.99px) {
+@media (max-width: 1080px) {
 
 	.entry-content,
 	.editor-styles-wrapper {

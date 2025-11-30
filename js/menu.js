@@ -5,13 +5,6 @@ jQuery(document).ready(function ($) {
 	const $menuClose = $('#close-menu');
 	const $menuOuter = $('#menu-outer');
 
-	// Mobile menu is active under this width.
-	const DESKTOP_BREAKPOINT = 1080;
-
-	// Admin bar is positioned absolute under (and at) this width
-	// and will be covered by mobile menu.
-	const ADMIN_BAR_ABSOLUTE_BREAKPOINT = 600;
-
 	if (!$menuOpen.length || !$menuOuter.length) {
 		return;
 	}
@@ -49,9 +42,10 @@ jQuery(document).ready(function ($) {
 				return;
 			}
 
-			// Skip element if it's inside position: fixed admin bar.
+			// Skip element if it's inside uncovered admin bar.
+			// (Admin bar is covered at 600px and under.)
 			const isInAdminBar = $el.closest('#wpadminbar').length;
-			if (isInAdminBar && $window.width() > ADMIN_BAR_ABSOLUTE_BREAKPOINT) {
+			if (isInAdminBar && $window.width() > 600) {
 				return;
 			}
 
@@ -142,7 +136,7 @@ jQuery(document).ready(function ($) {
 		}
 
 		// If we're at desktop width, close the menu.
-		if ($window.width() >= DESKTOP_BREAKPOINT) {
+		if ($window.width() > 1080) {
 			closeMenu();
 			return;
 		}
