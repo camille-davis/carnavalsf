@@ -10,7 +10,8 @@
  */
 require_once get_template_directory() . '/inc/customizer.php';
 require_once get_template_directory() . '/inc/page-color.php';
-require_once get_template_directory() . '/inc/blocks.php';
+require_once get_template_directory() . '/inc/misc-block-customizations.php';
+require_once get_template_directory() . '/inc/contact-form.php';
 
 /**
  * Theme setup
@@ -22,6 +23,7 @@ function carnavalsf_setup() {
 	add_editor_style( 'style.css' );
 }
 add_action( 'after_setup_theme', 'carnavalsf_setup' );
+
 
 /**
  * Navigation menus
@@ -85,6 +87,7 @@ function carnavalsf_enqueue_assets() {
 		wp_get_theme()->get( 'Version' ),
 		true
 	);
+
 }
 add_action( 'wp_enqueue_scripts', 'carnavalsf_enqueue_assets' );
 

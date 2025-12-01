@@ -5,13 +5,25 @@ Text Domain: carnavalsf
 */
 
 /*
- * Global
+ * Normalize
  */
 
 * {
 	margin: 0;
 	padding: 0;
 }
+
+input,
+textarea,
+select,
+button {
+	font-family: inherit;
+	font-size: inherit;
+}
+
+/*
+ * Global
+ */
 
 :root {
 	--side-padding-desktop: 2rem;
@@ -27,6 +39,7 @@ Text Domain: carnavalsf
   --wp--preset--font-size--medium: 1rem;
   --wp--preset--font-size--large: 1.25rem;
   --wp--preset--font-size--x-large: 2rem;
+  --letter-spacing-small: 0.025em;
 }
 
 body {
@@ -47,16 +60,7 @@ ul {
 	padding-left: 1rem;
 }
 
-/* Global Typography */
-
-a {
-	color: var(--accent-color-2);
-	font-weight: 700;
-}
-
-a:hover {
-	text-decoration: none;
-}
+/* Headings */
 
 h1,
 h2,
@@ -89,6 +93,91 @@ h5 {
 
 h6 {
 	font-size: var(--h6-font-size);
+}
+
+/* Links */
+
+a:not(.wp-element-button) {
+	color: var(--accent-color-2);
+	font-weight: 700;
+}
+
+a:not(.wp-element-button):hover {
+	color: var(--dark-text);
+}
+
+.page-color-2 a {
+	color: var(--accent-color-1);
+}
+
+.page-color-2 a:hover {
+	color: var(--light-text);
+}
+
+/* Buttons */
+
+button,
+.wp-element-button {
+	border: 0;
+	border-radius: var(--border-radius);
+	padding: 0.5rem 1.5rem;
+	text-transform: uppercase;
+	font-size: inherit;
+	letter-spacing: 0.025em;
+	margin-bottom: var(--vertical-space-small);
+	background-color: var(--accent-color-2);
+	color: var(--accent-color-1);
+	font-weight: bold;
+	cursor: pointer;
+	letter-spacing: var(--letter-spacing-small);
+}
+
+button:hover,
+.wp-element-button:hover {
+	background-color: var(--dark-text);
+}
+
+.page-color-2 button,
+.page-color-2 .wp-element-button {
+	background-color: var(--accent-color-1);
+	color: var(--accent-color-2);
+}
+
+.page-color-2 button:hover,
+.page-color-2 .wp-element-button:hover {
+	background-color: var(--light-text);
+}
+
+/* Inputs */
+
+input,
+textarea {
+	border: 0.125rem solid var(--accent-color-2);
+	border-radius: var(--border-radius);
+	padding: 0.5rem 1rem;
+	margin-bottom: var(--vertical-space-small);
+	background-color: transparent;
+	color: var(--dark-text);
+}
+
+.page-color-2 input,
+.page-color-2 textarea {
+	border-color: var(--accent-color-1);
+	color: var(--light-text);
+}
+
+/* Forms */
+
+.form-group {
+	display: flex;
+	flex-direction: column;
+}
+
+label {
+	padding-bottom: .25rem;
+	font-weight: bold;
+	text-transform: uppercase;
+	letter-spacing: var(--letter-spacing-small);
 }
 
 /*
@@ -321,7 +410,7 @@ main {
 .menu-links a {
 	font-family: var(--accent-font);
 	font-size: 1.375rem;
-	font-weight: 800;
+	font-weight: bold;
 	text-transform: uppercase;
 	text-decoration: none;
 	padding: 0 0.625rem;
@@ -534,10 +623,6 @@ h6.has-background {
 	}
 }
 
-.page-color-2 a {
-	color: var(--accent-color-1);
-}
-
 .entry-content,
 .editor-styles-wrapper {
 	padding: var(--vertical-space-large) var(--side-padding-desktop);
@@ -573,7 +658,7 @@ h6.has-background {
 }
 
 /*
-   Gutenberg Blocks
+* Gutenberg Blocks
 */
 
 /* Unset inline editor styles */
@@ -663,7 +748,7 @@ summary .block-editor-rich-text__editable {
 	line-height: 1;
 	text-transform: uppercase;
 	font-size: var(--h3-font-size);
-	font-weight: 800;
+	font-weight: bold;
 }
 
 .wp-block-details .details-content {
@@ -681,32 +766,15 @@ summary .block-editor-rich-text__editable {
 	margin-bottom: 0.25rem;
 }
 
-/* Buttons block */
+/* Contact form block */
 
-.wp-block-buttons {
-	margin-bottom: var(--vertical-space-small);
+.form-message {
+	text-align: center;
 }
 
-.wp-block-button__link {
-	border-radius: var(--border-radius);
-	padding: 0.5rem 1.5rem;
-	text-transform: uppercase;
-	font-size: inherit;
-	letter-spacing: 0.025em;
-}
-
-.wp-block-button__link,
-.page-color-2 .wp-block-button__link:hover {
-	background-color: var(--accent-color-2);
-	color: var(--accent-color-1);
-}
-
-.wp-block-button__link:hover,
-.page-color-2 .wp-block-button__link {
-	background-color: var(--accent-color-1);
-	color: var(--accent-color-2);
-}
-
+/*
+ * Color Classes
+ */
 .has-accent-color-1-color {
 	color: var(--accent-color-1) !important;
 }

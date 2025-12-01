@@ -38,6 +38,78 @@ Always write code in the most concise and pared-down form possible. This include
 6. **Consolidate selectors**: Use single query selectors with appropriate combinators instead of multiple separate queries
 7. **Remove verbose comments**: Keep comments minimal and only for non-obvious logic; let the code be self-documenting
 
+### WordPress-Specific Simplifications
+
+1. **Block registration**: Use WordPress's automatic `block.json` detection instead of manually registering scripts and assets:
+   - ✅ `register_block_type( get_template_directory() . '/blocks/block-name' );`
+   - ❌ Manual script registration with asset files when not needed
+
+2. **Conditional logic**: Use concise conditionals and null coalescing:
+   - ✅ `$value = $attributes['key'] ?? 'default';`
+   - ✅ `$has_form = ( $post && has_block( 'namespace/block', $post ) ) || is_page_template( 'template.php' );`
+   - ❌ Verbose if/else chains for simple defaults
+
+3. **JavaScript event handling**: Use event delegation and concise callbacks:
+   - ✅ `$(document).on('submit', '.form-class', function(e) { ... });`
+   - ❌ `$(document).ready(function() { $('.form-class').on('submit', ...); });`
+
+4. **AJAX callbacks**: Simplify success/error handling:
+   - ✅ Combine success/error logic when possible
+   - ✅ Use ternary operators for simple conditional class assignment
+   - ❌ Separate verbose if/else blocks for similar operations
+
+5. **Block editor JavaScript**: Use concise React element creation:
+   - ✅ `el('div', props, content)` instead of verbose `createElement` calls
+   - ✅ Arrow functions and destructuring: `({ attributes, setAttributes }) => ...`
+   - ❌ Verbose function declarations and intermediate variables
+
+6. **Remove unnecessary files**: Don't create asset files (like `index.asset.php`) unless WordPress requires them for build processes. Use automatic detection when possible.
+
+7. **Template rendering**: Simplify attribute access and remove unnecessary variables:
+   - ✅ Direct attribute access: `$attributes['key'] ?? 'default'`
+   - ✅ Inline conditionals: `<?php if ( $show ) : ?>`
+   - ❌ Multiple intermediate variables for simple operations
+
+8. **Data sanitization**: Use null coalescing operator instead of verbose isset checks:
+   - ✅ `sanitize_text_field( $_POST['name'] ?? '' )`
+   - ❌ `isset( $_POST['name'] ) ? sanitize_text_field( wp_unslash( $_POST['name'] ) ) : ''`
+
+9. **Validation logic**: Combine related validations into single statements:
+   - ✅ `if ( empty( $name ) || empty( $email ) || ! is_email( $email ) || empty( $message ) )`
+   - ❌ Separate if statements for each validation with array of errors
+
+10. **DRY principle**: Extract duplicate HTML/code into shared functions:
+    - ✅ Create reusable render functions when the same HTML appears in multiple places (blocks, shortcodes, etc.)
+    - ✅ Call shared functions instead of duplicating code
+    - ❌ Copy-pasting the same HTML structure in multiple files
+
+11. **Code density**: Remove unnecessary line breaks and whitespace in simple operations:
+    - ✅ `$message.addClass(response.success ? 'success' : 'error').text(response.data.message).fadeIn();`
+    - ✅ `if (response.success) $form[0].reset();`
+    - ❌ Excessive line breaks for simple single-line operations
+
+12. **Variable elimination**: Remove intermediate variables when values are only used once:
+    - ✅ `$to = apply_filters( 'filter_name', get_option( 'option' ) );`
+    - ❌ `$default = get_option( 'option' ); $to = apply_filters( 'filter_name', $default );`
+
+13. **Remove unnecessary file checks**: Don't check for file existence when WordPress functions handle it automatically:
+    - ✅ `register_block_type( get_template_directory() . '/blocks/block-name' );`
+    - ❌ `if ( file_exists( $block_path . '/block.json' ) ) { register_block_type( $block_path ); }`
+
+14. **Condense function calls**: Combine related WordPress function calls to single lines when appropriate:
+    - ✅ `wp_enqueue_script( 'handle', $url, $deps, $version, true );`
+    - ✅ `wp_localize_script( 'handle', 'object', array( 'key' => 'value' ) );`
+    - ❌ Multi-line formatting for simple function calls with few parameters
+
+15. **Remove redundant PHPDoc**: Don't add PHPDoc comments that just repeat the method name or are obvious:
+    - ✅ `public function register_block() {`
+    - ❌ `/**\n * Register block\n */\npublic function register_block() {`
+    - Keep PHPDoc only for complex methods or when it adds meaningful information
+
+16. **Self-documenting code**: Prefer clear method/variable names over comments:
+    - ✅ `public function enqueue_scripts() {`
+    - ❌ `// Enqueue scripts for contact form\npublic function enqueue_scripts() {`
+
 **Example of good pared-down code:**
 ```javascript
 // ✅ Good: Concise and clear

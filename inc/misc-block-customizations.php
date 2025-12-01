@@ -1,6 +1,10 @@
 <?php
 /**
- * Block customizations for Carnaval SF theme
+ * Misc block customizations for Carnaval SF theme:
+ * - Disable layout support
+ * - Customize details block
+ * - Add is-fullwidth class to group block
+ * - Change 'Dimensions' panel title to 'Spacing'
  *
  * @package CarnavalSF
  */
