@@ -1,173 +1,76 @@
-# Code Quality Rules
+# Project-specific
+
+- **Never modify core or plugins**: Never modify WordPress core files (`wp-admin/`, `wp-includes/`) or third-party plugin files.
+- **No JSX syntax**: Do not use JSX in JavaScript files. This theme does not use a build process to transpile JSX. Use `wp.element.createElement()` for creating React elements in WordPress block editor scripts.
+
+# Code-Creation Process
+
+When implementing a new feature or functionality:
+
+1. **Research First**: Before implementing, search the codebase and research multiple implementation approaches. Consider:
+   - WordPress-specific APIs and hooks available
+   - Existing patterns and conventions in the codebase
+   - Different architectural approaches (hooks vs direct calls, filters vs actions, etc.)
+   - Performance implications
+   - Maintainability and extensibility
+
+2. **Present Options**: After research, present the user with:
+   - Multiple viable implementation approaches (typically 2-3 options)
+   - Brief pros/cons for each approach
+   - Recommendation if one approach is clearly superior
+
+3. **Ask Clarifying Questions**: Before proceeding with implementation, ask questions to understand:
+   - User's specific requirements and constraints
+   - Expected behavior and edge cases
+   - Integration points with existing code
+   - Performance or scalability concerns
+   - Future extensibility needs
+
+4. **Wait for Approval**: Do not proceed with implementation until the user has:
+   - Selected an approach from the options presented
+   - Answered any critical clarifying questions
+   - Confirmed they're ready to proceed
+
+# Code Simplification
 
 ## Remove Unnecessary Code
 
-Always remove unnecessary code before committing. This includes:
+- **Unused code**: Remove variables, functions, attributes, and data attributes that are defined but never used
+- **Dead code**: Remove code that cannot execute due to context limitations (e.g., Customizer API code on non-customizer screens)
+- **Unnecessary dependencies**: Only include script/style dependencies that are actually used
+- **Redundant functionality**: Don't duplicate functionality already provided elsewhere (e.g., inline styles + JavaScript, localized data + inline scripts)
+- **Dead code paths**: Remove unreachable else/elseif branches and simplify always-true/false conditionals
+- **Remove redundant checks**: Eliminate unnecessary conditionals and type checks when code is already safe
+- **Variable elimination**: Remove intermediate variables when values are only used once
 
-1. **Unused variables, functions, and attributes**: Remove any code that is defined but never used, including:
-  - Data attributes that are set but never read
-  - Inline scripts that duplicate functionality already provided by localized scripts
-  - Variables or functions that are declared but never called
+## Readability and Maintainability
 
-2. **Code that cannot execute**: Remove code that will never run due to context limitations:
-  - WordPress Customizer API code (`wp.customize`) on non-customizer screens (e.g., post edit screens)
-  - Event listeners for APIs that aren't available in the current context
-  - Conditional code where the condition can never be true
+- **DRY principle**: Extract duplicate HTML/code into shared functions
+- **Inline simple functions**: Inline functions that are only called once or are very simple
+- **Avoid excessive nesting**: Limit nesting depth (prefer early returns, extract functions, use guard clauses). Refactor deeply nested conditionals or loops into separate functions.
+- **Combine similar operations**: Merge multiple similar queries or operations into single statements
+- **Condense function calls**: Single-line formatting for simple function calls
 
-3. **Unnecessary dependencies**: Remove script/style dependencies that aren't actually used:
-  - Don't include `customize-controls` dependency unless actually using the Customizer API
-  - Only include dependencies that are directly used in the code
+### PHP
 
-4. **Redundant functionality**: If functionality is already provided elsewhere, don't duplicate it:
-  - If colors are set inline via `style` attributes, don't also set them via JavaScript unless needed for dynamic updates
-  - If data is already localized via `wp_localize_script`, don't also output it in inline scripts
+- **Conditional logic**: Use null coalescing and concise conditionals:
+  - ✅ `$value = $attributes['key'] ?? 'default';`
+  - ✅ `$has_form = ( $post && has_block( 'namespace/block', $post ) ) || is_page_template( 'template.php' );`
+  - ❌ Verbose if/else chains for simple defaults
+- **Template rendering**: Direct attribute access and inline conditionals:
+  - ✅ `$attributes['key'] ?? 'default'`
+  - ✅ `<?php if ( $show ) : ?>`
+- **Validation logic**: Combine related validations into single statements:
+  - ✅ `if ( empty( $name ) || empty( $email ) || ! is_email( $email ) || empty( $message ) )`
 
-5. **Dead code paths**: Remove code in else/elseif branches that will never execute, or simplify conditionals that are always true/false.
+### JavaScript
 
-Before finalizing code, review it to ensure every line serves a purpose and will execute in the intended context.
-
-## Code Simplification
-
-Always write code in the most concise and pared-down form possible. This includes:
-
-1. **Combine similar operations**: Merge multiple similar queries or operations into single statements where possible
-2. **Use modern syntax**: Prefer optional chaining (`?.`), arrow functions, and other concise syntax over verbose alternatives
-3. **Remove redundant checks**: Eliminate unnecessary conditionals and type checks when the code is already safe
-4. **Inline simple functions**: If a function is only called once or is very simple, consider inlining it
-5. **Simplify initialization**: Combine related setup code and remove unnecessary intermediate variables
-6. **Consolidate selectors**: Use single query selectors with appropriate combinators instead of multiple separate queries
-7. **Remove verbose comments**: Keep comments minimal and only for non-obvious logic; let the code be self-documenting
-
-### WordPress-Specific Simplifications
-
-1. **Block registration**: Use WordPress's automatic `block.json` detection instead of manually registering scripts and assets:
-   - ✅ `register_block_type( get_template_directory() . '/blocks/block-name' );`
-   - ❌ Manual script registration with asset files when not needed
-
-2. **Conditional logic**: Use concise conditionals and null coalescing:
-   - ✅ `$value = $attributes['key'] ?? 'default';`
-   - ✅ `$has_form = ( $post && has_block( 'namespace/block', $post ) ) || is_page_template( 'template.php' );`
-   - ❌ Verbose if/else chains for simple defaults
-
-3. **JavaScript event handling**: Use event delegation and concise callbacks:
-   - ✅ `$(document).on('submit', '.form-class', function(e) { ... });`
-   - ❌ `$(document).ready(function() { $('.form-class').on('submit', ...); });`
-
-4. **AJAX callbacks**: Simplify success/error handling:
-   - ✅ Combine success/error logic when possible
-   - ✅ Use ternary operators for simple conditional class assignment
-   - ❌ Separate verbose if/else blocks for similar operations
-
-5. **Block editor JavaScript**: Use concise React element creation:
-   - ✅ `el('div', props, content)` instead of verbose `createElement` calls
-   - ✅ Arrow functions and destructuring: `({ attributes, setAttributes }) => ...`
-   - ❌ Verbose function declarations and intermediate variables
-
-6. **Remove unnecessary files**: Don't create asset files (like `index.asset.php`) unless WordPress requires them for build processes. Use automatic detection when possible.
-
-7. **Template rendering**: Simplify attribute access and remove unnecessary variables:
-   - ✅ Direct attribute access: `$attributes['key'] ?? 'default'`
-   - ✅ Inline conditionals: `<?php if ( $show ) : ?>`
-   - ❌ Multiple intermediate variables for simple operations
-
-8. **Data sanitization**: Use null coalescing operator instead of verbose isset checks:
-   - ✅ `sanitize_text_field( $_POST['name'] ?? '' )`
-   - ❌ `isset( $_POST['name'] ) ? sanitize_text_field( wp_unslash( $_POST['name'] ) ) : ''`
-
-9. **Validation logic**: Combine related validations into single statements:
-   - ✅ `if ( empty( $name ) || empty( $email ) || ! is_email( $email ) || empty( $message ) )`
-   - ❌ Separate if statements for each validation with array of errors
-
-10. **DRY principle**: Extract duplicate HTML/code into shared functions:
-    - ✅ Create reusable render functions when the same HTML appears in multiple places (blocks, shortcodes, etc.)
-    - ✅ Call shared functions instead of duplicating code
-    - ❌ Copy-pasting the same HTML structure in multiple files
-
-11. **Code density**: Remove unnecessary line breaks and whitespace in simple operations:
-    - ✅ `$message.addClass(response.success ? 'success' : 'error').text(response.data.message).fadeIn();`
-    - ✅ `if (response.success) $form[0].reset();`
-    - ❌ Excessive line breaks for simple single-line operations
-
-12. **Variable elimination**: Remove intermediate variables when values are only used once:
-    - ✅ `$to = apply_filters( 'filter_name', get_option( 'option' ) );`
-    - ❌ `$default = get_option( 'option' ); $to = apply_filters( 'filter_name', $default );`
-
-13. **Remove unnecessary file checks**: Don't check for file existence when WordPress functions handle it automatically:
-    - ✅ `register_block_type( get_template_directory() . '/blocks/block-name' );`
-    - ❌ `if ( file_exists( $block_path . '/block.json' ) ) { register_block_type( $block_path ); }`
-
-14. **Condense function calls**: Combine related WordPress function calls to single lines when appropriate:
-    - ✅ `wp_enqueue_script( 'handle', $url, $deps, $version, true );`
-    - ✅ `wp_localize_script( 'handle', 'object', array( 'key' => 'value' ) );`
-    - ❌ Multi-line formatting for simple function calls with few parameters
-
-15. **Remove redundant PHPDoc**: Don't add PHPDoc comments that just repeat the method name or are obvious:
-    - ✅ `public function register_block() {`
-    - ❌ `/**\n * Register block\n */\npublic function register_block() {`
-    - Keep PHPDoc only for complex methods or when it adds meaningful information
-
-16. **Self-documenting code**: Prefer clear method/variable names over comments:
-    - ✅ `public function enqueue_scripts() {`
-    - ❌ `// Enqueue scripts for contact form\npublic function enqueue_scripts() {`
-
-**Example of good pared-down code:**
-```javascript
-// ✅ Good: Concise and clear
-function updateTitles() {
-	document.querySelectorAll('.panel').forEach((el) => {
-		if (el.textContent?.includes('Dimensions')) {
-			el.textContent = el.textContent.replace('Dimensions', 'Spacing');
-		}
-	});
-}
-```
-
-**Example of code that should be simplified:**
-```javascript
-// ❌ Bad: Verbose and redundant
-function updatePanelTitles() {
-	const panelButtons = document.querySelectorAll('.components-panel__body-toggle');
-	const headings = document.querySelectorAll('.block-editor-block-inspector h2');
-
-	panelButtons.forEach((button) => {
-		const text = button.textContent;
-		if (text !== null && text !== undefined) {
-			if (text.includes('Dimensions')) {
-				button.textContent = text.replace('Dimensions', 'Spacing');
-			}
-		}
-	});
-
-	headings.forEach((heading) => {
-		const headingText = heading.textContent;
-		if (headingText !== null && headingText !== undefined) {
-			if (headingText.includes('Dimensions')) {
-				heading.textContent = headingText.replace('Dimensions', 'Spacing');
-			}
-		}
-	});
-}
-```
-
-## JavaScript Syntax
-
-**Do not use JSX syntax** in JavaScript files. This theme does not use a build process to transpile JSX. Instead, use `wp.element.createElement()` for creating React elements in WordPress block editor scripts. JSX syntax will cause syntax errors since the browser cannot parse it directly.
-
-## Formatting
-
-Comments:
-  - In comments, add a period at the end only if it's a sentence.
-  - **Always add an empty line above comments that are on their own line or in a comment block.** This includes:
-    - Single-line comments (`//`) that are on their own line
-    - Multi-line comment blocks (`/** */`)
-    - Comments that appear at the start of a function, method, or code block
-    - The only exception is comments that appear on the same line as code (inline comments)
-
-Spacing:
-  - Use spaces to line up assignments in arrays.
-  - Don't line up variable assignments outside of arrays.
-  - **PHPDoc parameter formatting: Use exactly one space between the type and the parameter name, then one space before the description. Do NOT add extra spaces for alignment.**
-    - ✅ `@param array $args Block type arguments`
-    - ✅ `@param string $name Block type name`
-    - ❌ `@param array  $args Block type arguments` (extra spaces for alignment)
-    - ❌ `@param array  $block          The block data` (extra spaces for alignment)
+- **Use modern syntax**: Prefer optional chaining (`?.`), arrow functions, and concise syntax over verbose alternatives
+- **Consolidate selectors**: Use single query selectors with appropriate combinators instead of multiple separate queries
+- **Event handling**: Use event delegation:
+  - ✅ `$(document).on('submit', '.form-class', function(e) { ... });`
+  - ❌ `$(document).ready(function() { $('.form-class').on('submit', ...); });`
+- **AJAX callbacks**: Simplify success/error handling with ternary operators
+- **Block editor**: Use concise React element creation:
+  - ✅ `el('div', props, content)` instead of verbose `createElement` calls
+  - ✅ Arrow functions: `({ attributes, setAttributes }) => ...`
