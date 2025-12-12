@@ -188,7 +188,7 @@ label {
 	background-color: var(--accent-color-2);
 	width: 100%;
 	position: fixed;
-	z-index: 1;
+	z-index: 1000;
 }
 
 @media (max-width: 1080px) {
@@ -262,6 +262,7 @@ label {
 
 	.open-menu {
 		margin-right: 1.5rem;
+		margin-bottom: 0;
 	}
 
 	.close-menu {
