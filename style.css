@@ -773,6 +773,23 @@ summary .block-editor-rich-text__editable {
 	text-align: center;
 }
 
+/* Gallery Lightbox */
+
+body.lightbox-open {
+	overflow: hidden;
+}
+
+.wp-lightbox-overlay.zoom.active .scrim,
+.wp-lightbox-overlay.zoom.show-closing-animation:not(.active) .scrim {
+	background-color: rgba(0, 0, 0, 0.9) !important;
+}
+
+.wp-lightbox-overlay .close-button svg {
+	width: 32px;
+	height: 32px;
+	fill: white;
+}
+
 /*
  * Color Classes
  */

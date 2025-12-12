@@ -5,6 +5,7 @@
  * - Customize details block
  * - Add is-fullwidth class to group block
  * - Change 'Dimensions' panel title to 'Spacing'
+ * - Set gallery image default to 'enlarge on click'
  *
  * @package CarnavalSF
  */
@@ -58,6 +59,14 @@ class CarnavalSF_Blocks {
 			'carnavalsf-dimensions-panel-title',
 			get_template_directory_uri() . '/js/dimensions-panel-title.js',
 			array( 'wp-i18n' ),
+			wp_get_theme()->get( 'Version' ),
+			true
+		);
+
+		wp_enqueue_script(
+			'carnavalsf-gallery',
+			get_template_directory_uri() . '/js/gallery.js',
+			array( 'wp-blocks', 'wp-hooks' ),
 			wp_get_theme()->get( 'Version' ),
 			true
 		);

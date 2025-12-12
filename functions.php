@@ -88,6 +88,15 @@ function carnavalsf_enqueue_assets() {
 		true
 	);
 
+  // Fix jumpy scrolling when Gallery Block Lightbox is open.
+	wp_enqueue_script(
+		'carnavalsf-fix-lightbox-scroll',
+		get_template_directory_uri() . '/js/fix-lightbox-scroll.js',
+		array(),
+		wp_get_theme()->get( 'Version' ),
+		true
+	);
+
 }
 add_action( 'wp_enqueue_scripts', 'carnavalsf_enqueue_assets' );
 
