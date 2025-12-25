@@ -1,13 +1,21 @@
 jQuery(document).ready(function ($) {
-	const $body = $('body');
-	const $window = $(window);
 	const $menuOpen = $('#open-menu');
-	const $menuClose = $('#close-menu');
 	const $menuOuter = $('#menu-outer');
 
 	if (!$menuOpen.length || !$menuOuter.length) {
 		return;
 	}
+
+	const $body = $('body');
+	const $window = $(window);
+	const $menuClose = $('#close-menu');
+	const focusableSelector = 'a[href]:not(:disabled):not(:hidden), ' +
+		'button:not(:disabled):not(:hidden), ' +
+		'input:not(:disabled):not(:hidden), ' +
+		'select:not(:disabled):not(:hidden), ' +
+		'textarea:not(:disabled):not(:hidden), ' +
+		'summary:not(:disabled):not(:hidden), ' +
+		'[tabindex]:not([tabindex="-1"]):not(:disabled):not(:hidden)';
 
 	/**
 	 * Helper functions for tab flow.
@@ -18,16 +26,6 @@ jQuery(document).ready(function ($) {
 
 	// Removes covered elements from tab flow when mobile menu is open.
 	function removeFromTabFlow() {
-
-		// Get focusable elements.
-		const focusableSelector = 'a[href]:not(:disabled):not(:hidden), ' +
-			'button:not(:disabled):not(:hidden), ' +
-			'input:not(:disabled):not(:hidden), ' +
-			'select:not(:disabled):not(:hidden), ' +
-			'textarea:not(:disabled):not(:hidden), ' +
-			'summary:not(:disabled):not(:hidden), ' +
-			'[tabindex]:not([tabindex="-1"]):not(:disabled):not(:hidden)';
-
 		$(focusableSelector).each(function() {
 			const $el = $(this);
 			const element = this;
