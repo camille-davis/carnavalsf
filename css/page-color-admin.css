@@ -62,3 +62,82 @@
 	color: #666;
 }
 
+/* Toggle Switch Styles */
+.carnavalsf-toggle-wrapper {
+	margin: 1.5em 0;
+}
+
+.carnavalsf-toggle-label {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	cursor: pointer;
+	user-select: none;
+}
+
+.carnavalsf-toggle-label-text {
+	flex: 1;
+	margin-right: 12px;
+	font-weight: 500;
+}
+
+.carnavalsf-toggle-switch {
+	position: relative;
+	display: inline-block;
+	width: 44px;
+	height: 24px;
+	flex-shrink: 0;
+}
+
+.carnavalsf-toggle-input {
+	opacity: 0;
+	width: 0;
+	height: 0;
+	position: absolute;
+}
+
+.carnavalsf-toggle-slider {
+	position: absolute;
+	cursor: pointer;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: #ccc;
+	transition: 0.3s;
+	border-radius: 24px;
+}
+
+.carnavalsf-toggle-slider:before {
+	position: absolute;
+	content: "";
+	height: 18px;
+	width: 18px;
+	left: 3px;
+	bottom: 3px;
+	background-color: white;
+	transition: 0.3s;
+	border-radius: 50%;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.carnavalsf-toggle-input:checked + .carnavalsf-toggle-slider {
+	background-color: #2271b1;
+}
+
+.carnavalsf-toggle-input:checked + .carnavalsf-toggle-slider:before {
+	transform: translateX(20px);
+}
+
+.carnavalsf-toggle-input:focus + .carnavalsf-toggle-slider {
+	box-shadow: 0 0 0 2px rgba(34, 113, 177, 0.2);
+}
+
+.carnavalsf-toggle-switch:hover .carnavalsf-toggle-slider {
+	background-color: #b3b3b3;
+}
+
+.carnavalsf-toggle-input:checked + .carnavalsf-toggle-slider:hover {
+	background-color: #135e96;
+}
+
