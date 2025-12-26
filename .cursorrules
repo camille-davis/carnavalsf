@@ -6,6 +6,18 @@
 
 ---
 
+# Instruction Following Rules
+
+**IMPORTANT:** Follow user instructions literally and conservatively.
+
+- **Answer questions literally**: If the user asks a question or requests an explanation, provide the answer/explanation only. Do NOT take action or make changes unless explicitly requested.
+- **Ask before taking initiative**: If you want to take action beyond what was explicitly requested, ask for confirmation first. Do not assume the user wants additional improvements, refactoring, or optimizations unless they explicitly ask.
+- **Ask for clarification when unsure**: If you are uncertain about what the user wants, ask for clarification rather than making assumptions.
+- **Follow instructions exactly**: If the user says "check", "analyze", "review", or "look at" something, do that action only. Do not automatically fix issues found unless explicitly asked to do so.
+- **Be explicit about scope**: When the user requests a change, only make that specific change. Do not make related improvements unless explicitly requested.
+
+---
+
 # Code Improvement Documentation Rule
 
 **IMPORTANT:** Whenever you improve code quality, refactor, or apply patterns from this document, you MUST add the improvement pattern to `.cursorrules` if it's not already documented. This ensures knowledge is preserved and patterns can be reused.
