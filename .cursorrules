@@ -216,8 +216,120 @@ Combine related validations into single statements:
 
 # Security & Validation
 
+## Input Sanitization
+Always sanitize user input using WordPress functions:
+- ✅ `sanitize_text_field()` - For single-line text
+- ✅ `sanitize_email()` - For email addresses
+- ✅ `sanitize_textarea_field()` - For multi-line text
+- ✅ `sanitize_url()` - For URLs
+- ✅ `esc_url_raw()` - For URLs that will be escaped later
+
+```php
+// Before
+$name = $_POST['name'];
+$email = $_POST['email'];
+
+// After
+$name = isset( $_POST['name'] ) ? sanitize_text_field( $_POST['name'] ) : '';
+$email = isset( $_POST['email'] ) ? sanitize_email( $_POST['email'] ) : '';
+```
+
+## Output Escaping
+Always escape output for the appropriate context:
+- ✅ `esc_html()` - For HTML content
+- ✅ `esc_attr()` - For HTML attributes
+- ✅ `esc_url()` - For URLs in attributes/href
+- ✅ `esc_js()` - For JavaScript strings
+- ✅ `esc_html_e()` - For translatable HTML strings
+
+```php
+// Before
+<div class="<?php echo $class; ?>"><?php echo $content; ?></div>
+
+// After
+<div class="<?php echo esc_attr( $class ); ?>"><?php echo esc_html( $content ); ?></div>
+```
+
+## Nonce Verification
+Always verify nonces for form submissions and AJAX requests:
+```php
+// Create nonce
+wp_nonce_field( 'action_name', 'nonce_field_name' );
+// Or for AJAX
+wp_localize_script( 'script', 'data', array( 'nonce' => wp_create_nonce( 'action_name' ) ) );
+
+// Verify nonce
+if ( ! isset( $_POST['nonce_field_name'] ) || ! wp_verify_nonce( $_POST['nonce_field_name'], 'action_name' ) ) {
+    wp_die( 'Security check failed' );
+}
+```
+
+## ABSPATH Checks
+Always check for `ABSPATH` in included files to prevent direct access:
+```php
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
+```
+
+## Email Validation
+Always validate email addresses:
+```php
+// Before
+$email = sanitize_email( $_POST['email'] );
+if ( ! empty( $email ) ) {
+    // use email
+}
+
+// After
+$email = isset( $_POST['email'] ) ? sanitize_email( $_POST['email'] ) : '';
+if ( ! empty( $email ) && is_email( $email ) ) {
+    // use email
+}
+```
+
+## Prevent Header Injection
+Check for newlines in user input before using in email headers:
+```php
+// Before
+$headers[] = 'From: ' . $name . ' <' . $email . '>';
+
+// After
+if ( strpos( $name, "\n" ) !== false || strpos( $name, "\r" ) !== false ||
+     strpos( $email, "\n" ) !== false || strpos( $email, "\r" ) !== false ) {
+    return new WP_Error( 'invalid_input', 'Invalid input detected.' );
+}
+$headers[] = 'From: ' . $name . ' <' . $email . '>';
+```
+
+## Rate Limiting
+Implement rate limiting for form submissions and API calls using WordPress transients:
+```php
+private const RATE_LIMIT = 3;
+private const RATE_LIMIT_WINDOW = HOUR_IN_SECONDS;
+
+private function check_rate_limit() {
+    $ip = $this->get_client_ip();
+    $key = 'rate_limit_' . md5( $ip );
+    $count = get_transient( $key );
+
+    if ( $count && $count >= self::RATE_LIMIT ) {
+        return new WP_Error( 'rate_limit_exceeded', 'Too many requests. Please try again later.' );
+    }
+
+    return true;
+}
+
+private function increment_rate_limit() {
+    $ip = $this->get_client_ip();
+    $key = 'rate_limit_' . md5( $ip );
+    $count = get_transient( $key );
+    set_transient( $key, ( $count ? $count + 1 : 1 ), self::RATE_LIMIT_WINDOW );
+}
+```
+
 ## Strict URL Validation
-Use `wp_parse_url()` for proper validation:
+Use `wp_parse_url()` for proper URL validation instead of string matching:
 ```php
 // Before
 if ( strpos( $url, 'youtube.com' ) === false ) return;
@@ -229,17 +341,59 @@ $host = strtolower( $parsed['host'] );
 return in_array( $host, array( 'youtube.com', 'www.youtube.com' ), true );
 ```
 
-## Prevent Header Injection
-Check for newlines in user input:
+## URL Filtering
+When filtering URLs from user input, use comprehensive pattern matching:
+```php
+private function contains_url( $text ) {
+    if ( empty( $text ) ) {
+        return false;
+    }
+
+    $patterns = array(
+        '/https?:\/\//i',
+        '/www\.\w+/i',
+        '/\w+\.(com|org|net|io|co|edu|gov)/i',
+    );
+
+    foreach ( $patterns as $pattern ) {
+        if ( preg_match( $pattern, $text ) ) {
+            return true;
+        }
+    }
+
+    return false;
+}
+```
+
+## Permission Checks
+Always verify user capabilities for admin functions:
 ```php
 // Before
-$headers[] = 'From: ' . $name . ' <' . $email . '>';
+if ( isset( $_POST['save'] ) ) {
+    // save data
+}
 
 // After
-if ( strpos( $name, "\n" ) !== false || strpos( $name, "\r" ) !== false ) {
-    return new WP_Error( 'invalid_input', 'Invalid input detected.' );
+if ( isset( $_POST['save'] ) && current_user_can( 'edit_posts' ) ) {
+    // verify nonce
+    // save data
 }
-$headers[] = 'From: ' . $name . ' <' . $email . '>';
+```
+
+## Inline Style Security
+Avoid inline styles with user-controlled data. Use data attributes and CSS instead:
+```php
+// Before
+<div style="background-image: url('<?php echo esc_url( $url ); ?>');"></div>
+
+// After
+<div data-bg-image="<?php echo esc_attr( esc_url( $url ) ); ?>"></div>
+```
+Then handle in CSS:
+```css
+[data-bg-image] {
+    background-image: url(attr(data-bg-image));
+}
 ```
 
 ---
