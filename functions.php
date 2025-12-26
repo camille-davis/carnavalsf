@@ -9,7 +9,6 @@
 // Theme Includes
 // ============================================================================
 
-require_once get_template_directory() . '/inc/theme-helpers.php';
 require_once get_template_directory() . '/inc/customizer.php';
 require_once get_template_directory() . '/inc/page-appearance.php';
 require_once get_template_directory() . '/inc/misc-block-customizations.php';
@@ -84,6 +83,23 @@ function carnavalsf_widgets_init() {
 	}
 }
 add_action( 'widgets_init', 'carnavalsf_widgets_init' );
+
+// ============================================================================
+// Theme Helpers
+// ============================================================================
+
+/**
+ * Get the theme version.
+ *
+ * @return string Theme version.
+ */
+function carnavalsf_get_theme_version() {
+	static $version = null;
+	if ( null === $version ) {
+		$version = wp_get_theme()->get( 'Version' );
+	}
+	return $version;
+}
 
 // ============================================================================
 // Assets (Styles & Scripts)
