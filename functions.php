@@ -9,6 +9,7 @@
 // Theme Includes
 // ============================================================================
 
+require_once get_template_directory() . '/inc/theme-helpers.php';
 require_once get_template_directory() . '/inc/customizer.php';
 require_once get_template_directory() . '/inc/page-appearance.php';
 require_once get_template_directory() . '/inc/misc-block-customizations.php';
@@ -94,7 +95,7 @@ add_action( 'widgets_init', 'carnavalsf_widgets_init' );
  * @return void
  */
 function carnavalsf_enqueue_assets() {
-	$theme_version = wp_get_theme()->get( 'Version' );
+	$theme_version = carnavalsf_get_theme_version();
 
 	// Main stylesheet.
 	wp_enqueue_style(

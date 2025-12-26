@@ -32,7 +32,7 @@ class CarnavalSF_Blocks {
 	 * @return void
 	 */
 	public function enqueue_block_editor_assets() {
-		$theme_version = wp_get_theme()->get( 'Version' );
+		$theme_version = carnavalsf_get_theme_version();
 
 		// Group block fullwidth functionality.
 		wp_enqueue_script(
@@ -87,7 +87,7 @@ class CarnavalSF_Blocks {
 	 * @return string Modified block content.
 	 */
 	public function group_block_fullwidth( $block_content, $block ) {
-		if ( empty( $block['attrs']['fullwidth'] ) ) {
+		if ( ! isset( $block['attrs']['fullwidth'] ) || ! $block['attrs']['fullwidth'] ) {
 			return $block_content;
 		}
 

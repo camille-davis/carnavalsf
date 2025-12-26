@@ -36,7 +36,7 @@ class CarnavalSF_Customizer {
 	 *
 	 * @var array
 	 */
-	private const DEFAULT_COLORS = array(
+	public const DEFAULT_COLORS = array(
 		'accent_color_1'   => '#FFA843',
 		'accent_color_2'   => '#9C286E',
 		'accent_color_3'   => '#05DFD7',
@@ -279,7 +279,7 @@ class CarnavalSF_Customizer {
 		wp_add_inline_script( 'customize-controls', $inline_script );
 
 		// Add 'Reset' buttons.
-		$theme_version = wp_get_theme()->get( 'Version' );
+		$theme_version = carnavalsf_get_theme_version();
 		wp_enqueue_script(
 			'carnavalsf-customizer',
 			get_template_directory_uri() . '/js/customizer.js',
@@ -301,7 +301,7 @@ class CarnavalSF_Customizer {
 	 * Add customizer styles.
 	 */
 	public function add_customizer_style() {
-		$theme_version = wp_get_theme()->get( 'Version' );
+		$theme_version = carnavalsf_get_theme_version();
 		wp_enqueue_style(
 			'carnavalsf-customizer',
 			get_template_directory_uri() . '/css/customizer.css',

@@ -14,11 +14,9 @@ get_header();
 		the_post();
 
 		// Get page color from meta box.
-		$page_color      = 'page-color-1';
 		$page_color_meta = get_post_meta( get_the_ID(), '_carnavalsf_page_color', true );
-		if ( ! empty( $page_color_meta ) && in_array( $page_color_meta, array( 'color-1', 'color-2' ), true ) ) {
-			$page_color = 'page-' . $page_color_meta;
-		}
+		$valid_color     = ! empty( $page_color_meta ) && in_array( $page_color_meta, CarnavalSF_Page_Appearance::PAGE_COLOR_OPTIONS, true ) ? $page_color_meta : CarnavalSF_Page_Appearance::DEFAULT_PAGE_COLOR;
+		$page_color      = 'page-' . $valid_color;
 		?>
 
 		<div id="post-<?php the_ID(); ?>" <?php post_class( $page_color ); ?>>

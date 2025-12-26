@@ -160,7 +160,30 @@ Combine related validations into single statements:
   - Versions: `private const VERSION = '1.0.0';`
   - Timeouts: `private const TIMEOUT = 30;`
 - **Extract Repeated Function Calls**: Cache expensive or repeated function results
+  ```php
+  // Before: Repeated expensive calls
+  wp_enqueue_style( 'style', $url, array(), wp_get_theme()->get( 'Version' ) );
+  wp_enqueue_script( 'script', $url, array(), wp_get_theme()->get( 'Version' ), true );
+
+  // After: Helper function with static caching
+  function get_theme_version() {
+      static $version = null;
+      if ( null === $version ) {
+          $version = wp_get_theme()->get( 'Version' );
+      }
+      return $version;
+  }
+  wp_enqueue_style( 'style', $url, array(), get_theme_version() );
+  ```
 - **Centralized Configuration**: Single source of truth for feature definitions
+- **Share Constants Between Classes**: Make constants public when needed by other classes
+  ```php
+  // In Class A
+  public const CONFIG_VALUE = 'value';
+
+  // In Class B
+  $value = ClassA::CONFIG_VALUE;
+  ```
 - **Extract Default Values to Constants**: Group related defaults into constant arrays
   ```php
   // Before: Hardcoded defaults scattered throughout code
@@ -532,6 +555,11 @@ Then use the custom property in CSS:
 - Default values appear in multiple places (get_theme_mod, get_option, etc.)
 - Defaults are related and form a logical group
 - You want a single source of truth for configuration
+
+## Extract Repeated Expensive Calls When:
+- Same function call appears 3+ times
+- Function call is expensive (file system, database, complex calculations)
+- Use static caching in helper function to avoid repeated calls
 
 ## Extract to Plugin When:
 - Functionality is reusable

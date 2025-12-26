@@ -15,6 +15,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 class CarnavalSF_Page_Appearance {
 
 	/**
+	 * Available page color options.
+	 *
+	 * @var array
+	 */
+	public const PAGE_COLOR_OPTIONS = array( 'color-1', 'color-2' );
+
+	/**
+	 * Default page color.
+	 *
+	 * @var string
+	 */
+	public const DEFAULT_PAGE_COLOR = 'color-1';
+
+	/**
 	 * Constructor.
 	 *
 	 * @return void
@@ -66,12 +80,12 @@ class CarnavalSF_Page_Appearance {
 	public function render_page_color_section( $post ) {
 		$selected_color = get_post_meta( $post->ID, '_carnavalsf_page_color', true );
 		if ( empty( $selected_color ) ) {
-			$selected_color = 'color-1';
+			$selected_color = self::DEFAULT_PAGE_COLOR;
 		}
 
 		// Get colors from customizer.
-		$color_1 = get_theme_mod( 'accent_color_1', '#FFA843' );
-		$color_2 = get_theme_mod( 'accent_color_2', '#9C286E' );
+		$color_1 = get_theme_mod( 'accent_color_1', CarnavalSF_Customizer::DEFAULT_COLORS['accent_color_1'] );
+		$color_2 = get_theme_mod( 'accent_color_2', CarnavalSF_Customizer::DEFAULT_COLORS['accent_color_2'] );
 		?>
 		<div class="carnavalsf-page-color-selector">
 			<p><?php esc_html_e( 'Select a page color:', 'carnavalsf' ); ?></p>
@@ -155,10 +169,10 @@ class CarnavalSF_Page_Appearance {
 	 */
 	public function save_page_color( $post_id ) {
 		// Save the value.
-		$color = 'color-1'; // Default.
+		$color = self::DEFAULT_PAGE_COLOR;
 		if ( isset( $_POST['carnavalsf_page_color'] ) ) {
 			$submitted_color = sanitize_text_field( wp_unslash( $_POST['carnavalsf_page_color'] ) );
-			if ( in_array( $submitted_color, array( 'color-1', 'color-2' ), true ) ) {
+			if ( in_array( $submitted_color, self::PAGE_COLOR_OPTIONS, true ) ) {
 				$color = $submitted_color;
 			}
 		}
@@ -194,7 +208,7 @@ class CarnavalSF_Page_Appearance {
 			return;
 		}
 
-		$theme_version = wp_get_theme()->get( 'Version' );
+		$theme_version = carnavalsf_get_theme_version();
 
 		// Enqueue admin CSS.
 		wp_enqueue_style(
@@ -218,8 +232,8 @@ class CarnavalSF_Page_Appearance {
 			'carnavalsf-page-color',
 			'carnavalsfPageColor',
 			array(
-				'color1' => get_theme_mod( 'accent_color_1', '#FFA843' ),
-				'color2' => get_theme_mod( 'accent_color_2', '#9C286E' ),
+				'color1' => get_theme_mod( 'accent_color_1', CarnavalSF_Customizer::DEFAULT_COLORS['accent_color_1'] ),
+				'color2' => get_theme_mod( 'accent_color_2', CarnavalSF_Customizer::DEFAULT_COLORS['accent_color_2'] ),
 			)
 		);
 	}
@@ -237,7 +251,7 @@ class CarnavalSF_Page_Appearance {
 			return;
 		}
 
-		$theme_version = wp_get_theme()->get( 'Version' );
+		$theme_version = carnavalsf_get_theme_version();
 
 		// Enqueue editor script for hiding page title.
 		wp_enqueue_script(
