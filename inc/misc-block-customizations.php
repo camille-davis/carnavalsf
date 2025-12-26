@@ -1,7 +1,6 @@
 <?php
 /**
  * Misc block customizations for Carnaval SF theme:
- * - Disable layout support
  * - Customize details block
  * - Add is-fullwidth class to group block
  * - Change 'Dimensions' panel title to 'Spacing'
@@ -22,21 +21,9 @@ class CarnavalSF_Blocks {
 	 * Constructor
 	 */
 	public function __construct() {
-		add_filter( 'block_editor_settings_all', array( $this, 'disable_layout_support' ), 10, 1 );
 		add_filter( 'render_block', array( $this, 'customize_details_block' ), 10, 2 );
 		add_filter( 'render_block_core/group', array( $this, 'group_block_fullwidth' ), 10, 2 );
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_block_editor_assets' ) );
-	}
-
-	/**
-	 * Disable layout support in block editor.
-	 *
-	 * @param array $editor_settings Editor settings array.
-	 * @return array Modified editor settings.
-	 */
-	public function disable_layout_support( $editor_settings ) {
-		$editor_settings['supportsLayout'] = false;
-		return $editor_settings;
 	}
 
 	/**
