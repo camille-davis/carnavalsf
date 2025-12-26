@@ -22,9 +22,15 @@ get_header();
 		?>
 
 		<div id="post-<?php the_ID(); ?>" <?php post_class( $page_color ); ?>>
-			<?php if ( has_post_thumbnail() ) : ?>
-				<div class="featured-image" style="background-image: url('<?php echo esc_url( get_the_post_thumbnail_url() ); ?>');"></div>
-			<?php endif; ?>
+		<?php if ( has_post_thumbnail() ) :
+			$thumbnail_url = get_the_post_thumbnail_url();
+			if ( $thumbnail_url ) :
+				$escaped_url = esc_url( $thumbnail_url );
+			?>
+			<div class="featured-image" style="--bg-image: url('<?php echo esc_attr( $escaped_url ); ?>');"></div>
+		<?php
+			endif;
+		endif; ?>
 
 			<?php get_template_part( 'template-parts/content' ); ?>
 		</div>

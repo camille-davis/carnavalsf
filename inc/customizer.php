@@ -18,6 +18,50 @@ require_once get_template_directory() . '/inc/color-converter.php';
 class CarnavalSF_Customizer {
 
 	/**
+	 * Default fonts URL.
+	 *
+	 * @var string
+	 */
+	private const DEFAULT_FONTS_URL = 'https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&family=Saira+Condensed:wght@400;800&display=block';
+
+	/**
+	 * Allowed font hosts.
+	 *
+	 * @var array
+	 */
+	private const ALLOWED_FONT_HOSTS = array( 'fonts.googleapis.com', 'fonts.gstatic.com' );
+
+	/**
+	 * Default color values.
+	 *
+	 * @var array
+	 */
+	private const DEFAULT_COLORS = array(
+		'accent_color_1'   => '#FFA843',
+		'accent_color_2'   => '#9C286E',
+		'accent_color_3'   => '#05DFD7',
+		'dark_text_color'  => '#383838',
+		'light_text_color' => '#FFFFFF',
+	);
+
+	/**
+	 * Default typography values.
+	 *
+	 * @var array
+	 */
+	private const DEFAULT_TYPOGRAPHY = array(
+		'body_font'      => 'Quicksand',
+		'accent_font'    => 'Saira Condensed',
+		'body_font_size' => '1rem',
+		'h1_font_size'   => '6.25rem',
+		'h2_font_size'   => '4.25rem',
+		'h3_font_size'   => '3rem',
+		'h4_font_size'   => '2rem',
+		'h5_font_size'   => '1.25rem',
+		'h6_font_size'   => '1rem',
+	);
+
+	/**
 	 * Constructor.
 	 */
 	public function __construct() {
@@ -57,33 +101,18 @@ class CarnavalSF_Customizer {
 
 		// Color settings.
 		$colors = array(
-			'accent_color_1'   => array(
-				'default' => '#FFA843',
-				'label'   => __( 'Accent Color 1', 'carnavalsf' ),
-			),
-			'accent_color_2'   => array(
-				'default' => '#9C286E',
-				'label'   => __( 'Accent Color 2', 'carnavalsf' ),
-			),
-			'accent_color_3'   => array(
-				'default' => '#05DFD7',
-				'label'   => __( 'Accent Color 3', 'carnavalsf' ),
-			),
-			'dark_text_color'  => array(
-				'default' => '#383838',
-				'label'   => __( 'Dark Text Color', 'carnavalsf' ),
-			),
-			'light_text_color' => array(
-				'default' => '#FFFFFF',
-				'label'   => __( 'Light Text Color', 'carnavalsf' ),
-			),
+			'accent_color_1'   => __( 'Accent Color 1', 'carnavalsf' ),
+			'accent_color_2'   => __( 'Accent Color 2', 'carnavalsf' ),
+			'accent_color_3'   => __( 'Accent Color 3', 'carnavalsf' ),
+			'dark_text_color'  => __( 'Dark Text Color', 'carnavalsf' ),
+			'light_text_color' => __( 'Light Text Color', 'carnavalsf' ),
 		);
 
-		foreach ( $colors as $setting_id => $args ) {
+		foreach ( $colors as $setting_id => $label ) {
 			$wp_customize->add_setting(
 				$setting_id,
 				array(
-					'default'           => $args['default'],
+					'default'           => self::DEFAULT_COLORS[ $setting_id ],
 					'sanitize_callback' => 'sanitize_hex_color',
 				)
 			);
@@ -93,7 +122,7 @@ class CarnavalSF_Customizer {
 					$wp_customize,
 					$setting_id,
 					array(
-						'label'   => $args['label'],
+						'label'   => $label,
 						'section' => 'carnavalsf_colors',
 					)
 				)
@@ -121,8 +150,8 @@ class CarnavalSF_Customizer {
 		$wp_customize->add_setting(
 			'fonts_url',
 			array(
-				'default'           => 'https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&family=Saira+Condensed:wght@400;800&display=block',
-				'sanitize_callback' => 'esc_url_raw',
+				'default'           => self::DEFAULT_FONTS_URL,
+				'sanitize_callback' => array( $this, 'sanitize_font_url' ),
 			)
 		);
 
@@ -135,92 +164,94 @@ class CarnavalSF_Customizer {
 			)
 		);
 
-		// Body Font.
-		$wp_customize->add_setting(
-			'body_font',
-			array(
-				'default'           => 'Quicksand',
-				'sanitize_callback' => 'sanitize_text_field',
-			)
+		// Typography text controls.
+		$typography_controls = array(
+			'body_font'      => __( 'Body Font', 'carnavalsf' ),
+			'accent_font'    => __( 'Accent Font', 'carnavalsf' ),
+			'body_font_size' => __( 'Body Font Size', 'carnavalsf' ),
 		);
 
-		$wp_customize->add_control(
-			'body_font',
-			array(
-				'label'   => __( 'Body Font', 'carnavalsf' ),
-				'section' => 'carnavalsf_typography',
-				'type'    => 'text',
-			)
-		);
-
-		// Accent Font.
-		$wp_customize->add_setting(
-			'accent_font',
-			array(
-				'default'           => 'Saira Condensed',
-				'sanitize_callback' => 'sanitize_text_field',
-			)
-		);
-
-		$wp_customize->add_control(
-			'accent_font',
-			array(
-				'label'   => __( 'Accent Font', 'carnavalsf' ),
-				'section' => 'carnavalsf_typography',
-				'type'    => 'text',
-			)
-		);
-
-		// Body Font Size.
-		$wp_customize->add_setting(
-			'body_font_size',
-			array(
-				'default'           => '1rem',
-				'sanitize_callback' => 'sanitize_text_field',
-			)
-		);
-
-		$wp_customize->add_control(
-			'body_font_size',
-			array(
-				'label'   => __( 'Body Font Size', 'carnavalsf' ),
-				'section' => 'carnavalsf_typography',
-				'type'    => 'text',
-			)
-		);
+		foreach ( $typography_controls as $setting_id => $label ) {
+			$this->register_text_control( $wp_customize, $setting_id, $label, 'carnavalsf_typography' );
+		}
 
 		// Heading Font Sizes.
-		$headings = array(
-			'h1' => '6.25rem',
-			'h2' => '4.25rem',
-			'h3' => '3rem',
-			'h4' => '2rem',
-			'h5' => '1.25rem',
-			'h6' => '1rem',
+		$headings = array( 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' );
+		foreach ( $headings as $heading ) {
+			$setting_id = "{$heading}_font_size";
+			$label      = sprintf(
+				// translators: %s is the heading name.
+				__( '%s Size', 'carnavalsf' ),
+				ucfirst( $heading )
+			);
+			$this->register_text_control( $wp_customize, $setting_id, $label, 'carnavalsf_typography' );
+		}
+	}
+
+	/**
+	 * Register a text control in the customizer.
+	 *
+	 * @param WP_Customize_Manager $wp_customize Theme Customizer object.
+	 * @param string               $setting_id   Setting ID.
+	 * @param string               $label        Control label.
+	 * @param string               $section      Section ID.
+	 */
+	private function register_text_control( $wp_customize, $setting_id, $label, $section ) {
+		$wp_customize->add_setting(
+			$setting_id,
+			array(
+				'default'           => self::DEFAULT_TYPOGRAPHY[ $setting_id ] ?? '',
+				'sanitize_callback' => 'sanitize_text_field',
+			)
 		);
 
-		foreach ( $headings as $heading => $default ) {
-			$wp_customize->add_setting(
-				"{$heading}_font_size",
-				array(
-					'default'           => $default,
-					'sanitize_callback' => 'sanitize_text_field',
-				)
-			);
+		$wp_customize->add_control(
+			$setting_id,
+			array(
+				'label'   => $label,
+				'section' => $section,
+				'type'    => 'text',
+			)
+		);
+	}
 
-			$wp_customize->add_control(
-				"{$heading}_font_size",
-				array(
-					'label'   => sprintf(
-						// translators: %s is the heading name.
-						__( '%s Size', 'carnavalsf' ),
-						ucfirst( $heading )
-					),
-					'section' => 'carnavalsf_typography',
-					'type'    => 'text',
-				)
-			);
+	/**
+	 * Sanitize font URL to only allow trusted sources.
+	 *
+	 * @param string $url The font URL to sanitize.
+	 * @return string Sanitized URL or default if invalid.
+	 */
+	public function sanitize_font_url( $url ) {
+		$url = esc_url_raw( $url );
+
+		// If empty, return default.
+		if ( empty( $url ) ) {
+			return self::DEFAULT_FONTS_URL;
 		}
+
+		$parsed = wp_parse_url( $url );
+
+		// If URL cannot be parsed or has no host, return default.
+		if ( ! $parsed || empty( $parsed['host'] ) ) {
+			return self::DEFAULT_FONTS_URL;
+		}
+
+		$host = strtolower( $parsed['host'] );
+
+		// Allow same domain or subdomain.
+		if ( isset( $_SERVER['HTTP_HOST'] ) && strpos( $host, strtolower( $_SERVER['HTTP_HOST'] ) ) !== false ) {
+			return $url;
+		}
+
+		// Check against allowed hosts.
+		foreach ( self::ALLOWED_FONT_HOSTS as $allowed ) {
+			if ( $host === $allowed || strpos( $host, '.' . $allowed ) !== false ) {
+				return $url;
+			}
+		}
+
+		// If not allowed, return default.
+		return self::DEFAULT_FONTS_URL;
 	}
 
 	/**
@@ -317,33 +348,22 @@ class CarnavalSF_Customizer {
 	 * Register editor color palette with accent colors from customizer.
 	 */
 	public function register_editor_color_palette() {
-		$editor_color_palette = array(
-			array(
-				'name'  => __( 'Accent Color 1', 'carnavalsf' ),
-				'slug'  => 'accent-color-1',
-				'color' => get_theme_mod( 'accent_color_1', '#FFA843' ),
-			),
-			array(
-				'name'  => __( 'Accent Color 2', 'carnavalsf' ),
-				'slug'  => 'accent-color-2',
-				'color' => get_theme_mod( 'accent_color_2', '#9C286E' ),
-			),
-			array(
-				'name'  => __( 'Accent Color 3', 'carnavalsf' ),
-				'slug'  => 'accent-color-3',
-				'color' => get_theme_mod( 'accent_color_3', '#05DFD7' ),
-			),
-			array(
-				'name'  => __( 'Dark Text Color', 'carnavalsf' ),
-				'slug'  => 'dark-text-color',
-				'color' => get_theme_mod( 'dark_text_color', '#383838' ),
-			),
-			array(
-				'name'  => __( 'Light Text Color', 'carnavalsf' ),
-				'slug'  => 'light-text-color',
-				'color' => get_theme_mod( 'light_text_color', '#FFFFFF' ),
-			),
+		$color_map = array(
+			'accent_color_1'   => array( 'name' => __( 'Accent Color 1', 'carnavalsf' ), 'slug' => 'accent-color-1' ),
+			'accent_color_2'   => array( 'name' => __( 'Accent Color 2', 'carnavalsf' ), 'slug' => 'accent-color-2' ),
+			'accent_color_3'   => array( 'name' => __( 'Accent Color 3', 'carnavalsf' ), 'slug' => 'accent-color-3' ),
+			'dark_text_color'  => array( 'name' => __( 'Dark Text Color', 'carnavalsf' ), 'slug' => 'dark-text-color' ),
+			'light_text_color' => array( 'name' => __( 'Light Text Color', 'carnavalsf' ), 'slug' => 'light-text-color' ),
 		);
+
+		$editor_color_palette = array();
+		foreach ( $color_map as $setting_id => $args ) {
+			$editor_color_palette[] = array(
+				'name'  => $args['name'],
+				'slug'  => $args['slug'],
+				'color' => get_theme_mod( $setting_id, self::DEFAULT_COLORS[ $setting_id ] ),
+			);
+		}
 
 		add_theme_support( 'editor-color-palette', $editor_color_palette );
 	}
@@ -363,11 +383,11 @@ class CarnavalSF_Customizer {
 		}
 
 		// Cache theme mod values to avoid repeated calls.
-		$accent_color_1   = get_theme_mod( 'accent_color_1', '#FFA843' );
-		$accent_color_2   = get_theme_mod( 'accent_color_2', '#9C286E' );
-		$accent_color_3   = get_theme_mod( 'accent_color_3', '#05DFD7' );
-		$dark_text_color  = get_theme_mod( 'dark_text_color', '#383838' );
-		$light_text_color = get_theme_mod( 'light_text_color', '#FFFFFF' );
+		$accent_color_1   = get_theme_mod( 'accent_color_1', self::DEFAULT_COLORS['accent_color_1'] );
+		$accent_color_2   = get_theme_mod( 'accent_color_2', self::DEFAULT_COLORS['accent_color_2'] );
+		$accent_color_3   = get_theme_mod( 'accent_color_3', self::DEFAULT_COLORS['accent_color_3'] );
+		$dark_text_color  = get_theme_mod( 'dark_text_color', self::DEFAULT_COLORS['dark_text_color'] );
+		$light_text_color = get_theme_mod( 'light_text_color', self::DEFAULT_COLORS['light_text_color'] );
 
 		// Output custom CSS variables.
 		$custom_css_variables = array(
@@ -386,15 +406,15 @@ class CarnavalSF_Customizer {
 			'light-text'            => $light_text_color,
 			'light-text-filter'     => CarnavalSF_Color_Converter::hex_to_css_filter( $light_text_color ),
 			'light-text-rgb'        => implode( ',', CarnavalSF_Color_Converter::hex_to_rgb( $light_text_color ) ),
-			'body-font'             => get_theme_mod( 'body_font', 'Quicksand' ) . ', sans-serif',
-			'accent-font'           => get_theme_mod( 'accent_font', 'Saira Condensed' ) . ', sans-serif',
-			'body-font-size'        => get_theme_mod( 'body_font_size', '1rem' ),
-			'h1-font-size'          => get_theme_mod( 'h1_font_size', '6.25rem' ),
-			'h2-font-size'          => get_theme_mod( 'h2_font_size', '4.25rem' ),
-			'h3-font-size'          => get_theme_mod( 'h3_font_size', '3rem' ),
-			'h4-font-size'          => get_theme_mod( 'h4_font_size', '2rem' ),
-			'h5-font-size'          => get_theme_mod( 'h5_font_size', '1.25rem' ),
-			'h6-font-size'          => get_theme_mod( 'h6_font_size', '1rem' ),
+			'body-font'      => get_theme_mod( 'body_font', self::DEFAULT_TYPOGRAPHY['body_font'] ) . ', sans-serif',
+			'accent-font'    => get_theme_mod( 'accent_font', self::DEFAULT_TYPOGRAPHY['accent_font'] ) . ', sans-serif',
+			'body-font-size' => get_theme_mod( 'body_font_size', self::DEFAULT_TYPOGRAPHY['body_font_size'] ),
+			'h1-font-size'   => get_theme_mod( 'h1_font_size', self::DEFAULT_TYPOGRAPHY['h1_font_size'] ),
+			'h2-font-size'   => get_theme_mod( 'h2_font_size', self::DEFAULT_TYPOGRAPHY['h2_font_size'] ),
+			'h3-font-size'   => get_theme_mod( 'h3_font_size', self::DEFAULT_TYPOGRAPHY['h3_font_size'] ),
+			'h4-font-size'   => get_theme_mod( 'h4_font_size', self::DEFAULT_TYPOGRAPHY['h4_font_size'] ),
+			'h5-font-size'   => get_theme_mod( 'h5_font_size', self::DEFAULT_TYPOGRAPHY['h5_font_size'] ),
+			'h6-font-size'   => get_theme_mod( 'h6_font_size', self::DEFAULT_TYPOGRAPHY['h6_font_size'] ),
 		);
 
 		$css .= ':root {';

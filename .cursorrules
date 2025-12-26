@@ -6,6 +6,19 @@
 
 ---
 
+# Code Improvement Documentation Rule
+
+**IMPORTANT:** Whenever you improve code quality, refactor, or apply patterns from this document, you MUST add the improvement pattern to `.cursorrules` if it's not already documented. This ensures knowledge is preserved and patterns can be reused.
+
+- If you extract constants, add the pattern to "Constants & Configuration"
+- If you create helper functions, add to "Function & Method Improvements"
+- If you simplify conditionals, add to "Conditional Logic Simplifications"
+- If you use array-based approaches, add to the appropriate section
+- Always include before/after examples when adding new patterns
+- **Generalize examples**: Use generic names, values, and identifiers instead of project-specific ones (e.g., use `setting_1`, `default_value` instead of `accent_color_1`, `#FFA843`)
+
+---
+
 # Code-Creation Process
 
 When implementing a new feature or functionality:
@@ -129,7 +142,7 @@ if ( ! isset( $attrs['key'] ) || ! $attrs['key'] ) return;
 ## Conditional Logic
 Use null coalescing and concise conditionals:
 - ✅ `$value = $attributes['key'] ?? 'default';`
-- ✅ `$has_form = ( $post && has_block( 'namespace/block', $post ) ) || is_page_template( 'template.php' );`
+- ✅ `$has_feature = ( $post && has_block( 'namespace/block', $post ) ) || is_page_template( 'custom-template.php' );`
 - ❌ Verbose if/else chains for simple defaults
 
 ## Template Rendering
@@ -148,6 +161,19 @@ Combine related validations into single statements:
   - Timeouts: `private const TIMEOUT = 30;`
 - **Extract Repeated Function Calls**: Cache expensive or repeated function results
 - **Centralized Configuration**: Single source of truth for feature definitions
+- **Extract Default Values to Constants**: Group related defaults into constant arrays
+  ```php
+  // Before: Hardcoded defaults scattered throughout code
+  $value1 = get_theme_mod( 'setting_1', 'default_value_1' );
+  $value2 = get_theme_mod( 'setting_2', 'default_value_2' );
+
+  // After: Centralized defaults
+  private const DEFAULT_VALUES = array(
+      'setting_1' => 'default_value_1',
+      'setting_2' => 'default_value_2',
+  );
+  $value1 = get_theme_mod( 'setting_1', self::DEFAULT_VALUES['setting_1'] );
+  ```
 
 ## Conditional Logic Simplifications
 - **Combine Early Returns**: Merge multiple early return conditions
@@ -164,10 +190,39 @@ Combine related validations into single statements:
   return ! empty( $email ) && is_email( $email ) ? $email : get_option( 'admin_email' );
   ```
 - **Array-Based Feature Checking**: Use arrays to check multiple features
+- **Array-Based Control Registration**: Use arrays to register multiple similar controls
+  ```php
+  // Before: Repeated code for each control
+  $wp_customize->add_setting( 'setting_1', array( 'default' => 'default_1', ... ) );
+  $wp_customize->add_control( 'setting_1', array( 'label' => __( 'Setting 1', 'textdomain' ), ... ) );
+  $wp_customize->add_setting( 'setting_2', array( 'default' => 'default_2', ... ) );
+  $wp_customize->add_control( 'setting_2', array( 'label' => __( 'Setting 2', 'textdomain' ), ... ) );
+
+  // After: Array-based approach
+  $controls = array(
+      'setting_1' => __( 'Setting 1', 'textdomain' ),
+      'setting_2' => __( 'Setting 2', 'textdomain' ),
+  );
+  foreach ( $controls as $setting_id => $label ) {
+      $this->register_control( $wp_customize, $setting_id, $label, 'section_name' );
+  }
+  ```
 
 ## Function & Method Improvements
 - **Inline Single-Use Functions**: Remove abstraction when function is used only once
 - **Extract Reusable Helpers**: Create helpers for repeated patterns
+  ```php
+  // Before: Repeated pattern
+  $wp_customize->add_setting( 'setting_1', array( 'default' => 'default_1', 'sanitize_callback' => 'sanitize_text_field' ) );
+  $wp_customize->add_control( 'setting_1', array( 'label' => __( 'Setting 1', 'textdomain' ), 'section' => 'section_name', 'type' => 'text' ) );
+  // ... repeated for each control
+
+  // After: Helper method
+  private function register_control( $wp_customize, $setting_id, $label, $section ) {
+      $wp_customize->add_setting( $setting_id, array( 'default' => self::DEFAULTS[ $setting_id ], 'sanitize_callback' => 'sanitize_text_field' ) );
+      $wp_customize->add_control( $setting_id, array( 'label' => $label, 'section' => $section, 'type' => 'text' ) );
+  }
+  ```
 - **Unified Parameter Functions**: Combine similar functions into one
 - **Single-Pass Processing**: Build output directly instead of intermediate arrays
 
@@ -200,8 +255,8 @@ Combine related validations into single statements:
 
 ## Event Handling
 - **Event Delegation**: Use event delegation
-  - ✅ `$(document).on('submit', '.form-class', function(e) { ... });`
-  - ❌ `$(document).ready(function() { $('.form-class').on('submit', ...); });`
+  - ✅ `$(document).on('submit', '.form-selector', function(e) { ... });`
+  - ❌ `$(document).ready(function() { $('.form-selector').on('submit', ...); });`
 
 ## AJAX & Block Editor
 - **AJAX Callbacks**: Simplify success/error handling with ternary operators
@@ -332,13 +387,14 @@ private function increment_rate_limit() {
 Use `wp_parse_url()` for proper URL validation instead of string matching:
 ```php
 // Before
-if ( strpos( $url, 'youtube.com' ) === false ) return;
+if ( strpos( $url, 'example.com' ) === false ) return;
 
 // After
 $parsed = wp_parse_url( $url );
 if ( ! $parsed || empty( $parsed['host'] ) ) return false;
 $host = strtolower( $parsed['host'] );
-return in_array( $host, array( 'youtube.com', 'www.youtube.com' ), true );
+$allowed_hosts = array( 'example.com', 'www.example.com' );
+return in_array( $host, $allowed_hosts, true );
 ```
 
 ## URL Filtering
@@ -381,20 +437,22 @@ if ( isset( $_POST['save'] ) && current_user_can( 'edit_posts' ) ) {
 ```
 
 ## Inline Style Security
-Avoid inline styles with user-controlled data. Use data attributes and CSS instead:
+Avoid direct inline styles with user-controlled data. Use CSS custom properties (CSS variables) with proper escaping:
 ```php
 // Before
 <div style="background-image: url('<?php echo esc_url( $url ); ?>');"></div>
 
 // After
-<div data-bg-image="<?php echo esc_attr( esc_url( $url ) ); ?>"></div>
+<div class="image-container" style="--bg-image: url('<?php echo esc_attr( esc_url( $url ) ); ?>');"></div>
 ```
-Then handle in CSS:
+Then use the custom property in CSS:
 ```css
-[data-bg-image] {
-    background-image: url(attr(data-bg-image));
+.image-container {
+    background-image: var(--bg-image);
 }
 ```
+
+**Why this is safe:** CSS custom properties are properly scoped, and we use `esc_url()` and `esc_attr()` for double escaping. This prevents XSS while avoiding the need for JavaScript.
 
 ---
 
@@ -468,6 +526,12 @@ Then handle in CSS:
 - Multiple similar features/attributes
 - Features might expand
 - Need to iterate over features
+- Registering multiple similar controls/settings (WordPress Customizer, meta boxes, etc.)
+
+## Extract Default Values to Constants When:
+- Default values appear in multiple places (get_theme_mod, get_option, etc.)
+- Defaults are related and form a logical group
+- You want a single source of truth for configuration
 
 ## Extract to Plugin When:
 - Functionality is reusable

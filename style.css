@@ -555,6 +555,7 @@ h2 {
 	height: 31rem;
 	background-size: cover;
 	background-position: center center;
+	background-image: var(--bg-image);
 }
 
 h1.has-background,
