@@ -37,8 +37,13 @@ class CarnavalSF_Blocks {
 
 	/**
 	 * Enqueue block editor assets.
+	 *
+	 * @return void
 	 */
 	public function enqueue_block_editor_assets() {
+		$theme_version = wp_get_theme()->get( 'Version' );
+
+		// Group block fullwidth functionality.
 		wp_enqueue_script(
 			'carnavalsf-group-block-fullwidth',
 			get_template_directory_uri() . '/js/group-block-fullwidth.js',
@@ -50,15 +55,16 @@ class CarnavalSF_Blocks {
 				'wp-element',
 				'wp-hooks',
 			),
-			wp_get_theme()->get( 'Version' ),
+			$theme_version,
 			true
 		);
 
+		// Dimensions panel title customization.
 		wp_enqueue_script(
 			'carnavalsf-dimensions-panel-title',
 			get_template_directory_uri() . '/js/dimensions-panel-title.js',
 			array( 'wp-i18n' ),
-			wp_get_theme()->get( 'Version' ),
+			$theme_version,
 			true
 		);
 	}

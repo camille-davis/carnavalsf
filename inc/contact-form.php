@@ -1,11 +1,18 @@
 <?php
 /**
- * Contact Form
+ * Contact Form Block Functionality
  *
  * @package CarnavalSF
  */
 
+/**
+ * Contact Form Block Class
+ */
 class CarnavalSF_Contact_Form {
+
+	/**
+	 * Constructor
+	 */
 	public function __construct() {
 		add_action( 'init', array( $this, 'register_block' ) );
 		add_action( 'wp_ajax_carnavalsf_contact_form', array( $this, 'handle_submission' ) );
@@ -13,30 +20,33 @@ class CarnavalSF_Contact_Form {
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 	}
 
-  /**
-   * Registers the contact form block.
-   */
+	/**
+	 * Registers the contact form block.
+	 *
+	 * @return void
+	 */
 	public function register_block() {
-
-    // Loads index.js in block editor.
+		// Loads index.js in block editor.
 		wp_register_script(
-      'carnavalsf-contact-form-block-editor',
-      get_template_directory_uri() . '/blocks/contact-form/index.js',
-      array( 'wp-blocks', 'wp-block-editor', 'wp-server-side-render', 'wp-element', 'wp-components', 'wp-i18n' ),
-      wp_get_theme()->get( 'Version' ),
-      true
-    );
+			'carnavalsf-contact-form-block-editor',
+			get_template_directory_uri() . '/blocks/contact-form/index.js',
+			array( 'wp-blocks', 'wp-block-editor', 'wp-server-side-render', 'wp-element', 'wp-components', 'wp-i18n' ),
+			wp_get_theme()->get( 'Version' ),
+			true
+		);
 
-    // Reads block.json and registers the block.
+		// Reads block.json and registers the block.
 		register_block_type(
-      get_template_directory() . '/blocks/contact-form',
-      array( 'editor_script' => 'carnavalsf-contact-form-block-editor' )
-    );
+			get_template_directory() . '/blocks/contact-form',
+			array( 'editor_script' => 'carnavalsf-contact-form-block-editor' )
+		);
 	}
 
-  /**
-   * Handles the contact form submission on the backend.
-   */
+	/**
+	 * Handles the contact form submission on the backend.
+	 *
+	 * @return void
+	 */
 	public function handle_submission() {
 		if ( ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ?? '' ) ), 'carnavalsf_contact_form_nonce' ) || ! empty( $_POST['website'] ) ) {
 			wp_send_json_error( array( 'message' => __( 'Security check failed.', 'carnavalsf' ) ) );
@@ -70,17 +80,20 @@ class CarnavalSF_Contact_Form {
 	}
 
 	/**
-	 * Adds contact form js functionality to frontend.
+	 * Enqueues contact form JavaScript functionality on the frontend.
+	 * Only loads if the contact form block is present on the page.
+	 *
+	 * @return void
 	 */
 	public function enqueue_scripts() {
-
 		// Check if block exists in post content.
-		$has_block = ( $post = get_post() ) && has_block( 'carnavalsf/contact-form', $post );
+		$post      = get_post();
+		$has_block = $post && has_block( 'carnavalsf/contact-form', $post );
 
 		// If not found in post, check all widget content.
 		if ( ! $has_block ) {
 			$widget_content = '';
-			$widgets = get_option( 'widget_block', array() );
+			$widgets        = get_option( 'widget_block', array() );
 			foreach ( $widgets as $widget ) {
 				if ( ! empty( $widget['content'] ) ) {
 					$widget_content .= $widget['content'];
@@ -89,10 +102,28 @@ class CarnavalSF_Contact_Form {
 			$has_block = ! empty( $widget_content ) && has_block( 'carnavalsf/contact-form', $widget_content );
 		}
 
-		if ( ! $has_block ) return;
+		if ( ! $has_block ) {
+			return;
+		}
 
-		wp_enqueue_script( 'carnavalsf-contact-form', get_template_directory_uri() . '/js/contact-form.js', array( 'jquery' ), wp_get_theme()->get( 'Version' ), true );
-		wp_localize_script( 'carnavalsf-contact-form', 'carnavalsfContactForm', array( 'ajaxUrl' => admin_url( 'admin-ajax.php' ), 'nonce' => wp_create_nonce( 'carnavalsf_contact_form_nonce' ) ) );
+		$theme_version = wp_get_theme()->get( 'Version' );
+
+		wp_enqueue_script(
+			'carnavalsf-contact-form',
+			get_template_directory_uri() . '/js/contact-form.js',
+			array( 'jquery' ),
+			$theme_version,
+			true
+		);
+
+		wp_localize_script(
+			'carnavalsf-contact-form',
+			'carnavalsfContactForm',
+			array(
+				'ajaxUrl' => admin_url( 'admin-ajax.php' ),
+				'nonce'   => wp_create_nonce( 'carnavalsf_contact_form_nonce' ),
+			)
+		);
 	}
 }
 

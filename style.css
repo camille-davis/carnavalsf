@@ -4,9 +4,9 @@ Author: Camille Davis
 Text Domain: carnavalsf
 */
 
-/*
- * Normalize
- */
+/* ============================================================================
+   Normalize & Reset
+   ============================================================================ */
 
 * {
 	margin: 0;
@@ -21,26 +21,37 @@ button {
 	font-size: inherit;
 }
 
-/*
- * Global
- */
+/* ============================================================================
+   CSS Variables (Custom Properties)
+   ============================================================================ */
 
 :root {
+	/* Spacing */
 	--side-padding-desktop: 2rem;
 	--side-padding-mobile: 1.5rem;
 	--vertical-space-large: 3rem;
 	--vertical-space-medium: 2rem;
 	--vertical-space-small: 1rem;
 	--border-radius: 0.25rem;
+
+	/* Navigation */
 	--nav-height-desktop: 7.5rem;
 	--nav-height-mobile: 6rem;
 	--menu-button-size: 3.75rem;
-	--wp--preset--font-size--small: .875rem;
-  --wp--preset--font-size--medium: 1rem;
-  --wp--preset--font-size--large: 1.25rem;
-  --wp--preset--font-size--x-large: 2rem;
-  --letter-spacing-small: 0.025em;
+
+	/* Typography */
+	--wp--preset--font-size--small: 0.875rem;
+	--wp--preset--font-size--medium: 1rem;
+	--wp--preset--font-size--large: 1.25rem;
+	--wp--preset--font-size--x-large: 2rem;
+	--letter-spacing-small: 0.025em;
+
+	/* Colors, fonts, and font sizes are set dynamically via customizer */
 }
+
+/* ============================================================================
+   Base Styles
+   ============================================================================ */
 
 body {
 	background-color: var(--accent-color-1);
@@ -50,15 +61,19 @@ body {
 	line-height: 1.5;
 }
 
-/* Global Elements */
-
+/* Paragraphs */
 p:not(:last-child) {
 	padding-bottom: var(--vertical-space-small);
 }
 
+/* Lists */
 ul {
 	padding-left: 1rem;
 }
+
+/* ============================================================================
+   Typography
+   ============================================================================ */
 
 /* Headings */
 
@@ -96,7 +111,6 @@ h6 {
 }
 
 /* Links */
-
 a:not(.wp-element-button) {
 	color: var(--accent-color-2);
 	font-weight: 700;
@@ -113,6 +127,10 @@ a:not(.wp-element-button):hover {
 .page-color-2 a:hover {
 	color: var(--light-text);
 }
+
+/* ============================================================================
+   Form Elements
+   ============================================================================ */
 
 /* Buttons */
 
@@ -148,8 +166,7 @@ button:hover,
 	background-color: var(--light-text);
 }
 
-/* Inputs */
-
+/* Inputs & Textareas */
 input,
 textarea {
 	border: 0.125rem solid var(--accent-color-2);
@@ -166,23 +183,23 @@ textarea {
 	color: var(--light-text);
 }
 
-/* Forms */
-
+/* Form Groups */
 .form-group {
 	display: flex;
 	flex-direction: column;
 }
 
+/* Labels */
 label {
-	padding-bottom: .25rem;
+	padding-bottom: 0.25rem;
 	font-weight: bold;
 	text-transform: uppercase;
 	letter-spacing: var(--letter-spacing-small);
 }
 
-/*
- * Header
- */
+/* ============================================================================
+   Header & Navigation
+   ============================================================================ */
 
 .site-header {
 	background-color: var(--accent-color-2);
@@ -474,9 +491,9 @@ main {
 	}
 }
 
-/*
- * Footer
- */
+/* ============================================================================
+   Footer
+   ============================================================================ */
 
 .footer-columns {
 	background-color: #fff;
@@ -490,22 +507,7 @@ main {
 	padding: 0.75rem var(--side-padding-desktop);
 }
 
-@media (max-width: 1080px) {
-
-	.footer-columns {
-		padding-left: var(--side-padding-mobile);
-		padding-right: var(--side-padding-mobile);
-		flex-direction: column;
-	}
-
-	.footer-bottom {
-		padding-left: var(--side-padding-mobile);
-		padding-right: var(--side-padding-mobile);
-	}
-}
-
-/* Content css - TODO move to custom css. */
-
+/* Footer Column Layout */
 .footer-column-1 {
 	min-width: fit-content;
 }
@@ -518,6 +520,7 @@ main {
 	max-width: 28rem;
 }
 
+/* Footer Column 1 Styles */
 .footer-column-1 h1 {
 	font-size: var(--h3-font-size);
 	padding: 0;
@@ -535,6 +538,7 @@ main {
 	margin-bottom: -0.125rem;
 }
 
+/* Footer Column 3 Styles */
 .footer-column-3 img {
 	width: 18rem;
 }
@@ -547,9 +551,23 @@ main {
 	margin-bottom: 0;
 }
 
-/*
- * Page
- */
+/* Footer Responsive Styles */
+@media (max-width: 1080px) {
+	.footer-columns {
+		padding-left: var(--side-padding-mobile);
+		padding-right: var(--side-padding-mobile);
+		flex-direction: column;
+	}
+
+	.footer-bottom {
+		padding-left: var(--side-padding-mobile);
+		padding-right: var(--side-padding-mobile);
+	}
+}
+
+/* ============================================================================
+   Page Content
+   ============================================================================ */
 
 h1,
 h2,
@@ -658,43 +676,39 @@ h6.has-background {
 	}
 }
 
-/*
-* Gutenberg Blocks
-*/
+/* ============================================================================
+   Gutenberg Blocks
+   ============================================================================ */
 
-/* Unset inline editor styles */
-
+/* Editor Styles */
 .editor-visual-editor__post-title-wrapper {
 	margin-top: 0 !important;
 }
 
-/* Columns block */
-
+/* Columns Block */
 .is-layout-flex .wp-block-column,
 .wp-block-column {
 	margin-bottom: var(--vertical-space-small);
 }
 
 @media (max-width: 782px) {
-
 	.wp-block-columns {
 		gap: 0;
 	}
 }
 
-/* Grid block */
-
+/* Grid Block */
 .is-layout-grid {
 	gap: 5rem;
 }
 
 .is-layout-grid figure {
 	display: flex;
-  align-items: center;
-  justify-content: center;
+	align-items: center;
+	justify-content: center;
 }
 
-/* Details block */
+/* Details Block */
 
 .wp-block-details {
 	border-radius: var(--border-radius);
@@ -767,15 +781,16 @@ summary .block-editor-rich-text__editable {
 	margin-bottom: 0.25rem;
 }
 
-/* Contact form block */
-
+/* Contact Form Block */
 .form-message {
 	text-align: center;
 }
 
-/*
- * Color Classes
- */
+/* ============================================================================
+   Utility Classes
+   ============================================================================ */
+
+/* Color Utility Classes */
 .has-accent-color-1-color {
 	color: var(--accent-color-1) !important;
 }

@@ -11,7 +11,9 @@
 class CarnavalSF_Page_Color {
 
 	/**
-	 * Constructor
+	 * Constructor.
+	 *
+	 * @return void
 	 */
 	public function __construct() {
 		add_action( 'add_meta_boxes', array( $this, 'add_page_color_meta_box' ) );
@@ -20,7 +22,9 @@ class CarnavalSF_Page_Color {
 	}
 
 	/**
-	 * Add page color meta box to page edit screen
+	 * Add page color meta box to page edit screen.
+	 *
+	 * @return void
 	 */
 	public function add_page_color_meta_box() {
 		add_meta_box(
@@ -70,9 +74,10 @@ class CarnavalSF_Page_Color {
 	}
 
 	/**
-	 * Save page color meta box data
+	 * Save page color meta box data.
 	 *
 	 * @param int $post_id The post ID.
+	 * @return void
 	 */
 	public function save_page_color( $post_id ) {
 
@@ -109,9 +114,10 @@ class CarnavalSF_Page_Color {
 	}
 
 	/**
-	 * Enqueue admin assets for page color meta box
+	 * Enqueue admin assets for page color meta box.
 	 *
 	 * @param string $hook The current admin page hook.
+	 * @return void
 	 */
 	public function enqueue_admin_assets( $hook ) {
 
@@ -125,12 +131,14 @@ class CarnavalSF_Page_Color {
 			return;
 		}
 
+		$theme_version = wp_get_theme()->get( 'Version' );
+
 		// Enqueue admin CSS.
 		wp_enqueue_style(
 			'carnavalsf-page-color-admin',
 			get_template_directory_uri() . '/css/page-color-admin.css',
 			array(),
-			wp_get_theme()->get( 'Version' )
+			$theme_version
 		);
 
 		// Enqueue page color JavaScript (handles both admin swatches and editor updates).
@@ -138,7 +146,7 @@ class CarnavalSF_Page_Color {
 			'carnavalsf-page-color',
 			get_template_directory_uri() . '/js/page-color.js',
 			array( 'jquery' ),
-			wp_get_theme()->get( 'Version' ),
+			$theme_version,
 			true
 		);
 
