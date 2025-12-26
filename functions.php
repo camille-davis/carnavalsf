@@ -12,7 +12,6 @@
 require_once get_template_directory() . '/inc/customizer.php';
 require_once get_template_directory() . '/inc/page-appearance.php';
 require_once get_template_directory() . '/inc/misc-block-customizations.php';
-require_once get_template_directory() . '/inc/contact-form.php';
 
 // ============================================================================
 // Theme Setup

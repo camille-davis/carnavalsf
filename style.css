@@ -507,50 +507,6 @@ main {
 	padding: 0.75rem var(--side-padding-desktop);
 }
 
-/* Footer Column Layout */
-.footer-column-1 {
-	min-width: fit-content;
-}
-
-.footer-column-2 {
-	max-width: 26rem;
-}
-
-.footer-column-3 {
-	max-width: 28rem;
-}
-
-/* Footer Column 1 Styles */
-.footer-column-1 h1 {
-	font-size: var(--h3-font-size);
-	padding: 0;
-}
-
-.footer-column-1 ul:not(.wp-block-social-links) {
-	margin: 0;
-	padding: 0;
-	list-style: none;
-}
-
-.footer-column-1 .wp-block-list img {
-	width: 1.25rem;
-	padding-right: 0.25rem;
-	margin-bottom: -0.125rem;
-}
-
-/* Footer Column 3 Styles */
-.footer-column-3 img {
-	width: 18rem;
-}
-
-.wp-block-social-links {
-	margin-top: 1.5rem;
-}
-
-.footer-bottom p {
-	margin-bottom: 0;
-}
-
 /* Footer Responsive Styles */
 @media (max-width: 1080px) {
 	.footer-columns {
@@ -829,4 +785,74 @@ summary .block-editor-rich-text__editable {
 
 .has-light-text-color-background-color {
 	background-color: var(--light-text) !important;
+}
+
+.has-text-shadow {
+	text-shadow: 0 0 1rem rgba(0, 0, 0, .7);
+}
+
+.is-position-absolute {
+	position: absolute !important;
+}
+
+/* ============================================================================
+   Things to move to custom CSS database table after migration
+   ============================================================================ */
+
+/* Footer Column Layout */
+.footer-column-1 {
+	min-width: fit-content;
+}
+
+.footer-column-2 {
+	max-width: 26rem;
+}
+
+.footer-column-3 {
+	max-width: 28rem;
+}
+
+/* Footer Column 1 Styles */
+.footer-column-1 h1 {
+	font-size: var(--h3-font-size);
+	padding: 0;
+}
+
+.footer-column-1 ul:not(.wp-block-social-links) {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.footer-column-1 .wp-block-list img {
+	width: 1.25rem;
+	padding-right: 0.25rem;
+	margin-bottom: -0.125rem;
+}
+
+/* Footer Column 3 Styles */
+.footer-column-3 img {
+	width: 18rem;
+}
+
+.wp-block-social-links {
+	margin-top: 1.5rem;
+}
+
+.footer-bottom p {
+	margin-bottom: 0;
+}
+
+.background-video {
+	overflow: hidden;
+}
+
+.background-video .wp-block-embed__wrapper {
+	min-width: 1300px;
+}
+
+@media (max-width: 1080px) {
+	.background-video .wp-block-embed__wrapper {
+		margin-left: calc(50% - 750px);
+	}
 }

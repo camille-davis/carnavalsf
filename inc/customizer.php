@@ -248,11 +248,12 @@ class CarnavalSF_Customizer {
 		wp_add_inline_script( 'customize-controls', $inline_script );
 
 		// Add 'Reset' buttons.
+		$theme_version = wp_get_theme()->get( 'Version' );
 		wp_enqueue_script(
 			'carnavalsf-customizer',
 			get_template_directory_uri() . '/js/customizer.js',
 			array( 'jquery', 'customize-controls' ),
-			wp_get_theme()->get( 'Version' ),
+			$theme_version,
 			true
 		);
 
@@ -269,11 +270,12 @@ class CarnavalSF_Customizer {
 	 * Add customizer styles.
 	 */
 	public function add_customizer_style() {
+		$theme_version = wp_get_theme()->get( 'Version' );
 		wp_enqueue_style(
 			'carnavalsf-customizer',
 			get_template_directory_uri() . '/css/customizer.css',
 			array(),
-			wp_get_theme()->get( 'Version' )
+			$theme_version
 		);
 	}
 
