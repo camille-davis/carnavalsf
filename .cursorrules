@@ -1,7 +1,10 @@
-# Project-specific
+# Project-specific Rules
 
 - **Never modify core or plugins**: Never modify WordPress core files (`wp-admin/`, `wp-includes/`) or third-party plugin files.
 - **No JSX syntax**: Do not use JSX in JavaScript files. This theme does not use a build process to transpile JSX. Use `wp.element.createElement()` for creating React elements in WordPress block editor scripts.
+- **No build processes**: Do not implement build tools or processes for JavaScript or CSS (no webpack, babel, npm scripts, etc.). Write vanilla JavaScript and CSS that works directly without compilation or bundling.
+
+---
 
 # Code-Creation Process
 
@@ -31,7 +34,75 @@ When implementing a new feature or functionality:
    - Answered any critical clarifying questions
    - Confirmed they're ready to proceed
 
-# Code Simplification
+---
+
+# Key Principles
+
+1. **DRY (Don't Repeat Yourself)**: Consolidate duplicate logic
+2. **KISS (Keep It Simple, Stupid)**: Remove unnecessary abstractions
+3. **YAGNI (You Aren't Gonna Need It)**: Remove unused features
+4. **Single Responsibility**: Each function has one clear purpose
+5. **Early Returns**: Reduced nesting, clearer flow
+6. **Modern JavaScript**: Use ES6+ features consistently
+7. **WordPress Best Practices**: Leverage native functions
+8. **Security First**: Strict validation, defense in depth
+9. **Scalable Architecture**: Patterns that make adding features easy
+
+---
+
+# Quick Reference: Common Patterns
+
+## Extract Magic Numbers to Constants
+```php
+// Before
+if ( $count >= 3 ) { }
+wp_enqueue_script( 'script', $url, $deps, '1.0.0', true );
+
+// After
+private const RATE_LIMIT = 3;
+private const VERSION = '1.0.0';
+if ( $count >= self::RATE_LIMIT ) { }
+wp_enqueue_script( 'script', $url, $deps, self::VERSION, true );
+```
+
+## Simplify Conditional Returns
+```php
+// Before
+if ( empty( $text ) ) {
+    return false;
+}
+return strpos( $text, 'http' ) !== false;
+
+// After
+return ! empty( $text ) && strpos( $text, 'http' ) !== false;
+```
+
+## Extract Repeated Values
+```php
+// Before
+wp_enqueue_style( 'style', $url, array(), wp_get_theme()->get( 'Version' ) );
+wp_enqueue_script( 'script', $url, array(), wp_get_theme()->get( 'Version' ), true );
+
+// After
+$version = wp_get_theme()->get( 'Version' );
+wp_enqueue_style( 'style', $url, array(), $version );
+wp_enqueue_script( 'script', $url, array(), $version, true );
+```
+
+## Combine Early Returns
+```php
+// Before
+if ( ! isset( $attrs ) ) return;
+if ( ! isset( $attrs['key'] ) ) return;
+if ( ! $attrs['key'] ) return;
+
+// After
+if ( ! isset( $attrs['key'] ) || ! $attrs['key'] ) return;
+```
+
+---
+
+# Code Quality Standards
 
 ## Remove Unnecessary Code
 
@@ -51,26 +122,200 @@ When implementing a new feature or functionality:
 - **Combine similar operations**: Merge multiple similar queries or operations into single statements
 - **Condense function calls**: Single-line formatting for simple function calls
 
-### PHP
+---
 
-- **Conditional logic**: Use null coalescing and concise conditionals:
-  - ✅ `$value = $attributes['key'] ?? 'default';`
-  - ✅ `$has_form = ( $post && has_block( 'namespace/block', $post ) ) || is_page_template( 'template.php' );`
-  - ❌ Verbose if/else chains for simple defaults
-- **Template rendering**: Direct attribute access and inline conditionals:
-  - ✅ `$attributes['key'] ?? 'default'`
-  - ✅ `<?php if ( $show ) : ?>`
-- **Validation logic**: Combine related validations into single statements:
-  - ✅ `if ( empty( $name ) || empty( $email ) || ! is_email( $email ) || empty( $message ) )`
+# PHP Patterns
 
-### JavaScript
+## Conditional Logic
+Use null coalescing and concise conditionals:
+- ✅ `$value = $attributes['key'] ?? 'default';`
+- ✅ `$has_form = ( $post && has_block( 'namespace/block', $post ) ) || is_page_template( 'template.php' );`
+- ❌ Verbose if/else chains for simple defaults
 
-- **Use modern syntax**: Prefer optional chaining (`?.`), arrow functions, and concise syntax over verbose alternatives
-- **Consolidate selectors**: Use single query selectors with appropriate combinators instead of multiple separate queries
-- **Event handling**: Use event delegation:
+## Template Rendering
+Direct attribute access and inline conditionals:
+- ✅ `$attributes['key'] ?? 'default'`
+- ✅ `<?php if ( $show ) : ?>`
+
+## Validation Logic
+Combine related validations into single statements:
+- ✅ `if ( empty( $name ) || empty( $email ) || ! is_email( $email ) || empty( $message ) )`
+
+## Constants & Configuration
+- **Extract Magic Numbers**: Replace hardcoded values with named constants
+  - Rate limits: `private const RATE_LIMIT = 3;`
+  - Versions: `private const VERSION = '1.0.0';`
+  - Timeouts: `private const TIMEOUT = 30;`
+- **Extract Repeated Function Calls**: Cache expensive or repeated function results
+- **Centralized Configuration**: Single source of truth for feature definitions
+
+## Conditional Logic Simplifications
+- **Combine Early Returns**: Merge multiple early return conditions
+- **Simplify Boolean Checks**: Use direct boolean checks instead of `empty()` when appropriate
+- **Ternary for Simple Conditionals**: Use ternary for single-value conditionals
+  ```php
+  // Before
+  if ( ! empty( $email ) && is_email( $email ) ) {
+      return $email;
+  }
+  return get_option( 'admin_email' );
+
+  // After
+  return ! empty( $email ) && is_email( $email ) ? $email : get_option( 'admin_email' );
+  ```
+- **Array-Based Feature Checking**: Use arrays to check multiple features
+
+## Function & Method Improvements
+- **Inline Single-Use Functions**: Remove abstraction when function is used only once
+- **Extract Reusable Helpers**: Create helpers for repeated patterns
+- **Unified Parameter Functions**: Combine similar functions into one
+- **Single-Pass Processing**: Build output directly instead of intermediate arrays
+
+## Code Organization
+- **Section Headers**: Use visual separators to group related functionality
+  ```php
+  // ============================================================================
+  // Block Registration
+  // ============================================================================
+  ```
+- **Modular Class Structure**: Break monolithic classes into focused modules
+
+---
+
+# JavaScript Patterns
+
+## Modern Syntax
+- **Use const/let**: Prefer `const`/`let` instead of `var`
+- **Arrow Functions**: Use arrow functions for callbacks
+  ```javascript
+  // Before
+  addFilter( 'hook', 'namespace', function( settings, name ) { });
+
+  // After
+  addFilter( 'hook', 'namespace', ( settings, name ) => { });
+  ```
+- **Modern String Methods**: Use `includes()` instead of `indexOf()`
+- **Destructure Props**: Extract object properties
+- **URLSearchParams**: Use URLSearchParams instead of manual string building
+
+## Event Handling
+- **Event Delegation**: Use event delegation
   - ✅ `$(document).on('submit', '.form-class', function(e) { ... });`
   - ❌ `$(document).ready(function() { $('.form-class').on('submit', ...); });`
-- **AJAX callbacks**: Simplify success/error handling with ternary operators
-- **Block editor**: Use concise React element creation:
+
+## AJAX & Block Editor
+- **AJAX Callbacks**: Simplify success/error handling with ternary operators
+- **Block Editor**: Use concise React element creation
   - ✅ `el('div', props, content)` instead of verbose `createElement` calls
   - ✅ Arrow functions: `({ attributes, setAttributes }) => ...`
+
+## Consolidation
+- **Consolidate Selectors**: Use single query selectors with appropriate combinators instead of multiple separate queries
+
+---
+
+# Security & Validation
+
+## Strict URL Validation
+Use `wp_parse_url()` for proper validation:
+```php
+// Before
+if ( strpos( $url, 'youtube.com' ) === false ) return;
+
+// After
+$parsed = wp_parse_url( $url );
+if ( ! $parsed || empty( $parsed['host'] ) ) return false;
+$host = strtolower( $parsed['host'] );
+return in_array( $host, array( 'youtube.com', 'www.youtube.com' ), true );
+```
+
+## Prevent Header Injection
+Check for newlines in user input:
+```php
+// Before
+$headers[] = 'From: ' . $name . ' <' . $email . '>';
+
+// After
+if ( strpos( $name, "\n" ) !== false || strpos( $name, "\r" ) !== false ) {
+    return new WP_Error( 'invalid_input', 'Invalid input detected.' );
+}
+$headers[] = 'From: ' . $name . ' <' . $email . '>';
+```
+
+---
+
+# Performance Optimizations
+
+- **Conditional Script Loading**: Only load scripts when needed
+  ```php
+  public function enqueue_scripts() {
+      if ( ! $this->has_block() ) {
+          return;
+      }
+      // enqueue script
+  }
+  ```
+- **Prevent Duplicate Enqueues**: Check if already enqueued
+  ```php
+  if ( wp_script_is( 'script-handle', 'enqueued' ) ) {
+      return;
+  }
+  ```
+- **Optimize Fetch Frequency**: Only fetch when value changes
+
+---
+
+# Architecture Patterns
+
+- **Extract to Standalone Plugin**: Move theme-specific functionality to plugins when reusable
+- **Modular Architecture**: Separate into focused classes instead of monolithic classes
+- **Remove Build Dependencies**: Use WordPress globals directly
+  ```javascript
+  // Before: Requires build step
+  import { createElement } from '@wordpress/element';
+
+  // After: Use WordPress globals
+  const { createElement: el } = wp.element;
+  ```
+
+---
+
+# Documentation Standards
+
+- **Comprehensive Docblocks**: Include purpose, parameters, return types
+- **Remove Redundant Comments**: Only comment non-obvious logic
+- **File Header Documentation**: Describe file purpose
+
+---
+
+# Decision Guide: When to Apply Which Pattern
+
+## Extract to Constant When:
+- Value appears 2+ times
+- Value might need to change
+- Value has semantic meaning (rate limit, timeout, etc.)
+
+## Simplify Conditional When:
+- Multiple early returns checking similar things
+- Simple boolean logic can be combined
+- Ternary is clearer than if/else for single values
+
+## Extract Helper Function When:
+- Pattern repeats 3+ times
+- Logic is complex enough to benefit from naming
+- Function would be reusable
+
+## Inline Function When:
+- Function used only once
+- Function adds no clarity
+- Abstraction doesn't help understanding
+
+## Use Array-Based Approach When:
+- Multiple similar features/attributes
+- Features might expand
+- Need to iterate over features
+
+## Extract to Plugin When:
+- Functionality is reusable
+- Not theme-specific
+- Could be used with other themes
