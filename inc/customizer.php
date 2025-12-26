@@ -377,7 +377,7 @@ class CarnavalSF_Customizer {
 		$css = '';
 
 		// Output font import.
-		$fonts_url = get_theme_mod( 'fonts_url' );
+		$fonts_url = get_theme_mod( 'fonts_url', self::DEFAULT_FONTS_URL );
 		if ( $fonts_url ) {
 			$css .= '@import url("' . esc_url_raw( $fonts_url ) . '");';
 		}
