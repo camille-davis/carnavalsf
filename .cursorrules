@@ -187,6 +187,31 @@ Combine related validations into single statements:
   }
   wp_enqueue_style( 'style', $url, array(), get_theme_version() );
   ```
+- **Extract Repeated Path/URL Calculations**: Store plugin/theme paths and URLs as class properties
+  ```php
+  // Before: Repeated path calculations
+  public function register_block() {
+      $plugin_dir = dirname( dirname( __FILE__ ) );
+      $plugin_url = plugin_dir_url( dirname( __FILE__ ) );
+      // ... use $plugin_dir and $plugin_url
+  }
+  public function enqueue_scripts() {
+      $plugin_url = plugin_dir_url( dirname( __FILE__ ) );
+      // ... use $plugin_url
+  }
+
+  // After: Store as class properties
+  private $plugin_dir;
+  private $plugin_url;
+
+  public function __construct() {
+      $this->plugin_dir = dirname( dirname( __FILE__ ) );
+      $this->plugin_url = plugin_dir_url( dirname( __FILE__ ) );
+  }
+  public function register_block() {
+      // ... use $this->plugin_dir and $this->plugin_url
+  }
+  ```
 - **Centralized Configuration**: Single source of truth for feature definitions
 - **Share Constants Between Classes**: Make constants public when needed by other classes
   ```php
@@ -256,6 +281,44 @@ Combine related validations into single statements:
   private function register_control( $wp_customize, $setting_id, $label, $section ) {
       $wp_customize->add_setting( $setting_id, array( 'default' => self::DEFAULTS[ $setting_id ], 'sanitize_callback' => 'sanitize_text_field' ) );
       $wp_customize->add_control( $setting_id, array( 'label' => $label, 'section' => $section, 'type' => 'text' ) );
+  }
+  ```
+- **Extract Complex Conditionals**: Move complex conditional logic into named helper methods
+  ```php
+  // Before: Complex logic inline
+  public function enqueue_scripts() {
+      $post = get_post();
+      $has_block = $post && has_block( 'namespace/block', $post );
+      if ( ! $has_block ) {
+          $widgets = get_option( 'widget_block', array() );
+          $widget_content = '';
+          foreach ( $widgets as $widget ) {
+              if ( ! empty( $widget['content'] ) ) {
+                  $widget_content .= $widget['content'];
+              }
+          }
+          $has_block = ! empty( $widget_content ) && has_block( 'namespace/block', $widget_content );
+      }
+      if ( ! $has_block ) {
+          return;
+      }
+      // ... enqueue scripts
+  }
+
+  // After: Extract to helper method
+  public function enqueue_scripts() {
+      if ( ! $this->has_block() ) {
+          return;
+      }
+      // ... enqueue scripts
+  }
+  private function has_block() {
+      $post = get_post();
+      if ( $post && has_block( 'namespace/block', $post ) ) {
+          return true;
+      }
+      // Check widgets...
+      return false;
   }
   ```
 - **Unified Parameter Functions**: Combine similar functions into one
