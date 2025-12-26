@@ -1,4 +1,14 @@
 <?php
+/**
+ * Contact Form Block Render Template
+ *
+ * @package CarnavalSF
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 $id = 'contact-form-' . wp_unique_id();
 
 // Check if block is being rendered by index.js.

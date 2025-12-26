@@ -5,6 +5,10 @@
  * @package CarnavalSF
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * Color converter class.
  */

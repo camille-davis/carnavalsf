@@ -5,6 +5,10 @@
  * @package CarnavalSF
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * Page Color Meta Box Class
  */

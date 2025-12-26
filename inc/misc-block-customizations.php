@@ -9,6 +9,10 @@
  * @package CarnavalSF
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * Block Customizations Class
  */

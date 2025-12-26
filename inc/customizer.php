@@ -5,6 +5,10 @@
  * @package CarnavalSF
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 // Load color utility functions and classes.
 require_once get_template_directory() . '/inc/color-converter.php';
 
