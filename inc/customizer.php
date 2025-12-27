@@ -22,7 +22,7 @@ class CarnavalSF_Customizer {
 	 *
 	 * @var string
 	 */
-	private const DEFAULT_FONTS_URL = 'https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&family=Saira+Condensed:wght@400;800&display=block';
+	private const DEFAULT_FONTS_URL = 'https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,700;1,400;1,700&family=Saira+Condensed:wght@400;800&display=block&subset=latin';
 
 	/**
 	 * Allowed font hosts.
@@ -50,7 +50,7 @@ class CarnavalSF_Customizer {
 	 * @var array
 	 */
 	private const DEFAULT_TYPOGRAPHY = array(
-		'body_font'      => 'Quicksand',
+		'body_font'      => 'Poppins',
 		'accent_font'    => 'Saira Condensed',
 		'body_font_size' => '1rem',
 		'h1_font_size'   => '6.25rem',
