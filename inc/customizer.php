@@ -57,7 +57,7 @@ class CarnavalSF_Customizer {
 		'h2_font_size'   => '4.25rem',
 		'h3_font_size'   => '3rem',
 		'h4_font_size'   => '2rem',
-		'h5_font_size'   => '1.25rem',
+		'h5_font_size'   => '1.75rem',
 		'h6_font_size'   => '1rem',
 	);
 
