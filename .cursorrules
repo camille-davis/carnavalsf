@@ -11,6 +11,7 @@
 **IMPORTANT:** Follow user instructions literally and conservatively.
 
 - **Answer questions literally**: If the user asks a question or requests an explanation, provide the answer/explanation only. Do NOT take action or make changes unless explicitly requested.
+- **"explore why" means explanation only**: If the user says "explore why", provide an explanation in chat only. Do NOT implement any code changes or modifications.
 - **Ask before taking initiative**: If you want to take action beyond what was explicitly requested, ask for confirmation first. Do not assume the user wants additional improvements, refactoring, or optimizations unless they explicitly ask.
 - **Ask for clarification when unsure**: If you are uncertain about what the user wants, ask for clarification rather than making assumptions.
 - **Follow instructions exactly**: If the user says "check", "analyze", "review", or "look at" something, do that action only. Do not automatically fix issues found unless explicitly asked to do so.
@@ -171,6 +172,20 @@ Combine related validations into single statements:
   - Rate limits: `private const RATE_LIMIT = 3;`
   - Versions: `private const VERSION = '1.0.0';`
   - Timeouts: `private const TIMEOUT = 30;`
+- **Extract Array Constants**: Extract repeated arrays to top-level constants
+  ```php
+  // Before: Array defined in function
+  function validate_upload( $data, $file, $filename, $mimes, $real_mime ) {
+      $allowed_mimes = array( 'type1', 'type2', 'type3' );
+      if ( in_array( $real_mime, $allowed_mimes, true ) ) { }
+  }
+
+  // After: Top-level constant
+  const ALLOWED_MIMES = array( 'type1', 'type2', 'type3' );
+  function validate_upload( $data, $file, $filename, $mimes, $real_mime ) {
+      if ( in_array( $real_mime, ALLOWED_MIMES, true ) ) { }
+  }
+  ```
 - **Extract Repeated Function Calls**: Cache expensive or repeated function results
   ```php
   // Before: Repeated expensive calls

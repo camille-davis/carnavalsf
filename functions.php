@@ -146,6 +146,63 @@ add_action( 'wp_enqueue_scripts', 'carnavalsf_enqueue_assets' );
 // ============================================================================
 
 /**
+ * Allowed MIME types for PDF files.
+ */
+const ALLOWED_PDF_MIMES = array(
+	'application/pdf',
+	'application/x-pdf',
+	'application/acrobat',
+	'applications/vnd.pdf',
+	'text/pdf',
+	'text/x-pdf',
+);
+
+/**
+ * Allows PDF file uploads for administrators only.
+ *
+ * @param array $mimes Array of allowed MIME types.
+ * @return array Modified array of allowed MIME types.
+ */
+function carnavalsf_allow_pdf_uploads( $mimes ) {
+	if ( current_user_can( 'manage_options' ) ) {
+		$mimes['pdf'] = 'application/pdf';
+	}
+	return $mimes;
+}
+add_filter( 'upload_mimes', 'carnavalsf_allow_pdf_uploads' );
+
+/**
+ * Validates PDF file types during upload.
+ *
+ * @param array  $wp_check_filetype_and_ext File data array containing 'ext', 'type', and 'proper_filename'.
+ * @param string $file                      Full path to the file.
+ * @param string $filename                  The name of the file.
+ * @param array  $mimes                     Array of mime types keyed by their file extension regex.
+ * @param string|false $real_mime           The actual mime type or false if the type cannot be determined.
+ * @return array Modified file data array.
+ */
+function carnavalsf_validate_pdf_upload( $wp_check_filetype_and_ext, $file, $filename, $mimes, $real_mime ) {
+
+	// Reject PDF uploads if the file doesn't have a PDF extension.
+	if ( ! preg_match( '/\.pdf$/i', $filename ) ) {
+		return $wp_check_filetype_and_ext;
+	}
+
+	// Only accept if real MIME type matches allowed PDF types.
+	if ( $real_mime && in_array( $real_mime, ALLOWED_PDF_MIMES, true ) ) {
+		$wp_check_filetype_and_ext['ext']  = 'pdf';
+		$wp_check_filetype_and_ext['type'] = 'application/pdf';
+	} else {
+		// Reject if MIME type doesn't match or can't be determined.
+		$wp_check_filetype_and_ext['ext']  = false;
+		$wp_check_filetype_and_ext['type'] = false;
+	}
+
+	return $wp_check_filetype_and_ext;
+}
+add_filter( 'wp_check_filetype_and_ext', 'carnavalsf_validate_pdf_upload', 10, 5 );
+
+/**
  * Disables WordPress automatic image resizing.
  * This prevents WordPress from creating multiple image sizes.
  *
