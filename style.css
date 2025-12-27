@@ -734,17 +734,20 @@ summary h3,
 .details-content {
 	overflow: hidden;
 	transition: max-height 0.3s ease;
-	margin: 0 .5rem;
+}
+
+.details-content > * {
+	padding: 0 .5rem;
 }
 
 .editor-styles-wrapper summary + *,
 .details-content > :first-child {
-	margin-top: .5rem;
+	padding-top: .5rem;
 }
 
 .editor-styles-wrapper details > :last-child,
 details .details-content > :last-child {
-	margin-bottom: .5rem;
+	padding-bottom: .5rem;
 }
 
 /* Contact Form Block */

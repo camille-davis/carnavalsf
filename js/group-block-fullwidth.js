@@ -42,7 +42,7 @@
 				createElement(BlockEdit, props),
 				createElement(
 					InspectorControls,
-					{ group: 'styles' },
+					{ group: 'settings' },
 					createElement(
 						PanelBody,
 						{ title: 'Width', initialOpen: true, order: 10 },
