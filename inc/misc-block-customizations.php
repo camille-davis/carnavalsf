@@ -58,6 +58,15 @@ class CarnavalSF_Blocks {
 			$theme_version,
 			true
 		);
+
+		// Add container classes to block and widget editors to apply style.css styles.
+		wp_enqueue_script(
+			'carnavalsf-add-editor-classes',
+			get_template_directory_uri() . '/js/add-editor-classes.js',
+			array(),
+			$theme_version,
+			true
+		);
 	}
 
 	/**
