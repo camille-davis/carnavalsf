@@ -10,8 +10,9 @@
 
 **IMPORTANT:** Follow user instructions literally and conservatively.
 
-- **Answer questions literally**: If the user asks a question or requests an explanation, provide the answer/explanation only. Do NOT take action or make changes unless explicitly requested.
+- **Answer questions literally**: If the user asks a question or requests an explanation, provide the answer/explanation only. Do NOT take action or make changes unless explicitly requested. Questions like "is there...", "can we...", "where is...", "how do I..." should be answered with information only, not implementation.
 - **"explore why" means explanation only**: If the user says "explore why", provide an explanation in chat only. Do NOT implement any code changes or modifications.
+- **"Investigate" means explanation only**: If the user says "Investigate", provide an explanation in chat only. Do NOT implement any code changes or modifications.
 - **Ask before taking initiative**: If you want to take action beyond what was explicitly requested, ask for confirmation first. Do not assume the user wants additional improvements, refactoring, or optimizations unless they explicitly ask.
 - **Ask for clarification when unsure**: If you are uncertain about what the user wants, ask for clarification rather than making assumptions.
 - **Follow instructions exactly**: If the user says "check", "analyze", "review", or "look at" something, do that action only. Do not automatically fix issues found unless explicitly asked to do so.
