@@ -672,10 +672,6 @@ h6.has-background {
    Gutenberg Blocks
    ============================================================================ */
 
-	 :root :where(.is-layout-flow) > * {
-		margin-block-start: 0 !important;
-	}
-
 /* Columns Block */
 .is-layout-flex .wp-block-column,
 .wp-block-column {
