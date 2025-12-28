@@ -6,14 +6,19 @@
       "backgroundImage": true,
       "backgroundSize": true
     },
-    "appearanceTools": true,
     "spacing": {
       "padding": true,
-      "margin": true,
-      "blockGap": true
+      "margin": true
     },
     "shadow": {
       "defaultPresets": false
+    },
+    "blocks": {
+      "core/columns": {
+        "spacing": {
+          "blockGap": true
+        }
+      }
     }
   },
   "styles": {
