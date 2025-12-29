@@ -61,12 +61,12 @@ body {
 	line-height: 1.5;
 }
 
-p:not(:last-child) {
+p:not(:last-child),
+ul:not(.menu-links):not(:last-child) {
 	margin-bottom: var(--vertical-space-small);
 }
 
 ul:not(.menu-links) {
-	margin-bottom: var(--vertical-space-small);
 	padding-left: 1rem;
 }
 
