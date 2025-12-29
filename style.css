@@ -254,9 +254,6 @@ textarea {
 /* Labels */
 label {
 	margin-bottom: 0.25rem;
-	font-weight: bold;
-	text-transform: uppercase;
-	letter-spacing: var(--letter-spacing-small);
 }
 
 /* ============================================================================
