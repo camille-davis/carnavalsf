@@ -7,11 +7,11 @@
 
 	const BLOCK_NAME = 'core/image';
 	const imageAttributes = [
-		{ attrKey: 'fullwidth', className: 'is-fullwidth-image', label: 'Fullwidth', title: 'Width', order: 10, initialOpen: true },
-		{ attrKey: 'fullheight', className: 'is-fullheight-image', label: 'Fullheight', title: 'Height', order: 11, initialOpen: false },
+		{ attrKey: 'fullwidth', className: 'is-fullwidth-image', label: 'Fullwidth' },
+		{ attrKey: 'fullheight', className: 'is-fullheight-image', label: 'Fullheight' },
 	];
 
-	imageAttributes.forEach(({ attrKey, className: cssClass, label, title, order, initialOpen }) => {
+	imageAttributes.forEach(({ attrKey, className: cssClass }) => {
 		addFilter(
 			'blocks.registerBlockType',
 			`carnavalsf/image-block-${attrKey}`,
@@ -31,35 +31,6 @@
 			}
 		);
 
-		const withControl = createHigherOrderComponent((BlockEdit) => {
-			return ({ name, attributes, setAttributes, ...props }) => {
-				if (name !== BLOCK_NAME) {
-					return el(BlockEdit, { name, attributes, setAttributes, ...props });
-				}
-
-				return el(
-					Fragment,
-					{},
-					el(BlockEdit, { name, attributes, setAttributes, ...props }),
-					el(
-						InspectorControls,
-						{ group: 'settings' },
-						el(
-							PanelBody,
-							{ title, initialOpen, order },
-							el(ToggleControl, {
-								label,
-								checked: attributes[attrKey],
-								onChange: (value) => setAttributes({ [attrKey]: value }),
-							})
-						)
-					)
-				);
-			};
-		}, `with${attrKey.charAt(0).toUpperCase() + attrKey.slice(1)}Control`);
-
-		addFilter(`editor.BlockEdit`, `carnavalsf/image-block-${attrKey}`, withControl);
-
 		addFilter(
 			'editor.BlockListBlock',
 			`carnavalsf/image-block-${attrKey}-class`,
@@ -69,16 +40,47 @@
 						return el(BlockListBlock, { name, attributes, className, ...props });
 					}
 
-					const cssClassName = className ? `${className} ${cssClass}` : cssClass;
 					return el(BlockListBlock, {
 						...props,
 						name,
 						attributes,
-						className: cssClassName,
+						className: className ? `${className} ${cssClass}` : cssClass,
 					});
 				};
 			}
 		);
 	});
+
+	const withResponsiveSizeControl = createHigherOrderComponent((BlockEdit) => {
+		return ({ name, attributes, setAttributes, ...props }) => {
+			if (name !== BLOCK_NAME) {
+				return el(BlockEdit, { name, attributes, setAttributes, ...props });
+			}
+
+			return el(
+				Fragment,
+				null,
+				el(BlockEdit, { name, attributes, setAttributes, ...props }),
+				el(
+					InspectorControls,
+					{ group: 'settings' },
+					el(
+						PanelBody,
+						{ title: 'Responsive size', initialOpen: true, order: 10 },
+						imageAttributes.map(({ attrKey, label }) =>
+							el(ToggleControl, {
+								key: attrKey,
+								label,
+								checked: attributes[attrKey],
+								onChange: (value) => setAttributes({ [attrKey]: value }),
+							})
+						)
+					)
+				)
+			);
+		};
+	}, 'withResponsiveSizeControl');
+
+	addFilter('editor.BlockEdit', 'carnavalsf/image-block-options', withResponsiveSizeControl);
 })();
 
