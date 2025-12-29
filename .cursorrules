@@ -4,6 +4,7 @@
 - **No JSX syntax**: Do not use JSX in JavaScript files. This theme does not use a build process to transpile JSX. Use `wp.element.createElement()` for creating React elements in WordPress block editor scripts.
 - **No build processes**: Do not implement build tools or processes for JavaScript or CSS (no webpack, babel, npm scripts, etc.). Write vanilla JavaScript and CSS that works directly without compilation or bundling.
 - **No 'use strict'**: Do not use `'use strict'` directive in JavaScript files
+- **Frontend static DOM**: On the frontend, once the page is loaded, new elements will not appear. Do not implement MutationObserver cleanup code or watch for dynamically added/removed elements on the frontend. Scripts can run once on page load without needing to handle dynamic DOM changes.
 
 ---
 
@@ -135,6 +136,37 @@ if ( ! isset( $attrs['key'] ) || ! $attrs['key'] ) return;
 ## Remove Unnecessary Code
 
 - **Unused code**: Remove variables, functions, attributes, and data attributes that are defined but never used
+- **Unused dataset properties**: Remove dataset properties that are set but never read or checked
+  ```javascript
+  // Before
+  block.dataset.processed = 'true';
+  // ... never checked later
+
+  // After
+  // Remove entirely if not needed
+  ```
+- **Redundant CSS properties**: Remove duplicate CSS properties that are already set in base styles or parent selectors
+  ```css
+  /* Before */
+  .element {
+    overflow: hidden;
+  }
+  @media (max-width: 768px) {
+    .element {
+      overflow: hidden; /* Redundant */
+    }
+  }
+
+  /* After */
+  .element {
+    overflow: hidden;
+  }
+  @media (max-width: 768px) {
+    .element {
+      /* Remove redundant property */
+    }
+  }
+  ```
 - **Dead code**: Remove code that cannot execute due to context limitations (e.g., Customizer API code on non-customizer screens)
 - **Unnecessary dependencies**: Only include script/style dependencies that are actually used
 - **Redundant functionality**: Don't duplicate functionality already provided elsewhere (e.g., inline styles + JavaScript, localized data + inline scripts)
@@ -567,6 +599,35 @@ modifyEditorIframe('.editor-styles-wrapper', (element) => {
 ## Consolidation
 - **Consolidate Selectors**: Use single query selectors with appropriate combinators instead of multiple separate queries
 
+## Waiting for DOM to load
+- **Simplify DOM Ready Checks**: `DOMContentLoaded` event fires even if DOM is already loaded
+  ```javascript
+  // Before
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+
+  // After
+  document.addEventListener('DOMContentLoaded', init);
+  ```
+
+## DOM Element Object Storage
+- **Store Objects on Elements, Not in dataset**: Use direct element properties for storing objects (like ResizeObserver, MutationObserver), not `dataset` properties. `dataset` only stores strings, so objects cannot be stored there.
+  ```javascript
+  // Before: Won't work - dataset only stores strings
+  element.dataset.observer = resizeObserver;
+  element.dataset.observer.disconnect(); // TypeError: disconnect is not a function
+
+  // After: Store object directly on element
+  element._customObserver = resizeObserver;
+  if (element._customObserver) {
+    element._customObserver.disconnect();
+  }
+  ```
+- **Use Descriptive Property Names**: Prefix custom properties with underscore to avoid conflicts (e.g., `_customObserver`, `_slideshowInterval`)
+
 ---
 
 # Security & Validation
@@ -776,6 +837,193 @@ Then use the custom property in CSS:
 - **Optimize Fetch Frequency**: Only fetch when value changes
 
 ---
+
+# WordPress-Specific Patterns
+
+## Block Registration
+- **Use block.json for Block Configuration**: Define block metadata, attributes, and supports in `block.json` rather than in PHP
+  ```json
+  {
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 3,
+    "name": "namespace/block-name",
+    "title": "Block Title",
+    "category": "media",
+    "attributes": {
+      "attributeName": {
+        "type": "string",
+        "default": "default-value"
+      }
+    },
+    "supports": {
+      "anchor": true,
+      "html": false
+    }
+  }
+  ```
+- **Register Block with Render Callback**: Use `register_block_type()` with `block.json` and optional render callback
+  ```php
+  function register_custom_block() {
+    register_block_type( __DIR__, array(
+      'render_callback' => 'render_custom_block',
+    ) );
+  }
+  add_action( 'init', 'register_custom_block' );
+  ```
+- **Extract Version Constant**: Use a constant for plugin/theme version to avoid repetition
+  ```php
+  const PLUGIN_VERSION = '1.0.0';
+  wp_enqueue_script( 'script', $url, array(), PLUGIN_VERSION, true );
+  ```
+
+## Block Editor JavaScript
+- **Use WordPress Globals**: Access WordPress APIs via global objects, not imports
+  ```javascript
+  // ✅ Correct
+  const { registerBlockType } = wp.blocks;
+  const { useBlockProps, InnerBlocks } = wp.blockEditor;
+  const { createElement } = wp.element;
+
+  // ❌ Wrong (requires build step)
+  import { registerBlockType } from '@wordpress/blocks';
+  ```
+- **Template Lock Configuration**: Use `templateLock` attribute in block.json and pass to `useInnerBlocksProps()`
+  ```javascript
+  const innerBlocksProps = useInnerBlocksProps(blockProps, {
+    templateLock: attributes.templateLock || 'all',
+  });
+  ```
+- **Media Library Integration**: Use `MediaUpload` component for image selection
+  ```javascript
+  createElement(MediaUpload, {
+    onSelect: replaceImages,
+    allowedTypes: ['image'],
+    multiple: true,
+    gallery: true,
+    value: imageIds,
+    render: function (obj) {
+      return createElement(Button, {
+        onClick: obj.open,
+      }, __('Select Images'));
+    },
+  })
+  ```
+
+## Script and Style Enqueuing
+- **Conditional Enqueuing**: Only enqueue scripts/styles when needed (e.g., when block is present)
+  ```php
+  function enqueue_block_assets() {
+    if ( ! has_block( 'namespace/block-name' ) ) {
+      return;
+    }
+    wp_enqueue_script( 'block-script', $url, array(), VERSION, true );
+  }
+  add_action( 'wp_enqueue_scripts', 'enqueue_block_assets' );
+  ```
+- **Separate Editor and Frontend Scripts**: Use different hooks for editor vs frontend
+  ```php
+  // Editor scripts
+  add_action( 'enqueue_block_editor_assets', 'enqueue_editor_assets' );
+
+  // Frontend scripts
+  add_action( 'wp_enqueue_scripts', 'enqueue_frontend_assets' );
+  ```
+- **Remove Version in Development**: Use filter to remove version query string during development
+  ```php
+  function remove_version_script( $src ) {
+    if ( defined( 'WP_DEBUG' ) && WP_DEBUG && strpos( $src, 'plugin-name' ) !== false && strpos( $src, 'ver=' ) !== false ) {
+      $src = remove_query_arg( 'ver', $src );
+    }
+    return $src;
+  }
+  add_filter( 'script_loader_src', 'remove_version_script', 9999 );
+  ```
+
+## Render Callbacks
+- **Use WP_HTML_Tag_Processor for Content Modification**: Process block content safely
+  ```php
+  function render_block( $attributes, $content ) {
+    $unique_class = wp_unique_id( 'wp-block-namespace-block-' );
+    $processed = new WP_HTML_Tag_Processor( $content );
+    $processed->next_tag();
+    $processed->add_class( $unique_class );
+    return $processed->get_updated_html();
+  }
+  ```
+- **Keep Render Callbacks Simple**: Extract complex logic to helper functions
+  ```php
+  // Before: Complex logic in render callback
+  function render_block( $attributes, $content ) {
+    // 50+ lines of processing...
+  }
+
+  // After: Extract to helper
+  function render_block( $attributes, $content ) {
+    return process_block_content( $content, $attributes );
+  }
+  ```
+
+## Plugin Structure
+- **Organize with Section Headers**: Use visual separators to group functionality
+  ```php
+  // ============================================================================
+  // Constants
+  // ============================================================================
+
+  // ============================================================================
+  // Block Registration
+  // ============================================================================
+
+  // ============================================================================
+  // Script Enqueuing
+  // ============================================================================
+  ```
+- **Extract Plugin Path/URL**: Store plugin directory and URL as constants or class properties
+  ```php
+  const PLUGIN_DIR = __DIR__;
+  const PLUGIN_URL = plugin_dir_url( __FILE__ );
+  ```
+
+## Hooks and Filters
+- **Use Descriptive Hook Names**: Include plugin/theme prefix
+  ```php
+  // ✅ Good
+  add_action( 'init', 'plugin_name_register_blocks' );
+  add_filter( 'the_content', 'plugin_name_filter_content' );
+
+  // ❌ Bad
+  add_action( 'init', 'register' );
+  add_filter( 'the_content', 'filter' );
+  ```
+- **Document Hook Priorities**: Use appropriate priorities and document why
+  ```php
+  // Priority 9 to run before default block registration (priority 10)
+  add_action( 'init', 'register_custom_blocks', 9 );
+  ```
+
+## Block Attributes
+- **Set Defaults in block.json**: Define attribute defaults in block.json, not JavaScript
+  ```json
+  "attributes": {
+    "setting": {
+      "type": "string",
+      "default": "default-value"
+    }
+  }
+  ```
+- **Initialize Layout Attributes**: Set layout attribute in useEffect for drag-and-drop support
+  ```javascript
+  useEffect(function () {
+    if (!attributes.layout) {
+      setAttributes({
+        layout: {
+          type: 'flex',
+          orientation: 'horizontal',
+        },
+      });
+    }
+  }, [attributes.layout]);
+  ```
 
 # Architecture Patterns
 
