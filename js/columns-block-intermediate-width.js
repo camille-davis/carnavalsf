@@ -5,12 +5,12 @@
 	const { createHigherOrderComponent } = wp.compose;
 	const { Fragment, createElement: el } = wp.element;
 
-	const BLOCK_NAME = 'core/group';
-	const CLASS_NAME = 'is-fullwidth';
+	const BLOCK_NAME = 'core/columns';
+	const CLASS_NAME = 'has-intermediate-width';
 
 	addFilter(
 		'blocks.registerBlockType',
-		'carnavalsf/group-block-fullwidth',
+		'carnavalsf/columns-block-intermediate-width',
 		(settings, name) => {
 			if (name !== BLOCK_NAME) {
 				return settings;
@@ -18,7 +18,7 @@
 
 			return Object.assign({}, settings, {
 				attributes: Object.assign({}, settings.attributes, {
-					fullwidth: {
+					intermediateWidth: {
 						type: 'boolean',
 						default: false,
 					},
@@ -27,7 +27,7 @@
 		}
 	);
 
-	const withFullwidthControl = createHigherOrderComponent((BlockEdit) => {
+	const withIntermediateWidthControl = createHigherOrderComponent((BlockEdit) => {
 		return ({ name, attributes, setAttributes, ...props }) => {
 			if (name !== BLOCK_NAME) {
 				return el(BlockEdit, { name, attributes, setAttributes, ...props });
@@ -44,24 +44,25 @@
 						PanelBody,
 						{ title: 'Width', initialOpen: true, order: 10 },
 						el(ToggleControl, {
-							label: 'Fullwidth',
-							checked: attributes.fullwidth,
-							onChange: (value) => setAttributes({ fullwidth: value }),
+							label: 'Intermediate width',
+							checked: attributes.intermediateWidth,
+							onChange: (value) => setAttributes({ intermediateWidth: value }),
+							help: 'Sets columns to 2 per row between mobile and 1200px width.',
 						})
 					)
 				)
 			);
 		};
-	}, 'withFullwidthControl');
+	}, 'withIntermediateWidthControl');
 
-	addFilter('editor.BlockEdit', 'carnavalsf/group-block-fullwidth', withFullwidthControl);
+	addFilter('editor.BlockEdit', 'carnavalsf/columns-block-intermediate-width', withIntermediateWidthControl);
 
 	addFilter(
 		'editor.BlockListBlock',
-		'carnavalsf/group-block-fullwidth-class',
+		'carnavalsf/columns-block-intermediate-width-class',
 		(BlockListBlock) => {
 			return ({ name, attributes, className, ...props }) => {
-				if (name !== BLOCK_NAME || !attributes?.fullwidth) {
+				if (name !== BLOCK_NAME || !attributes?.intermediateWidth) {
 					return el(BlockListBlock, { name, attributes, className, ...props });
 				}
 
@@ -75,3 +76,4 @@
 		}
 	);
 })();
+

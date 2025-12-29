@@ -665,6 +665,19 @@ h6.has-background {
    Gutenberg Blocks
    ============================================================================ */
 
+/* Columns Block */
+
+@media (max-width: 1200px) {
+	.wp-block-columns.has-intermediate-width {
+		flex-wrap: wrap !important;
+	}
+
+	.wp-block-columns.has-intermediate-width > .wp-block-column {
+		flex-basis: calc(50% - 1em);
+		flex-grow: 0;
+	}
+}
+
 /* Grid Block */
 .is-layout-grid {
 	gap: 5rem;
@@ -806,7 +819,7 @@ details .details-content > :last-child:not(.wp-block-columns) {
 	margin: auto;
 }
 
-.fullwidth-image.wp-block-image .components-resizable-box__container img, /* editor */
-.fullwidth-image img {
+.is-fullwidth-image.wp-block-image .components-resizable-box__container img, /* editor */
+.is-fullwidth-image img {
 	width: 100%;
 }

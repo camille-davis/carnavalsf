@@ -6,7 +6,7 @@
 	const { Fragment, createElement: el } = wp.element;
 
 	const BLOCK_NAME = 'core/image';
-	const CLASS_NAME = 'fullwidth-image';
+	const CLASS_NAME = 'is-fullwidth-image';
 
 	addFilter(
 		'blocks.registerBlockType',

@@ -3,7 +3,8 @@
  * Misc block customizations for Carnaval SF theme:
  * - Customize details block
  * - Add is-fullwidth toggle to group block
- * - Add fullwidth-image toggle to image block
+ * - Add is-fullwidth-image toggle to image block
+ * - Add intermediate-width toggle to columns block
  * - Change 'Dimensions' panel title to 'Spacing'
  *
  * @package CarnavalSF
@@ -25,6 +26,7 @@ class CarnavalSF_Blocks {
 		add_filter( 'render_block', array( $this, 'customize_details_block' ), 10, 2 );
 		add_filter( 'render_block_core/group', array( $this, 'group_block_fullwidth' ), 10, 2 );
 		add_filter( 'render_block_core/image', array( $this, 'image_block_fullwidth' ), 10, 2 );
+		add_filter( 'render_block_core/columns', array( $this, 'columns_block_intermediate_width' ), 10, 2 );
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_block_editor_assets' ) );
 	}
 
@@ -44,23 +46,22 @@ class CarnavalSF_Blocks {
 			'wp-hooks',
 		);
 
-		wp_enqueue_script(
-			'carnavalsf-group-block-fullwidth',
-			get_template_directory_uri() . '/js/group-block-fullwidth.js',
-			$block_editor_deps,
-			$theme_version,
-			true
+		$block_scripts = array(
+			'carnavalsf-group-block-fullwidth'      => 'group-block-fullwidth.js',
+			'carnavalsf-image-block-fullwidth'      => 'image-block-fullwidth.js',
+			'carnavalsf-columns-block-intermediate-width' => 'columns-block-intermediate-width.js',
 		);
 
-		wp_enqueue_script(
-			'carnavalsf-image-block-fullwidth',
-			get_template_directory_uri() . '/js/image-block-fullwidth.js',
-			$block_editor_deps,
-			$theme_version,
-			true
-		);
+		foreach ( $block_scripts as $handle => $file ) {
+			wp_enqueue_script(
+				$handle,
+				get_template_directory_uri() . '/js/' . $file,
+				$block_editor_deps,
+				$theme_version,
+				true
+			);
+		}
 
-		// Dimensions panel title customization.
 		wp_enqueue_script(
 			'carnavalsf-dimensions-panel-title',
 			get_template_directory_uri() . '/js/dimensions-panel-title.js',
@@ -69,7 +70,6 @@ class CarnavalSF_Blocks {
 			true
 		);
 
-		// Add container classes to block and widget editors to apply style.css styles.
 		wp_enqueue_script(
 			'carnavalsf-add-editor-classes',
 			get_template_directory_uri() . '/js/add-editor-classes.js',
@@ -106,41 +106,49 @@ class CarnavalSF_Blocks {
 	 * @return string Modified block content.
 	 */
 	public function group_block_fullwidth( $block_content, $block ) {
-		return $this->add_fullwidth_class( $block_content, $block, 'wp-block-group', 'is-fullwidth' );
+		return $this->add_block_class( $block_content, $block, 'wp-block-group', 'is-fullwidth', 'fullwidth' );
 	}
 
 	/**
-	 * Add fullwidth-image class to Image block when fullwidth attribute is set.
+	 * Add is-fullwidth-image class to Image block when fullwidth attribute is set.
 	 *
 	 * @param string $block_content The block content.
 	 * @param array  $block The block data.
 	 * @return string Modified block content.
 	 */
 	public function image_block_fullwidth( $block_content, $block ) {
-		return $this->add_fullwidth_class( $block_content, $block, 'wp-block-image', 'fullwidth-image' );
+		return $this->add_block_class( $block_content, $block, 'wp-block-image', 'is-fullwidth-image', 'fullwidth' );
 	}
 
 	/**
-	 * Add fullwidth class to block content when fullwidth attribute is set.
+	 * Add has-intermediate-width class to Columns block when intermediateWidth attribute is set.
+	 *
+	 * @param string $block_content The block content.
+	 * @param array  $block The block data.
+	 * @return string Modified block content.
+	 */
+	public function columns_block_intermediate_width( $block_content, $block ) {
+		return $this->add_block_class( $block_content, $block, 'wp-block-columns', 'has-intermediate-width', 'intermediateWidth' );
+	}
+
+	/**
+	 * Add class to block content when attribute is set.
 	 *
 	 * @param string $block_content The block content.
 	 * @param array  $block The block data.
 	 * @param string $block_class The block class to match (e.g., 'wp-block-group').
-	 * @param string $fullwidth_class The fullwidth class to add (e.g., 'is-fullwidth').
+	 * @param string $css_class The CSS class to add (e.g., 'is-fullwidth').
+	 * @param string $attr_key The attribute key to check (e.g., 'fullwidth').
 	 * @return string Modified block content.
 	 */
-	private function add_fullwidth_class( $block_content, $block, $block_class, $fullwidth_class ) {
-		if ( ! isset( $block['attrs']['fullwidth'] ) || ! $block['attrs']['fullwidth'] ) {
-			return $block_content;
-		}
-
-		if ( strpos( $block_content, $fullwidth_class ) !== false ) {
+	private function add_block_class( $block_content, $block, $block_class, $css_class, $attr_key ) {
+		if ( ! isset( $block['attrs'][ $attr_key ] ) || ! $block['attrs'][ $attr_key ] || strpos( $block_content, $css_class ) !== false ) {
 			return $block_content;
 		}
 
 		$block_content = preg_replace(
 			'/(<[^>]*\bclass="[^"]*' . preg_quote( $block_class, '/' ) . '[^"]*)(")/',
-			'$1 ' . $fullwidth_class . '$2',
+			'$1 ' . $css_class . '$2',
 			$block_content,
 			1
 		);
