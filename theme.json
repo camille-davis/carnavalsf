@@ -12,6 +12,9 @@
     },
     "shadow": {
       "defaultPresets": false
+    },
+    "layout": {
+      "allowEditing": false
     }
   }
 }
