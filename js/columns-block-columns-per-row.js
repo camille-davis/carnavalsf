@@ -17,6 +17,12 @@
 	const selectOptions = [{ label: 'Select...', value: '' }, ...columnOptions];
 
 	const breakpoints = ['desktop', 'medium', 'tablet', 'mobile'];
+	const breakpointHelp = {
+		desktop: 'Applies to all screen widths.',
+		medium: 'Screen widths under 1200px.',
+		tablet: 'Screen widths under 768px.',
+		mobile: 'Screen widths under 576px.',
+	};
 
 	addFilter(
 		'blocks.registerBlockType',
@@ -55,6 +61,7 @@
 					value: attributes[attrKey] || '',
 					options: selectOptions,
 					onChange: (value) => setAttributes({ [attrKey]: value }),
+					help: breakpointHelp[breakpoint],
 				});
 			});
 
