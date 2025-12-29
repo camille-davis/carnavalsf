@@ -305,6 +305,61 @@ Combine related validations into single statements:
   ```
 - **Array-Based Feature Checking**: Use arrays to check multiple features
 - **Array-Based Control Registration**: Use arrays to register multiple similar controls
+- **Array-Based Attribute/Control Generation**: Use arrays to generate similar attributes and controls
+  ```javascript
+  // Before: Repeated attribute definitions
+  attributes: {
+      desktopColumnsPerRow: { type: 'string', default: '' },
+      mediumColumnsPerRow: { type: 'string', default: '' },
+      tabletColumnsPerRow: { type: 'string', default: '' },
+      mobileColumnsPerRow: { type: 'string', default: '' },
+  }
+
+  // After: Array-based generation
+  const breakpoints = ['desktop', 'medium', 'tablet', 'mobile'];
+  const attributes = {};
+  breakpoints.forEach(breakpoint => {
+      attributes[`${breakpoint}ColumnsPerRow`] = {
+          type: 'string',
+          default: '',
+      };
+  });
+  ```
+  ```javascript
+  // Before: Repeated SelectControls
+  el(SelectControl, { label: 'Desktop', value: attributes.desktopColumnsPerRow || '', ... }),
+  el(SelectControl, { label: 'Medium', value: attributes.mediumColumnsPerRow || '', ... }),
+  // ... repeated for each
+
+  // After: Array-based generation
+  const controls = breakpoints.map(breakpoint => {
+      const label = breakpoint.charAt(0).toUpperCase() + breakpoint.slice(1);
+      const attrKey = `${breakpoint}ColumnsPerRow`;
+      return el(SelectControl, {
+          key: breakpoint,
+          label: label,
+          value: attributes[attrKey] || '',
+          onChange: (value) => setAttributes({ [attrKey]: value }),
+      });
+  });
+  ```
+  ```php
+  // Before: Repeated attribute handling
+  $desktop = $attrs['desktopColumnsPerRow'] ?? '';
+  $medium = $attrs['mediumColumnsPerRow'] ?? $desktop;
+  $tablet = $attrs['tabletColumnsPerRow'] ?? $medium;
+  $mobile = $attrs['mobileColumnsPerRow'] ?? $tablet;
+
+  // After: Array-based with cascading defaults
+  $breakpoints = array( 'desktop', 'medium', 'tablet', 'mobile' );
+  $values = array();
+  $prev_value = '';
+  foreach ( $breakpoints as $breakpoint ) {
+      $attr_key = $breakpoint . 'ColumnsPerRow';
+      $values[ $breakpoint ] = $attrs[ $attr_key ] ?? $prev_value;
+      $prev_value = $values[ $breakpoint ];
+  }
+  ```
 - **Array-Based Variable Building**: Use mapping arrays with foreach to build related variables
   ```php
   // Before: Repeated pattern for each color

@@ -16,6 +16,8 @@
 
 	const selectOptions = [{ label: 'Select...', value: '' }, ...columnOptions];
 
+	const breakpoints = ['desktop', 'medium', 'tablet', 'mobile'];
+
 	addFilter(
 		'blocks.registerBlockType',
 		'carnavalsf/columns-block-columns-per-row',
@@ -24,25 +26,16 @@
 				return settings;
 			}
 
+			const attributes = {};
+			breakpoints.forEach(breakpoint => {
+				attributes[`${breakpoint}ColumnsPerRow`] = {
+					type: 'string',
+					default: '',
+				};
+			});
+
 			return Object.assign({}, settings, {
-				attributes: Object.assign({}, settings.attributes, {
-					desktopColumnsPerRow: {
-						type: 'string',
-						default: '',
-					},
-					mediumColumnsPerRow: {
-						type: 'string',
-						default: '',
-					},
-					tabletColumnsPerRow: {
-						type: 'string',
-						default: '',
-					},
-					mobileColumnsPerRow: {
-						type: 'string',
-						default: '',
-					},
-				}),
+				attributes: Object.assign({}, settings.attributes, attributes),
 			});
 		}
 	);
@@ -52,6 +45,18 @@
 			if (name !== BLOCK_NAME) {
 				return el(BlockEdit, { name, attributes, setAttributes, ...props });
 			}
+
+			const controls = breakpoints.map(breakpoint => {
+				const label = breakpoint.charAt(0).toUpperCase() + breakpoint.slice(1);
+				const attrKey = `${breakpoint}ColumnsPerRow`;
+				return el(SelectControl, {
+					key: breakpoint,
+					label: label,
+					value: attributes[attrKey] || '',
+					options: selectOptions,
+					onChange: (value) => setAttributes({ [attrKey]: value }),
+				});
+			});
 
 			return el(
 				Fragment,
@@ -63,30 +68,7 @@
 					el(
 						PanelBody,
 						{ title: 'Columns per Row', initialOpen: true, order: 10 },
-						el(SelectControl, {
-							label: 'Desktop',
-							value: attributes.desktopColumnsPerRow || '',
-							options: selectOptions,
-							onChange: (value) => setAttributes({ desktopColumnsPerRow: value }),
-						}),
-						el(SelectControl, {
-							label: 'Medium',
-							value: attributes.mediumColumnsPerRow || '',
-							options: selectOptions,
-							onChange: (value) => setAttributes({ mediumColumnsPerRow: value }),
-						}),
-						el(SelectControl, {
-							label: 'Tablet',
-							value: attributes.tabletColumnsPerRow || '',
-							options: selectOptions,
-							onChange: (value) => setAttributes({ tabletColumnsPerRow: value }),
-						}),
-						el(SelectControl, {
-							label: 'Mobile',
-							value: attributes.mobileColumnsPerRow || '',
-							options: selectOptions,
-							onChange: (value) => setAttributes({ mobileColumnsPerRow: value }),
-						})
+						...controls
 					)
 				)
 			);
@@ -104,26 +86,30 @@
 					return el(BlockListBlock, { name, attributes, wrapperProps, ...props });
 				}
 
-				const desktop = attributes.desktopColumnsPerRow;
-				const medium = attributes.mediumColumnsPerRow || desktop;
-				const tablet = attributes.tabletColumnsPerRow || medium;
-				const mobile = attributes.mobileColumnsPerRow || tablet;
+				const values = {};
+				let prevValue = '';
+				breakpoints.forEach(breakpoint => {
+					const attrKey = `${breakpoint}ColumnsPerRow`;
+					values[breakpoint] = attributes[attrKey] || prevValue;
+					prevValue = values[breakpoint];
+				});
 
-				if (!desktop && !medium && !tablet && !mobile) {
+				if (!Object.values(values).some(v => v)) {
 					return el(BlockListBlock, { name, attributes, wrapperProps, ...props });
 				}
+
+				const dataAttrs = {};
+				breakpoints.forEach(breakpoint => {
+					if (values[breakpoint]) {
+						dataAttrs[`data-columns-per-row-${breakpoint}`] = values[breakpoint];
+					}
+				});
 
 				return el(BlockListBlock, {
 					...props,
 					name,
 					attributes,
-					wrapperProps: {
-						...wrapperProps,
-						...(desktop && { 'data-columns-per-row-desktop': desktop }),
-						...(medium && { 'data-columns-per-row-medium': medium }),
-						...(tablet && { 'data-columns-per-row-tablet': tablet }),
-						...(mobile && { 'data-columns-per-row-mobile': mobile }),
-					},
+					wrapperProps: { ...wrapperProps, ...dataAttrs },
 				});
 			};
 		}

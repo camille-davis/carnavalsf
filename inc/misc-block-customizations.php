@@ -129,27 +129,25 @@ class CarnavalSF_Blocks {
 	 */
 	public function columns_block_columns_per_row( $block_content, $block ) {
 		$attrs = $block['attrs'] ?? array();
-		$desktop = $attrs['desktopColumnsPerRow'] ?? '';
-		$medium = $attrs['mediumColumnsPerRow'] ?? $desktop;
-		$tablet = $attrs['tabletColumnsPerRow'] ?? $medium;
-		$mobile = $attrs['mobileColumnsPerRow'] ?? $tablet;
+		$breakpoints = array( 'desktop', 'medium', 'tablet', 'mobile' );
 
-		if ( ! $desktop && ! $medium && ! $tablet && ! $mobile ) {
+		$values = array();
+		$prev_value = '';
+		foreach ( $breakpoints as $breakpoint ) {
+			$attr_key = $breakpoint . 'ColumnsPerRow';
+			$values[ $breakpoint ] = $attrs[ $attr_key ] ?? $prev_value;
+			$prev_value = $values[ $breakpoint ];
+		}
+
+		if ( ! array_filter( $values ) ) {
 			return $block_content;
 		}
 
 		$data_attrs = array();
-		if ( $desktop ) {
-			$data_attrs[] = 'data-columns-per-row-desktop="' . esc_attr( $desktop ) . '"';
-		}
-		if ( $medium ) {
-			$data_attrs[] = 'data-columns-per-row-medium="' . esc_attr( $medium ) . '"';
-		}
-		if ( $tablet ) {
-			$data_attrs[] = 'data-columns-per-row-tablet="' . esc_attr( $tablet ) . '"';
-		}
-		if ( $mobile ) {
-			$data_attrs[] = 'data-columns-per-row-mobile="' . esc_attr( $mobile ) . '"';
+		foreach ( $breakpoints as $breakpoint ) {
+			if ( $values[ $breakpoint ] ) {
+				$data_attrs[] = 'data-columns-per-row-' . $breakpoint . '="' . esc_attr( $values[ $breakpoint ] ) . '"';
+			}
 		}
 
 		return preg_replace(
