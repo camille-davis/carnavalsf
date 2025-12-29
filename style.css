@@ -714,7 +714,7 @@ h6.has-background {
 	}
 
 	.wp-block-columns[data-columns-per-row-intermediate="2"] > .wp-block-column {
-		flex-basis: calc((100% - var(--columns-gap)) / 2);
+		flex-basis: calc((100% - 2em) / 2);
 	}
 
 	.wp-block-columns[data-columns-per-row-intermediate="3"] > .wp-block-column {

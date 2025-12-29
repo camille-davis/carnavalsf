@@ -254,6 +254,21 @@ Combine related validations into single statements:
 
 ## Conditional Logic Simplifications
 - **Combine Early Returns**: Merge multiple early return conditions
+  ```php
+  // Before
+  if ( ! isset( $_POST['nonce'] ) ) return;
+  if ( ! wp_verify_nonce( $_POST['nonce'], 'action' ) ) return;
+  if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) return;
+  if ( ! current_user_can( 'edit_post', $post_id ) ) return;
+
+  // After
+  $nonce = $_POST['nonce'] ?? '';
+  if ( ! wp_verify_nonce( $nonce, 'action' ) ||
+       ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) ||
+       ! current_user_can( 'edit_post', $post_id ) ) {
+      return;
+  }
+  ```
 - **Simplify Boolean Checks**: Use direct boolean checks instead of `empty()` when appropriate
 - **Ternary for Simple Conditionals**: Use ternary for single-value conditionals
   ```php
@@ -266,8 +281,55 @@ Combine related validations into single statements:
   // After
   return ! empty( $email ) && is_email( $email ) ? $email : get_option( 'admin_email' );
   ```
+- **Ternary for Simple Return Statements**: Use ternary for conditional returns
+  ```php
+  // Before
+  if ( strpos( $src, 'ver=' ) ) {
+      $src = remove_query_arg( 'ver', $src );
+  }
+  return $src;
+
+  // After
+  return strpos( $src, 'ver=' ) ? remove_query_arg( 'ver', $src ) : $src;
+  ```
+- **Elvis Operator for Defaults**: Use `?:` for simple default value assignment
+  ```php
+  // Before
+  $selected_color = get_post_meta( $post->ID, '_meta_key', true );
+  if ( empty( $selected_color ) ) {
+      $selected_color = self::DEFAULT_VALUE;
+  }
+
+  // After
+  $selected_color = get_post_meta( $post->ID, '_meta_key', true ) ?: self::DEFAULT_VALUE;
+  ```
 - **Array-Based Feature Checking**: Use arrays to check multiple features
 - **Array-Based Control Registration**: Use arrays to register multiple similar controls
+- **Array-Based Variable Building**: Use mapping arrays with foreach to build related variables
+  ```php
+  // Before: Repeated pattern for each color
+  $custom_css_variables = array(
+      'accent-color-1'        => $accent_color_1,
+      'accent-color-1-filter' => CarnavalSF_Color_Converter::hex_to_css_filter( $accent_color_1 ),
+      'accent-color-1-rgb'    => implode( ',', CarnavalSF_Color_Converter::hex_to_rgb( $accent_color_1 ) ),
+      'accent-color-2'        => $accent_color_2,
+      'accent-color-2-filter' => CarnavalSF_Color_Converter::hex_to_css_filter( $accent_color_2 ),
+      // ... repeated for each color
+  );
+
+  // After: Array-based mapping
+  $color_map = array(
+      'accent_color_1'   => 'accent-color-1',
+      'accent_color_2'   => 'accent-color-2',
+  );
+  $color_variables = array();
+  foreach ( $color_map as $setting_id => $css_var ) {
+      $color = $color_settings[ $setting_id ];
+      $color_variables[ $css_var ] = $color;
+      $color_variables[ $css_var . '-filter' ] = CarnavalSF_Color_Converter::hex_to_css_filter( $color );
+      $color_variables[ $css_var . '-rgb' ] = implode( ',', CarnavalSF_Color_Converter::hex_to_rgb( $color ) );
+  }
+  ```
   ```php
   // Before: Repeated code for each control
   $wp_customize->add_setting( 'setting_1', array( 'default' => 'default_1', ... ) );
@@ -349,6 +411,33 @@ Combine related validations into single statements:
   // ============================================================================
   ```
 - **Modular Class Structure**: Break monolithic classes into focused modules
+- **Prefer get_post() over global $post**: Use WordPress function instead of global variable
+  ```php
+  // Before
+  global $post;
+  if ( ! $post || 'page' !== $post->post_type ) {
+      return;
+  }
+
+  // After
+  $post = get_post();
+  if ( ! $post || 'page' !== $post->post_type ) {
+      return;
+  }
+  ```
+- **Prefer $GLOBALS over global keyword**: More concise for single-use global access
+  ```php
+  // Before
+  global $post_type;
+  if ( 'page' !== $post_type ) {
+      return;
+  }
+
+  // After
+  if ( ( $GLOBALS['post_type'] ?? '' ) !== 'page' ) {
+      return;
+  }
+  ```
 
 ---
 

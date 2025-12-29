@@ -383,39 +383,44 @@ class CarnavalSF_Customizer {
 		}
 
 		// Cache theme mod values to avoid repeated calls.
-		$accent_color_1   = get_theme_mod( 'accent_color_1', self::DEFAULT_COLORS['accent_color_1'] );
-		$accent_color_2   = get_theme_mod( 'accent_color_2', self::DEFAULT_COLORS['accent_color_2'] );
-		$accent_color_3   = get_theme_mod( 'accent_color_3', self::DEFAULT_COLORS['accent_color_3'] );
-		$dark_text_color  = get_theme_mod( 'dark_text_color', self::DEFAULT_COLORS['dark_text_color'] );
-		$light_text_color = get_theme_mod( 'light_text_color', self::DEFAULT_COLORS['light_text_color'] );
+		$color_settings = array(
+			'accent_color_1'   => get_theme_mod( 'accent_color_1', self::DEFAULT_COLORS['accent_color_1'] ),
+			'accent_color_2'   => get_theme_mod( 'accent_color_2', self::DEFAULT_COLORS['accent_color_2'] ),
+			'accent_color_3'   => get_theme_mod( 'accent_color_3', self::DEFAULT_COLORS['accent_color_3'] ),
+			'dark_text_color'  => get_theme_mod( 'dark_text_color', self::DEFAULT_COLORS['dark_text_color'] ),
+			'light_text_color' => get_theme_mod( 'light_text_color', self::DEFAULT_COLORS['light_text_color'] ),
+		);
 
-		// Output custom CSS variables.
-		$custom_css_variables = array(
-			'accent-color-1'        => $accent_color_1,
-			'accent-color-1-filter' => CarnavalSF_Color_Converter::hex_to_css_filter( $accent_color_1 ),
-			'accent-color-1-rgb'    => implode( ',', CarnavalSF_Color_Converter::hex_to_rgb( $accent_color_1 ) ),
-			'accent-color-2'        => $accent_color_2,
-			'accent-color-2-filter' => CarnavalSF_Color_Converter::hex_to_css_filter( $accent_color_2 ),
-			'accent-color-2-rgb'    => implode( ',', CarnavalSF_Color_Converter::hex_to_rgb( $accent_color_2 ) ),
-			'accent-color-3'        => $accent_color_3,
-			'accent-color-3-filter' => CarnavalSF_Color_Converter::hex_to_css_filter( $accent_color_3 ),
-			'accent-color-3-rgb'    => implode( ',', CarnavalSF_Color_Converter::hex_to_rgb( $accent_color_3 ) ),
-			'dark-text'             => $dark_text_color,
-			'dark-text-filter'      => CarnavalSF_Color_Converter::hex_to_css_filter( $dark_text_color ),
-			'dark-text-rgb'         => implode( ',', CarnavalSF_Color_Converter::hex_to_rgb( $dark_text_color ) ),
-			'light-text'            => $light_text_color,
-			'light-text-filter'     => CarnavalSF_Color_Converter::hex_to_css_filter( $light_text_color ),
-			'light-text-rgb'        => implode( ',', CarnavalSF_Color_Converter::hex_to_rgb( $light_text_color ) ),
+		// Build color CSS variables.
+		$color_variables = array();
+		$color_map = array(
+			'accent_color_1'   => 'accent-color-1',
+			'accent_color_2'   => 'accent-color-2',
+			'accent_color_3'   => 'accent-color-3',
+			'dark_text_color'  => 'dark-text',
+			'light_text_color' => 'light-text',
+		);
+		foreach ( $color_map as $setting_id => $css_var ) {
+			$color = $color_settings[ $setting_id ];
+			$color_variables[ $css_var ] = $color;
+			$color_variables[ $css_var . '-filter' ] = CarnavalSF_Color_Converter::hex_to_css_filter( $color );
+			$color_variables[ $css_var . '-rgb' ] = implode( ',', CarnavalSF_Color_Converter::hex_to_rgb( $color ) );
+		}
+
+		// Build typography CSS variables.
+		$typography_variables = array(
 			'body-font'      => get_theme_mod( 'body_font', self::DEFAULT_TYPOGRAPHY['body_font'] ) . ', sans-serif',
 			'accent-font'    => get_theme_mod( 'accent_font', self::DEFAULT_TYPOGRAPHY['accent_font'] ) . ', sans-serif',
 			'body-font-size' => get_theme_mod( 'body_font_size', self::DEFAULT_TYPOGRAPHY['body_font_size'] ),
-			'h1-font-size'   => get_theme_mod( 'h1_font_size', self::DEFAULT_TYPOGRAPHY['h1_font_size'] ),
-			'h2-font-size'   => get_theme_mod( 'h2_font_size', self::DEFAULT_TYPOGRAPHY['h2_font_size'] ),
-			'h3-font-size'   => get_theme_mod( 'h3_font_size', self::DEFAULT_TYPOGRAPHY['h3_font_size'] ),
-			'h4-font-size'   => get_theme_mod( 'h4_font_size', self::DEFAULT_TYPOGRAPHY['h4_font_size'] ),
-			'h5-font-size'   => get_theme_mod( 'h5_font_size', self::DEFAULT_TYPOGRAPHY['h5_font_size'] ),
-			'h6-font-size'   => get_theme_mod( 'h6_font_size', self::DEFAULT_TYPOGRAPHY['h6_font_size'] ),
 		);
+		$headings = array( 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' );
+		foreach ( $headings as $heading ) {
+			$setting_id = "{$heading}_font_size";
+			$typography_variables[ "{$heading}-font-size" ] = get_theme_mod( $setting_id, self::DEFAULT_TYPOGRAPHY[ $setting_id ] );
+		}
+
+		// Combine all CSS variables.
+		$custom_css_variables = array_merge( $color_variables, $typography_variables );
 
 		$css .= ':root {';
 		foreach ( $custom_css_variables as $name => $value ) {

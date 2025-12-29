@@ -9,11 +9,12 @@
 	const COLUMN_MIN = 2;
 	const COLUMN_MAX = 8;
 
-	// Generate options for column range
 	const columnOptions = Array.from({ length: COLUMN_MAX - COLUMN_MIN + 1 }, (_, i) => ({
 		label: String(i + COLUMN_MIN),
 		value: String(i + COLUMN_MIN),
 	}));
+
+	const selectOptions = [{ label: 'Select...', value: '' }, ...columnOptions];
 
 	addFilter(
 		'blocks.registerBlockType',
@@ -44,13 +45,6 @@
 				return el(BlockEdit, { name, attributes, setAttributes, ...props });
 			}
 
-			const desktopValue = attributes.desktopColumnsPerRow || '';
-			const intermediateValue = attributes.intermediateColumnsPerRow || desktopValue;
-			const intermediateOptions = [
-				{ label: desktopValue ? `Default (${desktopValue})` : 'Select...', value: '' },
-				...columnOptions,
-			];
-
 			return el(
 				Fragment,
 				{},
@@ -63,18 +57,15 @@
 						{ title: 'Columns per Row', initialOpen: true, order: 10 },
 						el(SelectControl, {
 							label: 'Desktop size',
-							value: desktopValue,
-							options: [
-								{ label: 'Select...', value: '' },
-								...columnOptions,
-							],
+							value: attributes.desktopColumnsPerRow || '',
+							options: selectOptions,
 							onChange: (value) => setAttributes({ desktopColumnsPerRow: value }),
 							help: 'Number of columns per row on desktop screens.',
 						}),
 						el(SelectControl, {
 							label: 'Intermediate size',
 							value: attributes.intermediateColumnsPerRow || '',
-							options: intermediateOptions,
+							options: selectOptions,
 							onChange: (value) => setAttributes({ intermediateColumnsPerRow: value }),
 							help: 'Number of columns per row under 1200px width.',
 						})
@@ -95,10 +86,10 @@
 					return el(BlockListBlock, { name, attributes, wrapperProps, ...props });
 				}
 
-				const desktopValue = attributes.desktopColumnsPerRow;
-				const intermediateValue = attributes.intermediateColumnsPerRow || desktopValue;
+				const desktop = attributes.desktopColumnsPerRow;
+				const intermediate = attributes.intermediateColumnsPerRow || desktop;
 
-				if (!desktopValue && !intermediateValue) {
+				if (!desktop && !intermediate) {
 					return el(BlockListBlock, { name, attributes, wrapperProps, ...props });
 				}
 
@@ -108,8 +99,8 @@
 					attributes,
 					wrapperProps: {
 						...wrapperProps,
-						...(desktopValue && { 'data-columns-per-row-desktop': desktopValue }),
-						...(intermediateValue && { 'data-columns-per-row-intermediate': intermediateValue }),
+						...(desktop && { 'data-columns-per-row-desktop': desktop }),
+						...(intermediate && { 'data-columns-per-row-intermediate': intermediate }),
 					},
 				});
 			};

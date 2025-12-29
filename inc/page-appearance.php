@@ -78,10 +78,7 @@ class CarnavalSF_Page_Appearance {
 	 * @return void
 	 */
 	public function render_page_color_section( $post ) {
-		$selected_color = get_post_meta( $post->ID, '_carnavalsf_page_color', true );
-		if ( empty( $selected_color ) ) {
-			$selected_color = self::DEFAULT_PAGE_COLOR;
-		}
+		$selected_color = get_post_meta( $post->ID, '_carnavalsf_page_color', true ) ?: self::DEFAULT_PAGE_COLOR;
 
 		// Get colors from customizer.
 		$color_1 = get_theme_mod( 'accent_color_1', CarnavalSF_Customizer::DEFAULT_COLORS['accent_color_1'] );
@@ -134,25 +131,11 @@ class CarnavalSF_Page_Appearance {
 	 * @return void
 	 */
 	public function save_page_appearance( $post_id ) {
-
-		// Check nonce.
-		if ( ! isset( $_POST['carnavalsf_page_appearance_nonce'] ) ||
-			! wp_verify_nonce( $_POST['carnavalsf_page_appearance_nonce'], 'carnavalsf_page_appearance_nonce' ) ) {
-			return;
-		}
-
-		// Check autosave.
-		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
-			return;
-		}
-
-		// Check permissions.
-		if ( ! current_user_can( 'edit_post', $post_id ) ) {
-			return;
-		}
-
-		// Check post type.
-		if ( get_post_type( $post_id ) !== 'page' ) {
+		$nonce = $_POST['carnavalsf_page_appearance_nonce'] ?? '';
+		if ( ! wp_verify_nonce( $nonce, 'carnavalsf_page_appearance_nonce' ) ||
+			( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) ||
+			! current_user_can( 'edit_post', $post_id ) ||
+			get_post_type( $post_id ) !== 'page' ) {
 			return;
 		}
 
@@ -197,14 +180,7 @@ class CarnavalSF_Page_Appearance {
 	 * @return void
 	 */
 	public function enqueue_admin_assets( $hook ) {
-
-		// Only load on page edit screens.
-		if ( 'post.php' !== $hook && 'post-new.php' !== $hook ) {
-			return;
-		}
-
-		global $post_type;
-		if ( 'page' !== $post_type ) {
+		if ( ( 'post.php' !== $hook && 'post-new.php' !== $hook ) || ( $GLOBALS['post_type'] ?? '' ) !== 'page' ) {
 			return;
 		}
 
@@ -234,9 +210,7 @@ class CarnavalSF_Page_Appearance {
 	 * @return void
 	 */
 	public function enqueue_block_editor_assets() {
-		global $post;
-
-		// Only load on page edit screens.
+		$post = get_post();
 		if ( ! $post || 'page' !== $post->post_type ) {
 			return;
 		}

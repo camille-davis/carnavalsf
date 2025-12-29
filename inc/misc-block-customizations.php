@@ -129,26 +129,24 @@ class CarnavalSF_Blocks {
 	 */
 	public function columns_block_columns_per_row( $block_content, $block ) {
 		$attrs = $block['attrs'] ?? array();
-		$desktop_value = $attrs['desktopColumnsPerRow'] ?? '';
-		$intermediate_value = $attrs['intermediateColumnsPerRow'] ?? $desktop_value;
+		$desktop = $attrs['desktopColumnsPerRow'] ?? '';
+		$intermediate = $attrs['intermediateColumnsPerRow'] ?? $desktop;
 
-		if ( empty( $desktop_value ) && empty( $intermediate_value ) ) {
+		if ( ! $desktop && ! $intermediate ) {
 			return $block_content;
 		}
 
 		$data_attrs = array();
-		if ( ! empty( $desktop_value ) ) {
-			$data_attrs[] = 'data-columns-per-row-desktop="' . esc_attr( $desktop_value ) . '"';
+		if ( $desktop ) {
+			$data_attrs[] = 'data-columns-per-row-desktop="' . esc_attr( $desktop ) . '"';
 		}
-		if ( ! empty( $intermediate_value ) ) {
-			$data_attrs[] = 'data-columns-per-row-intermediate="' . esc_attr( $intermediate_value ) . '"';
+		if ( $intermediate ) {
+			$data_attrs[] = 'data-columns-per-row-intermediate="' . esc_attr( $intermediate ) . '"';
 		}
-
-		$data_attr_string = implode( ' ', $data_attrs );
 
 		return preg_replace(
 			'/(<[^>]*\bclass="[^"]*wp-block-columns[^"]*")/',
-			'$1 ' . $data_attr_string,
+			'$1 ' . implode( ' ', $data_attrs ),
 			$block_content,
 			1
 		);
@@ -165,18 +163,17 @@ class CarnavalSF_Blocks {
 	 * @return string Modified block content.
 	 */
 	private function add_block_class( $block_content, $block, $block_class, $css_class, $attr_key ) {
-		if ( ! isset( $block['attrs'][ $attr_key ] ) || ! $block['attrs'][ $attr_key ] || strpos( $block_content, $css_class ) !== false ) {
+		$attr_value = $block['attrs'][ $attr_key ] ?? false;
+		if ( ! $attr_value || strpos( $block_content, $css_class ) !== false ) {
 			return $block_content;
 		}
 
-		$block_content = preg_replace(
+		return preg_replace(
 			'/(<[^>]*\bclass="[^"]*' . preg_quote( $block_class, '/' ) . '[^"]*)(")/',
 			'$1 ' . $css_class . '$2',
 			$block_content,
 			1
 		);
-
-		return $block_content;
 	}
 }
 

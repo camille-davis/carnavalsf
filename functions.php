@@ -184,25 +184,21 @@ add_filter( 'upload_mimes', 'carnavalsf_allow_pdf_uploads' );
  * @param string|false $real_mime           The actual mime type or false if the type cannot be determined.
  * @return array Modified file data array.
  */
-function carnavalsf_validate_pdf_upload( $wp_check_filetype_and_ext, $file, $filename, $mimes, $real_mime ) {
+	function carnavalsf_validate_pdf_upload( $wp_check_filetype_and_ext, $file, $filename, $mimes, $real_mime ) {
+		if ( ! preg_match( '/\.pdf$/i', $filename ) ) {
+			return $wp_check_filetype_and_ext;
+		}
 
-	// Reject PDF uploads if the file doesn't have a PDF extension.
-	if ( ! preg_match( '/\.pdf$/i', $filename ) ) {
+		if ( $real_mime && in_array( $real_mime, ALLOWED_PDF_MIMES, true ) ) {
+			$wp_check_filetype_and_ext['ext']  = 'pdf';
+			$wp_check_filetype_and_ext['type'] = 'application/pdf';
+		} else {
+			$wp_check_filetype_and_ext['ext']  = false;
+			$wp_check_filetype_and_ext['type'] = false;
+		}
+
 		return $wp_check_filetype_and_ext;
 	}
-
-	// Only accept if real MIME type matches allowed PDF types.
-	if ( $real_mime && in_array( $real_mime, ALLOWED_PDF_MIMES, true ) ) {
-		$wp_check_filetype_and_ext['ext']  = 'pdf';
-		$wp_check_filetype_and_ext['type'] = 'application/pdf';
-	} else {
-		// Reject if MIME type doesn't match or can't be determined.
-		$wp_check_filetype_and_ext['ext']  = false;
-		$wp_check_filetype_and_ext['type'] = false;
-	}
-
-	return $wp_check_filetype_and_ext;
-}
 add_filter( 'wp_check_filetype_and_ext', 'carnavalsf_validate_pdf_upload', 10, 5 );
 
 /**
@@ -227,16 +223,12 @@ add_action( 'init', 'carnavalsf_disable_image_resizing' );
  * @param string $src The source URL.
  * @return string Modified source URL.
  */
-function carnavalsf_remove_version_scripts_styles( $src ) {
-	// Only run in development mode.
-	if ( ! defined( 'WP_DEBUG' ) || ! WP_DEBUG ) {
-		return $src;
-	}
+	function carnavalsf_remove_version_scripts_styles( $src ) {
+		if ( ! defined( 'WP_DEBUG' ) || ! WP_DEBUG ) {
+			return $src;
+		}
 
-	if ( strpos( $src, 'ver=' ) ) {
-		$src = remove_query_arg( 'ver', $src );
+		return strpos( $src, 'ver=' ) ? remove_query_arg( 'ver', $src ) : $src;
 	}
-	return $src;
-}
 add_filter( 'style_loader_src', 'carnavalsf_remove_version_scripts_styles', 9999 );
 add_filter( 'script_loader_src', 'carnavalsf_remove_version_scripts_styles', 9999 );
