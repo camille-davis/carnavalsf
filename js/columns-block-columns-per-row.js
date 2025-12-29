@@ -6,7 +6,7 @@
 	const { Fragment, createElement: el } = wp.element;
 
 	const BLOCK_NAME = 'core/columns';
-	const COLUMN_MIN = 2;
+	const COLUMN_MIN = 1;
 	const COLUMN_MAX = 8;
 
 	const columnOptions = Array.from({ length: COLUMN_MAX - COLUMN_MIN + 1 }, (_, i) => ({
