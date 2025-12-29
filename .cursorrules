@@ -3,6 +3,7 @@
 - **Never modify core or plugins**: Never modify WordPress core files (`wp-admin/`, `wp-includes/`) or third-party plugin files.
 - **No JSX syntax**: Do not use JSX in JavaScript files. This theme does not use a build process to transpile JSX. Use `wp.element.createElement()` for creating React elements in WordPress block editor scripts.
 - **No build processes**: Do not implement build tools or processes for JavaScript or CSS (no webpack, babel, npm scripts, etc.). Write vanilla JavaScript and CSS that works directly without compilation or bundling.
+- **No 'use strict'**: Do not use `'use strict'` directive in JavaScript files
 
 ---
 
@@ -377,6 +378,47 @@ Combine related validations into single statements:
 - **Block Editor**: Use concise React element creation
   - ✅ `el('div', props, content)` instead of verbose `createElement` calls
   - ✅ Arrow functions: `({ attributes, setAttributes }) => ...`
+
+## Editor Iframe Modifications
+When making JavaScript modifications to elements inside the WordPress block editor iframe, use the MutationObserver pattern to wait for the iframe and target elements to be available:
+
+```javascript
+function modifyEditorIframe( targetSelector, callback ) {
+	const blockEditor = document.getElementById('editor');
+	if (!blockEditor) {
+		return;
+	}
+
+	const observer = new MutationObserver(() => {
+		const iframe = document.querySelector('iframe');
+		if (!iframe) {
+			return;
+		}
+
+		const targetElement = iframe.contentDocument.querySelector(targetSelector);
+		if (!targetElement) {
+			return;
+		}
+
+		callback(targetElement);
+		observer.disconnect();
+	});
+	observer.observe(blockEditor, { childList: true, subtree: true });
+}
+
+// Usage example:
+modifyEditorIframe('.editor-styles-wrapper', (element) => {
+	element.classList.add('page-color-1');
+});
+```
+
+**Pattern details:**
+- Observe the `#editor` element (the block editor container)
+- Check for iframe existence first
+- Check for target element in `iframe.contentDocument`
+- Execute callback when target element is found
+- Always disconnect observer after successful modification
+- Use `{ childList: true, subtree: true }` as observer options
 
 ## Consolidation
 - **Consolidate Selectors**: Use single query selectors with appropriate combinators instead of multiple separate queries
