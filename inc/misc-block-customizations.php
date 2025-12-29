@@ -3,7 +3,7 @@
  * Misc block customizations for Carnaval SF theme:
  * - Customize details block
  * - Add is-fullwidth toggle to group block
- * - Add is-fullwidth-image toggle to image block
+ * - Add is-fullwidth-image and is-fullheight-image toggles to image block
  * - Add columns per row controls to columns block
  * - Change 'Dimensions' panel title to 'Spacing'
  *
@@ -25,9 +25,25 @@ class CarnavalSF_Blocks {
 	public function __construct() {
 		add_filter( 'render_block', array( $this, 'customize_details_block' ), 10, 2 );
 		add_filter( 'render_block_core/group', array( $this, 'group_block_fullwidth' ), 10, 2 );
-		add_filter( 'render_block_core/image', array( $this, 'image_block_fullwidth' ), 10, 2 );
 		add_filter( 'render_block_core/columns', array( $this, 'columns_block_columns_per_row' ), 10, 2 );
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_block_editor_assets' ) );
+
+		// Register image block filters for fullwidth and fullheight.
+		$image_block_attributes = array(
+			array( 'fullwidth', 'is-fullwidth-image' ),
+			array( 'fullheight', 'is-fullheight-image' ),
+		);
+		foreach ( $image_block_attributes as $attr_config ) {
+			list( $attr_key, $css_class ) = $attr_config;
+			add_filter(
+				'render_block_core/image',
+				function( $block_content, $block ) use ( $attr_key, $css_class ) {
+					return $this->add_block_class( $block_content, $block, 'wp-block-image', $css_class, $attr_key );
+				},
+				10,
+				2
+			);
+		}
 	}
 
 	/**
@@ -48,7 +64,7 @@ class CarnavalSF_Blocks {
 
 		$block_scripts = array(
 			'carnavalsf-group-block-fullwidth'      => 'group-block-fullwidth.js',
-			'carnavalsf-image-block-fullwidth'      => 'image-block-fullwidth.js',
+			'carnavalsf-image-block-options'         => 'image-block-options.js',
 			'carnavalsf-columns-block-columns-per-row' => 'columns-block-columns-per-row.js',
 		);
 
@@ -107,17 +123,6 @@ class CarnavalSF_Blocks {
 	 */
 	public function group_block_fullwidth( $block_content, $block ) {
 		return $this->add_block_class( $block_content, $block, 'wp-block-group', 'is-fullwidth', 'fullwidth' );
-	}
-
-	/**
-	 * Add is-fullwidth-image class to Image block when fullwidth attribute is set.
-	 *
-	 * @param string $block_content The block content.
-	 * @param array  $block The block data.
-	 * @return string Modified block content.
-	 */
-	public function image_block_fullwidth( $block_content, $block ) {
-		return $this->add_block_class( $block_content, $block, 'wp-block-image', 'is-fullwidth-image', 'fullwidth' );
 	}
 
 	/**

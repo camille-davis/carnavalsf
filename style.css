@@ -987,6 +987,16 @@ details .details-content > :last-child:not(.wp-block-columns) {
 	width: 100%;
 }
 
+.wp-block-image.is-fullheight-image {
+	width: 100%;
+}
+
+.is-fullheight-image.wp-block-image .components-resizable-box__container img, /* editor */
+.is-fullheight-image img {
+	object-fit: cover;
+  height: 100%;
+}
+
 .aligncenter,
 .has-text-align-center {
 	margin-left: auto;
