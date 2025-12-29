@@ -820,17 +820,6 @@ h6.has-background {
 	}
 }
 
-/* Grid Block */
-.is-layout-grid {
-	gap: 5rem;
-}
-
-.is-layout-grid figure {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-}
-
 /* Details Block */
 details {
 	border-radius: var(--border-radius);
