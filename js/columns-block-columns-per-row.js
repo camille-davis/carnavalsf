@@ -84,6 +84,48 @@
 
 	addFilter('editor.BlockEdit', 'carnavalsf/columns-block-columns-per-row', withColumnsPerRowControl);
 
+	// Hide column count warning
+	(function() {
+		const blockEditor = document.getElementById('editor');
+		if (!blockEditor) {
+			return;
+		}
+
+		const SIDEBAR_SELECTOR = '.interface-interface-skeleton__sidebar';
+		const WARNING_SELECTOR = '.is-warning';
+		const WARNING_TEXT = 'column count exceeds';
+
+		const hideWarning = () => {
+			const sidebar = document.querySelector(SIDEBAR_SELECTOR);
+			if (!sidebar) {
+				return;
+			}
+
+			sidebar.querySelectorAll(WARNING_SELECTOR).forEach(warning => {
+				if ((warning.textContent || '').includes(WARNING_TEXT)) {
+					warning.style.display = 'none';
+				}
+			});
+		};
+
+		const sidebarObserver = new MutationObserver(() => {
+			const sidebar = document.querySelector(SIDEBAR_SELECTOR);
+			if (!sidebar) {
+				return;
+			}
+
+			hideWarning();
+
+			const warningObserver = new MutationObserver(hideWarning);
+			warningObserver.observe(sidebar, { childList: true, subtree: true });
+
+			sidebarObserver.disconnect();
+		});
+
+		hideWarning();
+		sidebarObserver.observe(blockEditor, { childList: true, subtree: true });
+	})();
+
 	addFilter(
 		'editor.BlockListBlock',
 		'carnavalsf/columns-block-columns-per-row-attributes',
