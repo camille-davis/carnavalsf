@@ -808,3 +808,8 @@ details .details-content > :last-child:not(.wp-block-columns) {
 .aligncenter {
 	margin: auto;
 }
+
+.fullwidth-image.wp-block-image .components-resizable-box__container img, /* editor */
+.fullwidth-image img {
+	width: 100%;
+}
