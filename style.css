@@ -176,16 +176,12 @@ a:not(.wp-element-button) {
 	font-weight: 700;
 }
 
-a:not(.wp-element-button):hover {
-	color: var(--dark-text);
-}
-
 .page-color-2 a {
 	color: var(--accent-color-1);
 }
 
-.page-color-2 a:not(.wp-element-button):hover {
-	color: var(--light-text);
+a:hover {
+	text-decoration: none;
 }
 
 /* ============================================================================
@@ -795,44 +791,22 @@ details .details-content > :last-child:not(.wp-block-columns) {
    ============================================================================ */
 
 /* Color Utility Classes */
-.has-accent-color-1-color {
-	color: var(--accent-color-1) !important;
-}
-
 .has-accent-color-1-background-color {
-	background-color: var(--accent-color-1) !important;
+	background-color: var(--accent-color-1);
+	color: var(--dark-text);
 }
 
-.has-accent-color-2-color {
-	color: var(--accent-color-2) !important;
+.has-accent-color-1-background-color a {
+		color: var(--accent-color-2);
 }
 
 .has-accent-color-2-background-color {
-	background-color: var(--accent-color-2) !important;
+	background-color: var(--accent-color-2);
+	color: var(--light-text);
 }
 
-.has-accent-color-3-color {
-	color: var(--accent-color-3) !important;
-}
-
-.has-accent-color-3-background-color {
-	background-color: var(--accent-color-3) !important;
-}
-
-.has-dark-text-color-color {
-	color: var(--dark-text) !important;
-}
-
-.has-dark-text-color-background-color {
-	background-color: var(--dark-text) !important;
-}
-
-.has-light-text-color-color {
-	color: var(--light-text) !important;
-}
-
-.has-light-text-color-background-color {
-	background-color: var(--light-text) !important;
+.has-accent-color-2-background-color a {
+		color: var(--accent-color-1);
 }
 
 .has-text-shadow {
