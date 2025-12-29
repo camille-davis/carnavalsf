@@ -12,22 +12,6 @@
     },
     "shadow": {
       "defaultPresets": false
-    },
-    "blocks": {
-      "core/columns": {
-        "spacing": {
-          "blockGap": true
-        }
-      }
-    }
-  },
-  "styles": {
-    "blocks": {
-      "core/columns": {
-        "spacing": {
-          "blockGap": "3rem"
-        }
-      }
     }
   }
 }

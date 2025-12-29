@@ -668,18 +668,6 @@ h6.has-background {
    Gutenberg Blocks
    ============================================================================ */
 
-/* Columns Block */
-.is-layout-flex .wp-block-column,
-.wp-block-column {
-	margin-bottom: var(--vertical-space-small);
-}
-
-@media screen and (max-width: 782px) {
-	.wp-block-columns {
-		gap: 0;
-	}
-}
-
 /* Grid Block */
 .is-layout-grid {
 	gap: 5rem;
