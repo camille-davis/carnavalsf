@@ -667,14 +667,78 @@ h6.has-background {
 
 /* Columns Block */
 
+.wp-block-columns[data-columns-per-row-desktop] {
+	flex-wrap: wrap !important;
+}
+
+.wp-block-columns[data-columns-per-row-desktop] > .wp-block-column {
+	flex-grow: 0;
+}
+
+.wp-block-columns[data-columns-per-row-desktop="2"] > .wp-block-column {
+	flex-basis: calc((100% - var(--columns-gap)) / 2);
+}
+
+.wp-block-columns[data-columns-per-row-desktop="3"] > .wp-block-column {
+	flex-basis: calc((100% - 4em) / 3);
+}
+
+.wp-block-columns[data-columns-per-row-desktop="4"] > .wp-block-column {
+	flex-basis: calc((100% - 6em) / 4);
+}
+
+.wp-block-columns[data-columns-per-row-desktop="5"] > .wp-block-column {
+	flex-basis: calc((100% - 8em) / 5);
+}
+
+.wp-block-columns[data-columns-per-row-desktop="6"] > .wp-block-column {
+	flex-basis: calc((100% - 10em) / 6);
+}
+
+.wp-block-columns[data-columns-per-row-desktop="7"] > .wp-block-column {
+	flex-basis: calc((100% - 12em) / 7);
+}
+
+.wp-block-columns[data-columns-per-row-desktop="8"] > .wp-block-column {
+	flex-basis: calc((100% - 14em) / 8);
+}
+
+/* Columns per row - Intermediate size (applies under 1200px) */
 @media (max-width: 1200px) {
-	.wp-block-columns.has-intermediate-width {
+	.wp-block-columns[data-columns-per-row-intermediate] {
 		flex-wrap: wrap !important;
 	}
 
-	.wp-block-columns.has-intermediate-width > .wp-block-column {
-		flex-basis: calc(50% - 1em);
+	.wp-block-columns[data-columns-per-row-intermediate] > .wp-block-column {
 		flex-grow: 0;
+	}
+
+	.wp-block-columns[data-columns-per-row-intermediate="2"] > .wp-block-column {
+		flex-basis: calc((100% - var(--columns-gap)) / 2);
+	}
+
+	.wp-block-columns[data-columns-per-row-intermediate="3"] > .wp-block-column {
+		flex-basis: calc((100% - 4em) / 3);
+	}
+
+	.wp-block-columns[data-columns-per-row-intermediate="4"] > .wp-block-column {
+		flex-basis: calc((100% - 6em) / 4);
+	}
+
+	.wp-block-columns[data-columns-per-row-intermediate="5"] > .wp-block-column {
+		flex-basis: calc((100% - 8em) / 5);
+	}
+
+	.wp-block-columns[data-columns-per-row-intermediate="6"] > .wp-block-column {
+		flex-basis: calc((100% - 10em) / 6);
+	}
+
+	.wp-block-columns[data-columns-per-row-intermediate="7"] > .wp-block-column {
+		flex-basis: calc((100% - 12em) / 7);
+	}
+
+	.wp-block-columns[data-columns-per-row-intermediate="8"] > .wp-block-column {
+		flex-basis: calc((100% - 14em) / 8);
 	}
 }
 

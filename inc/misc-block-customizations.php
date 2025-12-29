@@ -4,7 +4,7 @@
  * - Customize details block
  * - Add is-fullwidth toggle to group block
  * - Add is-fullwidth-image toggle to image block
- * - Add intermediate-width toggle to columns block
+ * - Add columns per row controls to columns block
  * - Change 'Dimensions' panel title to 'Spacing'
  *
  * @package CarnavalSF
@@ -26,7 +26,7 @@ class CarnavalSF_Blocks {
 		add_filter( 'render_block', array( $this, 'customize_details_block' ), 10, 2 );
 		add_filter( 'render_block_core/group', array( $this, 'group_block_fullwidth' ), 10, 2 );
 		add_filter( 'render_block_core/image', array( $this, 'image_block_fullwidth' ), 10, 2 );
-		add_filter( 'render_block_core/columns', array( $this, 'columns_block_intermediate_width' ), 10, 2 );
+		add_filter( 'render_block_core/columns', array( $this, 'columns_block_columns_per_row' ), 10, 2 );
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_block_editor_assets' ) );
 	}
 
@@ -49,7 +49,7 @@ class CarnavalSF_Blocks {
 		$block_scripts = array(
 			'carnavalsf-group-block-fullwidth'      => 'group-block-fullwidth.js',
 			'carnavalsf-image-block-fullwidth'      => 'image-block-fullwidth.js',
-			'carnavalsf-columns-block-intermediate-width' => 'columns-block-intermediate-width.js',
+			'carnavalsf-columns-block-columns-per-row' => 'columns-block-columns-per-row.js',
 		);
 
 		foreach ( $block_scripts as $handle => $file ) {
@@ -121,14 +121,37 @@ class CarnavalSF_Blocks {
 	}
 
 	/**
-	 * Add has-intermediate-width class to Columns block when intermediateWidth attribute is set.
+	 * Add columns per row data attributes to Columns block when desktopColumnsPerRow or intermediateColumnsPerRow attributes are set.
 	 *
 	 * @param string $block_content The block content.
 	 * @param array  $block The block data.
 	 * @return string Modified block content.
 	 */
-	public function columns_block_intermediate_width( $block_content, $block ) {
-		return $this->add_block_class( $block_content, $block, 'wp-block-columns', 'has-intermediate-width', 'intermediateWidth' );
+	public function columns_block_columns_per_row( $block_content, $block ) {
+		$attrs = $block['attrs'] ?? array();
+		$desktop_value = $attrs['desktopColumnsPerRow'] ?? '';
+		$intermediate_value = $attrs['intermediateColumnsPerRow'] ?? $desktop_value;
+
+		if ( empty( $desktop_value ) && empty( $intermediate_value ) ) {
+			return $block_content;
+		}
+
+		$data_attrs = array();
+		if ( ! empty( $desktop_value ) ) {
+			$data_attrs[] = 'data-columns-per-row-desktop="' . esc_attr( $desktop_value ) . '"';
+		}
+		if ( ! empty( $intermediate_value ) ) {
+			$data_attrs[] = 'data-columns-per-row-intermediate="' . esc_attr( $intermediate_value ) . '"';
+		}
+
+		$data_attr_string = implode( ' ', $data_attrs );
+
+		return preg_replace(
+			'/(<[^>]*\bclass="[^"]*wp-block-columns[^"]*")/',
+			'$1 ' . $data_attr_string,
+			$block_content,
+			1
+		);
 	}
 
 	/**
