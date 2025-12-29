@@ -596,7 +596,7 @@ h6.has-background {
 .is-fullwidth > h2,
 .is-fullwidth > .wp-block-group__inner-container > h1,
 .is-fullwidth > .wp-block-group__inner-container > h2 {
-	margin-left: calc(-1 * var(--side-padding-desktop)) !important;
+	margin-left: calc(-1 * var(--side-padding-desktop));
 	padding: 0 1rem 0 var(--side-padding-desktop);
 	background-color: #fff;
 	color: var(--accent-color-2);
@@ -942,6 +942,15 @@ details .details-content > :last-child:not(.wp-block-columns) {
 	font-size: var(--wp--preset--font-size--small);
 }
 
+/* Separator Block */
+.wp-block-separator {
+	border-top: 1px solid;
+}
+
+.wp-block-separator.is-style-default {
+	width: 500px;
+}
+
 /* ============================================================================
    Utility Classes
    ============================================================================ */
@@ -966,7 +975,7 @@ details .details-content > :last-child:not(.wp-block-columns) {
 }
 
 .has-text-shadow {
-	text-shadow: 0 0 1rem rgba(0, 0, 0, 0.7);
+	text-shadow: 0 0 1rem rgba(0, 0, 0, 0.8);
 }
 
 .is-position-absolute {

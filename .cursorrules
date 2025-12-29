@@ -19,6 +19,7 @@
 - **Ask for clarification when unsure**: If you are uncertain about what the user wants, ask for clarification rather than making assumptions.
 - **Follow instructions exactly**: If the user says "check", "analyze", "review", or "look at" something, do that action only. Do not automatically fix issues found unless explicitly asked to do so.
 - **Be explicit about scope**: When the user requests a change, only make that specific change. Do not make related improvements unless explicitly requested.
+- **Debug statements only**: When asked to "add debug statements", only add console.log statements. Do not modify existing logic, fix bugs, or make other code changes. Only add the debugging output requested.
 
 ---
 
@@ -540,7 +541,14 @@ Combine related validations into single statements:
   // After
   addFilter( 'hook', 'namespace', ( settings, name ) => { });
   ```
-- **Modern String Methods**: Use `includes()` instead of `indexOf()`
+- **Modern String Methods**: Use `includes()` instead of `indexOf()`, `startsWith()` instead of `indexOf() === 0`
+  ```javascript
+  // Before
+  if (typeof image.alt === 'string' && image.alt.indexOf('This image has an empty alt attribute') === 0) { }
+
+  // After
+  if (typeof image.alt === 'string' && image.alt.startsWith('This image has an empty alt attribute')) { }
+  ```
 - **Destructure Props**: Extract object properties
 - **URLSearchParams**: Use URLSearchParams instead of manual string building
 
