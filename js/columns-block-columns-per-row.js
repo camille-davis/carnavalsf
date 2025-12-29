@@ -30,7 +30,15 @@
 						type: 'string',
 						default: '',
 					},
-					intermediateColumnsPerRow: {
+					mediumColumnsPerRow: {
+						type: 'string',
+						default: '',
+					},
+					tabletColumnsPerRow: {
+						type: 'string',
+						default: '',
+					},
+					mobileColumnsPerRow: {
 						type: 'string',
 						default: '',
 					},
@@ -56,18 +64,28 @@
 						PanelBody,
 						{ title: 'Columns per Row', initialOpen: true, order: 10 },
 						el(SelectControl, {
-							label: 'Desktop size',
+							label: 'Desktop',
 							value: attributes.desktopColumnsPerRow || '',
 							options: selectOptions,
 							onChange: (value) => setAttributes({ desktopColumnsPerRow: value }),
-							help: 'Number of columns per row on desktop screens.',
 						}),
 						el(SelectControl, {
-							label: 'Intermediate size',
-							value: attributes.intermediateColumnsPerRow || '',
+							label: 'Medium',
+							value: attributes.mediumColumnsPerRow || '',
 							options: selectOptions,
-							onChange: (value) => setAttributes({ intermediateColumnsPerRow: value }),
-							help: 'Number of columns per row under 1200px width.',
+							onChange: (value) => setAttributes({ mediumColumnsPerRow: value }),
+						}),
+						el(SelectControl, {
+							label: 'Tablet',
+							value: attributes.tabletColumnsPerRow || '',
+							options: selectOptions,
+							onChange: (value) => setAttributes({ tabletColumnsPerRow: value }),
+						}),
+						el(SelectControl, {
+							label: 'Mobile',
+							value: attributes.mobileColumnsPerRow || '',
+							options: selectOptions,
+							onChange: (value) => setAttributes({ mobileColumnsPerRow: value }),
 						})
 					)
 				)
@@ -87,9 +105,11 @@
 				}
 
 				const desktop = attributes.desktopColumnsPerRow;
-				const intermediate = attributes.intermediateColumnsPerRow || desktop;
+				const medium = attributes.mediumColumnsPerRow || desktop;
+				const tablet = attributes.tabletColumnsPerRow || medium;
+				const mobile = attributes.mobileColumnsPerRow || tablet;
 
-				if (!desktop && !intermediate) {
+				if (!desktop && !medium && !tablet && !mobile) {
 					return el(BlockListBlock, { name, attributes, wrapperProps, ...props });
 				}
 
@@ -100,7 +120,9 @@
 					wrapperProps: {
 						...wrapperProps,
 						...(desktop && { 'data-columns-per-row-desktop': desktop }),
-						...(intermediate && { 'data-columns-per-row-intermediate': intermediate }),
+						...(medium && { 'data-columns-per-row-medium': medium }),
+						...(tablet && { 'data-columns-per-row-tablet': tablet }),
+						...(mobile && { 'data-columns-per-row-mobile': mobile }),
 					},
 				});
 			};

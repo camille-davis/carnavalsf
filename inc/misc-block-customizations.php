@@ -121,7 +121,7 @@ class CarnavalSF_Blocks {
 	}
 
 	/**
-	 * Add columns per row data attributes to Columns block when desktopColumnsPerRow or intermediateColumnsPerRow attributes are set.
+	 * Add columns per row data attributes to Columns block.
 	 *
 	 * @param string $block_content The block content.
 	 * @param array  $block The block data.
@@ -130,9 +130,11 @@ class CarnavalSF_Blocks {
 	public function columns_block_columns_per_row( $block_content, $block ) {
 		$attrs = $block['attrs'] ?? array();
 		$desktop = $attrs['desktopColumnsPerRow'] ?? '';
-		$intermediate = $attrs['intermediateColumnsPerRow'] ?? $desktop;
+		$medium = $attrs['mediumColumnsPerRow'] ?? $desktop;
+		$tablet = $attrs['tabletColumnsPerRow'] ?? $medium;
+		$mobile = $attrs['mobileColumnsPerRow'] ?? $tablet;
 
-		if ( ! $desktop && ! $intermediate ) {
+		if ( ! $desktop && ! $medium && ! $tablet && ! $mobile ) {
 			return $block_content;
 		}
 
@@ -140,8 +142,14 @@ class CarnavalSF_Blocks {
 		if ( $desktop ) {
 			$data_attrs[] = 'data-columns-per-row-desktop="' . esc_attr( $desktop ) . '"';
 		}
-		if ( $intermediate ) {
-			$data_attrs[] = 'data-columns-per-row-intermediate="' . esc_attr( $intermediate ) . '"';
+		if ( $medium ) {
+			$data_attrs[] = 'data-columns-per-row-medium="' . esc_attr( $medium ) . '"';
+		}
+		if ( $tablet ) {
+			$data_attrs[] = 'data-columns-per-row-tablet="' . esc_attr( $tablet ) . '"';
+		}
+		if ( $mobile ) {
+			$data_attrs[] = 'data-columns-per-row-mobile="' . esc_attr( $mobile ) . '"';
 		}
 
 		return preg_replace(
