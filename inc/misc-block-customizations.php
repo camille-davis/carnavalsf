@@ -170,12 +170,21 @@ class CarnavalSF_Blocks {
 	 */
 	private function add_block_class( $block_content, $block, $block_class, $css_class, $attr_key ) {
 		$attr_value = $block['attrs'][ $attr_key ] ?? false;
-		if ( ! $attr_value || strpos( $block_content, $css_class ) !== false ) {
+
+		if ( ! $attr_value ) {
 			return $block_content;
 		}
 
+		// Check if class already exists in the target element's class attribute (not just anywhere in content).
+		// This prevents false positives when the class exists in nested blocks.
+		$pattern_check = '/(<[^>]*\bclass="[^"]*' . preg_quote( $block_class, '/' ) . '[^"]*' . preg_quote( $css_class, '/' ) . '[^"]*")/';
+		if ( preg_match( $pattern_check, $block_content ) ) {
+			return $block_content;
+		}
+
+		$pattern = '/(<[^>]*\bclass="[^"]*' . preg_quote( $block_class, '/' ) . '[^"]*)(")/';
 		return preg_replace(
-			'/(<[^>]*\bclass="[^"]*' . preg_quote( $block_class, '/' ) . '[^"]*)(")/',
+			$pattern,
 			'$1 ' . $css_class . '$2',
 			$block_content,
 			1

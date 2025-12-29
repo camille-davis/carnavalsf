@@ -970,6 +970,19 @@ Then use the custom property in CSS:
     return process_block_content( $content, $attributes );
   }
   ```
+- **Check Class Existence in Specific Element**: When checking if a CSS class exists before adding it, check the target element's class attribute specifically, not just anywhere in the content. This prevents false positives when the class exists in nested blocks.
+  ```php
+  // Before: Checks anywhere in content (can give false positives)
+  if ( strpos( $block_content, $css_class ) !== false ) {
+      return $block_content; // Early return if class found anywhere
+  }
+
+  // After: Check specifically in target element's class attribute
+  $pattern_check = '/(<[^>]*\bclass="[^"]*' . preg_quote( $block_class, '/' ) . '[^"]*' . preg_quote( $css_class, '/' ) . '[^"]*")/';
+  if ( preg_match( $pattern_check, $block_content ) ) {
+      return $block_content; // Only return early if class exists in target element
+  }
+  ```
 
 ## Plugin Structure
 - **Organize with Section Headers**: Use visual separators to group functionality
