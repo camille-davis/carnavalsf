@@ -590,17 +590,17 @@ h6.has-background {
 }
 
 .editor-visual-editor__post-title-wrapper h1,
-.entry-content > h1,
-.entry-content > h2,
-.is-fullwidth > h1,
-.is-fullwidth > h2,
-.is-fullwidth > .wp-block-group__inner-container > h1,
-.is-fullwidth > .wp-block-group__inner-container > h2 {
-	margin-left: calc(-1 * var(--side-padding-desktop));
-	padding: 0 1rem 0 var(--side-padding-desktop);
+.entry-content > h1:not(.has-text-align-center):not(.has-text-align-right),
+.entry-content > h2:not(.has-text-align-center):not(.has-text-align-right),
+.is-fullwidth > h1:not(.has-text-align-center):not(.has-text-align-right),
+.is-fullwidth > h2:not(.has-text-align-center):not(.has-text-align-right),
+.is-fullwidth > .wp-block-group__inner-container > h1:not(.has-text-align-center):not(.has-text-align-right),
+.is-fullwidth > .wp-block-group__inner-container > h2:not(.has-text-align-center):not(.has-text-align-right) {
 	background-color: #fff;
 	color: var(--accent-color-2);
 	width: fit-content;
+	margin-left: calc(-1 * var(--side-padding-desktop));
+	padding: 0 1rem 0 var(--side-padding-desktop);
 }
 
 .editor-visual-editor__post-title-wrapper { /* editor */
@@ -982,11 +982,13 @@ details .details-content > :last-child:not(.wp-block-columns) {
 	position: absolute !important;
 }
 
-.aligncenter {
-	margin: auto;
-}
-
 .is-fullwidth-image.wp-block-image .components-resizable-box__container img, /* editor */
 .is-fullwidth-image img {
 	width: 100%;
+}
+
+.aligncenter,
+.has-text-align-center {
+	margin-left: auto;
+	margin-right: auto;
 }
