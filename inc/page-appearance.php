@@ -19,14 +19,14 @@ class CarnavalSF_Page_Appearance {
 	 *
 	 * @var array
 	 */
-	public const PAGE_COLOR_OPTIONS = array( 'color-1', 'color-2' );
+	public const PAGE_COLOR_OPTIONS = array( '1', '2' );
 
 	/**
 	 * Default page color.
 	 *
 	 * @var string
 	 */
-	public const DEFAULT_PAGE_COLOR = 'color-1';
+	public const DEFAULT_PAGE_COLOR = '1';
 
 	/**
 	 * Constructor.
@@ -91,12 +91,12 @@ class CarnavalSF_Page_Appearance {
 			<p><?php esc_html_e( 'Select a page color:', 'carnavalsf' ); ?></p>
 			<div class="carnavalsf-color-swatches">
 				<label class="carnavalsf-color-swatch">
-					<input type="radio" name="carnavalsf_page_color" value="color-1" <?php checked( $selected_color, 'color-1' ); ?>>
+					<input type="radio" name="carnavalsf_page_color" value="1" <?php checked( $selected_color, '1' ); ?>>
 					<span class="swatch" style="background-color: <?php echo esc_attr( $color_1 ); ?>;"></span>
 					<span class="swatch-label"><?php echo esc_html( $color_1 ); ?></span>
 				</label>
 				<label class="carnavalsf-color-swatch">
-					<input type="radio" name="carnavalsf_page_color" value="color-2" <?php checked( $selected_color, 'color-2' ); ?>>
+					<input type="radio" name="carnavalsf_page_color" value="2" <?php checked( $selected_color, '2' ); ?>>
 					<span class="swatch" style="background-color: <?php echo esc_attr( $color_2 ); ?>;"></span>
 					<span class="swatch-label"><?php echo esc_html( $color_2 ); ?></span>
 				</label>
@@ -218,23 +218,13 @@ class CarnavalSF_Page_Appearance {
 			$theme_version
 		);
 
-		// Enqueue page color JavaScript (handles both admin swatches and editor updates).
+		// Enqueue page color editor js for editor.
 		wp_enqueue_script(
 			'carnavalsf-page-color',
 			get_template_directory_uri() . '/js/page-color.js',
 			array( 'jquery' ),
 			$theme_version,
 			true
-		);
-
-		// Localize script with customizer colors.
-		wp_localize_script(
-			'carnavalsf-page-color',
-			'carnavalsfPageColor',
-			array(
-				'color1' => get_theme_mod( 'accent_color_1', CarnavalSF_Customizer::DEFAULT_COLORS['accent_color_1'] ),
-				'color2' => get_theme_mod( 'accent_color_2', CarnavalSF_Customizer::DEFAULT_COLORS['accent_color_2'] ),
-			)
 		);
 	}
 

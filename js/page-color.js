@@ -1,65 +1,60 @@
 (function ($) {
-	'use strict';
 
 	/**
-	 * Update color swatches from localized data
+	 * Updates page color preview in editor when user selects a new color.
 	 */
-	$(document).ready(function () {
-		if (typeof carnavalsfPageColor !== 'undefined') {
-			['color1', 'color2'].forEach((colorKey, index) => {
-				$(
-					'.carnavalsf-color-swatch input[value="color-' +
-						(index + 1) +
-						'"]'
-				)
-					.siblings('.swatch')
-					.css('background-color', carnavalsfPageColor[colorKey]); // eslint-disable-line no-undef
+	function updateColorSwatches() {
+		document.querySelectorAll('input[name="carnavalsf_page_color"]').forEach((input) => {
+			input.addEventListener('click', function () {
+      	const iframe = document.querySelector('iframe');
+      	const editorStylesWrapper = iframe.contentDocument.querySelector('.editor-styles-wrapper');
+
+				// Remove any class starting with 'page-color-'.
+				editorStylesWrapper.classList.forEach(function (className) {
+					if (className.startsWith('page-color-')) {
+						editorStylesWrapper.classList.remove(className);
+					}
+				});
+
+				// Add the selected color class.
+				editorStylesWrapper.classList.add('page-color-' + this.value);
 			});
-		}
-	});
+		});
+	}
 
-	/**
-	 * Update editor iframe class when page color changes
+	/*
+	 * Sets initial page color class on iframe load.
 	 */
-	function updateEditorClass() {
+	function addPageColorClasses() {
+    const blockEditor = document.getElementById('editor');
+    if (!blockEditor) {
+      return;
+    }
+
+		// Get initial color class from input.
 		const colorInput = document.querySelector(
 			'input[name="carnavalsf_page_color"]:checked'
 		);
-		const pageColorClass = colorInput
-			? 'page-' + colorInput.value
-			: 'page-color-1';
+		const pageColorClass = colorInput ? 'page-color-' + colorInput.value : 'page-color-1';
 
-		// Find editor iframe - WordPress block editor uses iframe with name 'editor-canvas'
-		const editorIframe =
-			document.querySelector('iframe[name="editor-canvas"]') ||
-			document.querySelector('iframe.editor-canvas');
+		// Wait for iframe to load then set the class.
+		const observer = new MutationObserver(function () {
+      const iframe = document.querySelector('iframe');
+      if (!iframe) {
+        return;
+      }
 
-		if (editorIframe) {
-			try {
-				const editorWrapper =
-					editorIframe.contentDocument?.querySelector(
-						'.editor-styles-wrapper'
-					);
-				if (editorWrapper) {
-					editorWrapper.classList.remove(
-						'page-color-1',
-						'page-color-2'
-					);
-					editorWrapper.classList.add(pageColorClass);
-				}
-			} catch (e) {
-				// Skip if we can't access iframe
-			}
-		}
+      const editorStylesWrapper = iframe.contentDocument.querySelector('.editor-styles-wrapper');
+      if (!editorStylesWrapper) {
+        return;
+      }
+
+      editorStylesWrapper.classList.add(pageColorClass);
+      observer.disconnect();
+		});
+		observer.observe(blockEditor, { childList: true, subtree: true });
 	}
 
-	// Listen to meta box changes
-	document.addEventListener('change', function (e) {
-		if (e.target.name === 'carnavalsf_page_color') {
-			updateEditorClass();
-		}
-	});
-
-	// Initial update
-	setTimeout(updateEditorClass, 500);
+	document.addEventListener('DOMContentLoaded', addPageColorClasses);
+	document.addEventListener('DOMContentLoaded', updateColorSwatches);
 })(jQuery);
