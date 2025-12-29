@@ -13,6 +13,7 @@
 **IMPORTANT:** Follow user instructions literally and conservatively.
 
 - **Answer questions literally**: If the user asks a question or requests an explanation, provide the answer/explanation only. Do NOT take action or make changes unless explicitly requested. Questions like "is there...", "can we...", "where is...", "how do I..." should be answered with information only, not implementation.
+- **"What's the simplest way" means research only**: If the user asks "What's the simplest way" or similar questions (e.g., "What's the best way", "How should I", "What approach"), research and provide information about options and recommendations. Do NOT implement any code changes or modifications. Only provide research, explanations, and recommendations.
 - **"explore why" means explanation only**: If the user says "explore why", provide an explanation in chat only. Do NOT implement any code changes or modifications.
 - **"Investigate" means explanation only**: If the user says "Investigate", provide an explanation in chat only. Do NOT implement any code changes or modifications.
 - **Ask before taking initiative**: If you want to take action beyond what was explicitly requested, ask for confirmation first. Do not assume the user wants additional improvements, refactoring, or optimizations unless they explicitly ask.

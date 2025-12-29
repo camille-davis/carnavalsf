@@ -61,8 +61,8 @@ body {
 	line-height: 1.5;
 }
 
-p:not(:last-child),
-ul:not(.menu-links):not(:last-child) {
+p,
+ul:not(.menu-links) {
 	margin-bottom: var(--vertical-space-small);
 }
 
@@ -78,7 +78,7 @@ h1,
 :not(.footer-column) > h2,
 :not(summary) > h3 {
 	font-family: var(--accent-font);
-	line-height: 1;
+	line-height: .8;
 	text-transform: uppercase;
 }
 
@@ -176,7 +176,7 @@ a:not(.wp-element-button) {
 	font-weight: 700;
 }
 
-.page-color-2 a {
+.page-color-2 a:not(.wp-element-button) {
 	color: var(--accent-color-1);
 }
 
@@ -585,7 +585,7 @@ h3.has-background,
 h4.has-background,
 h5.has-background,
 h6.has-background {
-	padding: 0 1rem;
+	padding: .5rem 1rem;
 	width: fit-content;
 }
 
@@ -599,8 +599,8 @@ h6.has-background {
 	background-color: #fff;
 	color: var(--accent-color-2);
 	width: fit-content;
-	margin-left: calc(-1 * var(--side-padding-desktop));
-	padding: 0 1rem 0 var(--side-padding-desktop);
+	margin-left: calc(-1 * var(--side-padding-desktop)) !important;
+	padding: .5rem 1rem .5rem var(--side-padding-desktop);
 }
 
 .editor-visual-editor__post-title-wrapper { /* editor */
@@ -955,23 +955,20 @@ details .details-content > :last-child:not(.wp-block-columns) {
    Utility Classes
    ============================================================================ */
 
-/* Color Utility Classes */
 .has-accent-color-1-background-color {
-	background-color: var(--accent-color-1);
 	color: var(--dark-text);
 }
 
-.has-accent-color-1-background-color a {
-		color: var(--accent-color-2);
+.has-accent-color-1-background-color a:not(.wp-element-button) {
+	color: var(--accent-color-2) !important;
 }
 
 .has-accent-color-2-background-color {
-	background-color: var(--accent-color-2);
 	color: var(--light-text);
 }
 
-.has-accent-color-2-background-color a {
-		color: var(--accent-color-1);
+.has-accent-color-2-background-color a:not(.wp-element-button) {
+	color: var(--accent-color-1) !important;
 }
 
 .has-text-shadow {
@@ -980,6 +977,10 @@ details .details-content > :last-child:not(.wp-block-columns) {
 
 .is-position-absolute {
 	position: absolute !important;
+}
+
+.is-fullwidth-image {
+	min-width: 100%;
 }
 
 .is-fullwidth-image.wp-block-image .components-resizable-box__container img, /* editor */
