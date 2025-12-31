@@ -457,6 +457,11 @@ main {
 		opacity: 0;
 		z-index: 100000;
 		overflow-y: auto;
+		top: 0;
+		height: 100vh;
+	}
+
+	.logged-in .menu-outer {
 		top: 32px;
 		height: calc(100vh - 32px);
 	}
@@ -477,6 +482,10 @@ main {
 		background: #fff;
 		align-items: flex-end;
 		height: fit-content;
+		min-height: 100vh;
+	}
+
+	.logged-in .menu-inner {
 		min-height: calc(100vh - 32px);
 	}
 
@@ -509,23 +518,23 @@ main {
 
 /* WordPress Admin Bar Adjustments */
 @media screen and (max-width: 782px) {
-	.menu-outer {
+	.logged-in .menu-outer {
 		top: 46px;
 		height: calc(100vh - 46px);
 	}
 
-	.menu-inner {
+	.logged-in .menu-inner {
 		min-height: calc(100vh - 46px);
 	}
 }
 
 @media (max-width: 600px) {
-	.menu-outer {
+	.logged-in .menu-outer {
 		top: 0;
 		height: 100vh;
 	}
 
-	.menu-inner {
+	.logged-in .menu-inner {
 		min-height: 100vh;
 	}
 }
