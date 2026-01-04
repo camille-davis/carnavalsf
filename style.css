@@ -80,6 +80,7 @@ h1,
 	font-family: var(--accent-font);
 	line-height: .8;
 	text-transform: uppercase;
+  overflow-wrap: anywhere;
 }
 
 h1 {
@@ -94,15 +95,49 @@ h1 {
 	font-size: var(--h3-font-size);
 }
 
+@media (max-width: 576px) {
+  h1 {
+    font-size: calc(var(--h1-font-size) * .675 );
+  }
+
+  :not(.footer-column) > h2 {
+    font-size: calc(var(--h2-font-size) * .675);
+  }
+
+  :not(summary) > h3 {
+    font-size: calc(var(--h3-font-size) * .675);
+  }
+}
+
+@media (max-width: 400px) {
+  h1 {
+    font-size: calc(var(--h1-font-size) * .5 );
+  }
+
+  :not(.footer-column) > h2 {
+    font-size: calc(var(--h2-font-size) * .5);
+  }
+}
+
 h4,
 summary h3,
 .footer-column h2,
 .editor-styles-wrapper summary div { /* editor */
+  overflow-wrap: anywhere;
 	font-size: var(--h4-font-size);
 	font-weight: normal;
 	text-transform: uppercase;
 	letter-spacing: var(--letter-spacing-small);
 	margin-top: 0.5rem;
+}
+
+@media (max-width: 576px) {
+  h4,
+  summary h3,
+  .footer-column h2,
+  .editor-styles-wrapper summary div { /* editor */
+    font-size: calc(var(--h4-font-size) * .675);
+  }
 }
 
 h5 {
@@ -478,7 +513,7 @@ main {
 	}
 
 	.menu-inner {
-		min-width: 40%;
+		min-width: 20rem;
 		background: #fff;
 		align-items: flex-end;
 		height: fit-content;
@@ -516,8 +551,14 @@ main {
 	}
 }
 
+@media (max-width: 400px) {
+	.menu-inner {
+		min-width: 100%;
+  }
+}
+
 /* WordPress Admin Bar Adjustments */
-@media screen and (max-width: 782px) {
+@media (max-width: 782px) {
 	.logged-in .menu-outer {
 		top: 46px;
 		height: calc(100vh - 46px);
@@ -957,7 +998,7 @@ details .details-content > :last-child:not(.wp-block-columns) {
 }
 
 .wp-block-separator.is-style-default {
-	width: 500px;
+	max-width: 24rem;
 }
 
 /* ============================================================================
