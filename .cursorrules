@@ -13,9 +13,11 @@
 **IMPORTANT:** Follow user instructions literally and conservatively.
 
 - **Answer questions literally**: If the user asks a question or requests an explanation, provide the answer/explanation only. Do NOT take action or make changes unless explicitly requested. Questions like "is there...", "can we...", "where is...", "how do I..." should be answered with information only, not implementation.
+- **"Would it be possible" means explanation only**: If the user asks "Would it be possible" or similar feasibility questions, provide an explanation of whether it's possible, how it could be done, and any considerations. Do NOT implement any code changes or modifications. Only provide information and explanations.
 - **"What's the simplest way" means research only**: If the user asks "What's the simplest way" or similar questions (e.g., "What's the best way", "How should I", "What approach"), research and provide information about options and recommendations. Do NOT implement any code changes or modifications. Only provide research, explanations, and recommendations.
 - **"explore why" means explanation only**: If the user says "explore why", provide an explanation in chat only. Do NOT implement any code changes or modifications.
 - **"Investigate" means explanation only**: If the user says "Investigate", provide an explanation in chat only. Do NOT implement any code changes or modifications.
+- **No investigation documents**: When investigating or analyzing something, report findings in chat only. Do NOT create investigation documents, analysis files, or similar documentation unless the user explicitly requests it.
 - **Ask before taking initiative**: If you want to take action beyond what was explicitly requested, ask for confirmation first. Do not assume the user wants additional improvements, refactoring, or optimizations unless they explicitly ask.
 - **Ask for clarification when unsure**: If you are uncertain about what the user wants, ask for clarification rather than making assumptions.
 - **Follow instructions exactly**: If the user says "check", "analyze", "review", or "look at" something, do that action only. Do not automatically fix issues found unless explicitly asked to do so.
