@@ -5,6 +5,7 @@
  * - Add is-fullwidth toggle to group block
  * - Add is-fullwidth-image and is-fullheight-image toggles to image block
  * - Add columns per row controls to columns block
+ * - Add link URL option to cover block
  * - Change 'Dimensions' panel title to 'Spacing'
  *
  * @package CarnavalSF
@@ -26,6 +27,7 @@ class CarnavalSF_Blocks {
 		add_filter( 'render_block', array( $this, 'customize_details_block' ), 10, 2 );
 		add_filter( 'render_block_core/group', array( $this, 'group_block_fullwidth' ), 10, 2 );
 		add_filter( 'render_block_core/columns', array( $this, 'columns_block_columns_per_row' ), 10, 2 );
+		add_filter( 'render_block_core/cover', array( $this, 'cover_block_link' ), 10, 2 );
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_block_editor_assets' ) );
 
 		// Register image block filters for fullwidth and fullheight.
@@ -66,6 +68,7 @@ class CarnavalSF_Blocks {
 			'carnavalsf-group-block-fullwidth'      => 'group-block-fullwidth.js',
 			'carnavalsf-image-block-options'         => 'image-block-options.js',
 			'carnavalsf-columns-block-columns-per-row' => 'columns-block-columns-per-row.js',
+			'carnavalsf-cover-block-link'           => 'cover-block-link.js',
 		);
 
 		foreach ( $block_scripts as $handle => $file ) {
@@ -161,6 +164,21 @@ class CarnavalSF_Blocks {
 			$block_content,
 			1
 		);
+	}
+
+	/**
+	 * Wrap Cover block in link tag when linkUrl attribute is set.
+	 *
+	 * @param string $block_content The block content.
+	 * @param array  $block The block data.
+	 * @return string Modified block content.
+	 */
+	public function cover_block_link( $block_content, $block ) {
+		$link_url = $block['attrs']['linkUrl'] ?? '';
+		if ( empty( $link_url ) ) {
+			return $block_content;
+		}
+		return '<a class="cover-block-link" href="' . esc_url( $link_url ) . '"' . ( ( $block['attrs']['linkOpenInNewTab'] ?? false ) ? ' target="_blank" rel="noopener noreferrer"' : '' ) . '>' . $block_content . '</a>';
 	}
 
 	/**

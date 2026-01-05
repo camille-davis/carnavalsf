@@ -232,3 +232,4 @@ add_action( 'init', 'carnavalsf_disable_image_resizing' );
 	}
 add_filter( 'style_loader_src', 'carnavalsf_remove_version_scripts_styles', 9999 );
 add_filter( 'script_loader_src', 'carnavalsf_remove_version_scripts_styles', 9999 );
+

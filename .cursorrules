@@ -200,6 +200,15 @@ Use null coalescing and concise conditionals:
 Direct attribute access and inline conditionals:
 - ✅ `$attributes['key'] ?? 'default'`
 - ✅ `<?php if ( $show ) : ?>`
+- **Conditional HTML Attributes**: Build optional attributes inline using ternary operators
+  ```php
+  // Before: Intermediate variable
+  $target = $open_new_tab ? ' target="_blank" rel="noopener noreferrer"' : '';
+  return '<a href="' . esc_url( $url ) . '"' . $target . '>';
+
+  // After: Inline ternary
+  return '<a href="' . esc_url( $url ) . '"' . ( $open_new_tab ? ' target="_blank" rel="noopener noreferrer"' : '' ) . '>';
+  ```
 
 ## Validation Logic
 Combine related validations into single statements:
