@@ -232,3 +232,38 @@ add_action( 'init', 'carnavalsf_disable_image_resizing' );
 	}
 add_filter( 'style_loader_src', 'carnavalsf_remove_version_scripts_styles', 9999 );
 add_filter( 'script_loader_src', 'carnavalsf_remove_version_scripts_styles', 9999 );
+
+// ============================================================================
+// SMTP Configuration
+// ============================================================================
+
+/**
+ * Configures PHPMailer to use SMTP with credentials from wp-config.php.
+ *
+ * @param PHPMailer\PHPMailer\PHPMailer $phpmailer The PHPMailer instance.
+ * @return void
+ */
+function carnavalsf_configure_smtp( $phpmailer ) {
+	// Only configure if SMTP constants are defined.
+	if ( ! defined( 'SMTP_HOST' ) || ! defined( 'SMTP_PORT' ) ) {
+		return;
+	}
+
+	// Enable SMTP.
+	$phpmailer->isSMTP();
+
+	// Set SMTP server settings.
+	$phpmailer->Host       = SMTP_HOST;
+	$phpmailer->Port       = SMTP_PORT;
+	$phpmailer->SMTPAuth   = defined( 'SMTP_USER' ) && defined( 'SMTP_PASS' );
+	$phpmailer->Username   = defined( 'SMTP_USER' ) ? SMTP_USER : '';
+	$phpmailer->Password   = defined( 'SMTP_PASS' ) ? SMTP_PASS : '';
+	$phpmailer->SMTPSecure = defined( 'SMTP_ENCRYPTION' ) ? SMTP_ENCRYPTION : 'tls';
+
+	// Set From address if constants are defined.
+	if ( defined( 'SMTP_FROM_EMAIL' ) ) {
+		$from_name = defined( 'SMTP_FROM_NAME' ) ? SMTP_FROM_NAME : get_bloginfo( 'name' );
+		$phpmailer->setFrom( SMTP_FROM_EMAIL, $from_name, false );
+	}
+}
+add_action( 'phpmailer_init', 'carnavalsf_configure_smtp' );
